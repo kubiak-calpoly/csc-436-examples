@@ -5,14 +5,9 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.Spring
-import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.animation.core.infiniteRepeatable
-import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.spring
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -21,7 +16,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -30,12 +24,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.drawWithCache
-import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Matrix
 import androidx.compose.ui.graphics.Outline
-import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asComposePath
@@ -49,7 +40,6 @@ import androidx.graphics.shapes.RoundedPolygon
 import androidx.graphics.shapes.star
 import androidx.graphics.shapes.toPath
 import dev.csse.kubiak.datavizcompose.ui.theme.DataVizComposeTheme
-import kotlin.math.max
 
 class MainActivity : ComponentActivity() {
   override fun onCreate(savedInstanceState: Bundle?) {
@@ -113,31 +103,6 @@ fun DataViz(name: String, modifier: Modifier = Modifier) {
 fun DataVizPreview() {
   DataVizComposeTheme {
     DataViz("Android")
-  }
-}
-
-fun RoundedPolygon.getBounds() = calculateBounds().let {
-  Rect(it[0], it[1], it[2], it[3]) }
-class RoundedPolygonShape(
-  private val polygon: RoundedPolygon,
-  private var matrix: Matrix = Matrix()
-) : Shape {
-  private var path = Path()
-  override fun createOutline(
-    size: Size,
-    layoutDirection: LayoutDirection,
-    density: Density
-  ): Outline {
-    path.rewind()
-    path = polygon.toPath().asComposePath()
-    matrix.reset()
-    val bounds = polygon.getBounds()
-    val maxDimension = max(bounds.width, bounds.height)
-    matrix.scale(size.width / maxDimension, size.height / maxDimension)
-    matrix.translate(-bounds.left, -bounds.top)
-
-    path.transform(matrix)
-    return Outline.Generic(path)
   }
 }
 
