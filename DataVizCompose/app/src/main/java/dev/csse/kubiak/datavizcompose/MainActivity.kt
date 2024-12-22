@@ -15,6 +15,7 @@ import androidx.compose.ui.draw.drawWithCache
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asComposePath
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.graphics.shapes.CornerRounding
 import androidx.graphics.shapes.RoundedPolygon
 import androidx.graphics.shapes.toPath
 import dev.csse.kubiak.datavizcompose.ui.theme.DataVizComposeTheme
@@ -42,14 +43,18 @@ fun DataViz(name: String, modifier: Modifier = Modifier) {
     modifier = Modifier
       .drawWithCache {
         val roundedPolygon = RoundedPolygon(
-          numVertices = 6,
+          numVertices = 3,
           radius = size.minDimension / 2,
           centerX = size.width / 2,
-          centerY = size.height / 2
+          centerY = size.height / 2,
+          rounding = CornerRounding(
+            size.minDimension / 10f,
+            smoothing = 0.1f
+          )
         )
         val roundedPolygonPath = roundedPolygon.toPath().asComposePath()
         onDrawBehind {
-          drawPath(roundedPolygonPath, color = Color.Blue)
+          drawPath(roundedPolygonPath, color = Color.Black)
         }
       }
       .fillMaxSize()
