@@ -32,9 +32,14 @@ fun Greeting(names: List<String>): Unit {
 
 @Preview(showBackground = true)
 @Composable
-fun GreetingPreview() {
+fun Greeting4Preview() {
   val names = listOf("Paul", "John", "George", "Ringo")
-  DemoWeek2Theme {
-    Greeting(names)
-  }
+  Greeting(names)
+}
+
+@Preview(showBackground = true)
+@Composable
+fun Greeting1Preview() {
+  val names = listOf("Kotlin")
+  Greeting(names)
 }
