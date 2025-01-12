@@ -48,7 +48,7 @@ dependencies {
     implementation(libs.androidx.ui)
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
-    implementation("androidx.compose.foundation")
+    implementation(libs.androidx.compose.foundation)
     implementation("androidx.compose.material:material")
     implementation("androidx.compose.material:material-ripple")
     implementation("androidx.compose.material:material-icons-extended")
