@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">DemoWeek2</string>
+    <string name="greeting">Greetings, %s!</string>
+    <string name="click_count">I have been clicked %d times</string>
 </resources>
