@@ -18,30 +18,23 @@ class MainActivity : ComponentActivity() {
     super.onCreate(savedInstanceState)
     enableEdgeToEdge()
     setContent {
-      DemoWeek2Theme {
-        Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-          Greeting(
-            name = "Android",
-            modifier = Modifier.padding(innerPadding)
-          )
-        }
-      }
+      // eventually add content here
     }
   }
 }
 
 @Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-  Text(
-    text = "Hello $name!",
-    modifier = modifier
-  )
+fun Greeting(names: List<String>): Unit {
+  for ( name in names ) {
+    Text(text = "Hello $name!")
+  }
 }
 
 @Preview(showBackground = true)
 @Composable
 fun GreetingPreview() {
+  val names = listOf("Paul", "John", "George", "Ringo")
   DemoWeek2Theme {
-    Greeting("Android")
+    Greeting(names)
   }
 }
