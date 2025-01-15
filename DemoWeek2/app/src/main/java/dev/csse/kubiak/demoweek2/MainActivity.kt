@@ -8,6 +8,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Button
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -38,7 +39,9 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun Greeting(name: String) {
   Column(modifier = Modifier
-      .padding(0.dp, 20.dp, 10.dp, 0.dp)) {
+    .padding(0.dp, 20.dp, 10.dp, 0.dp)
+    .size(100.dp, 80.dp)
+  ) {
     Text(text = "Hello,")
     Text(text = name)
   }
