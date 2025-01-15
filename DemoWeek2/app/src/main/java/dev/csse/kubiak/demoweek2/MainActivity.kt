@@ -7,6 +7,8 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -25,6 +27,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.modifier.modifierLocalOf
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -42,9 +45,14 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun ColumnDemo(align: Alignment.Horizontal) {
-  Column(modifier = Modifier.width(300.dp),
-    horizontalAlignment = align
+fun ColumnDemo(
+  align: Alignment.Horizontal,
+  arrange: Arrangement.Vertical = Arrangement.Top
+) {
+  Column(
+    modifier = Modifier.size(150.dp),
+    horizontalAlignment = align,
+    verticalArrangement = arrange
   ) {
     Text("Jabberwock")
     Text("Bandersnatch")
@@ -56,9 +64,32 @@ fun ColumnDemo(align: Alignment.Horizontal) {
 @Preview
 @Composable
 fun ColumnPreview() {
-  ColumnDemo(Alignment.Start)
+  ColumnDemo(
+    Alignment.End,
+    Arrangement.SpaceAround
+  )
 }
 
+@Composable
+fun Square(color: Color, modifier: Modifier = Modifier ) {
+  Box(modifier = modifier
+    .size(20.dp)
+    .background(color)
+  )
+}
+
+@Preview
+@Composable
+fun BoxPreview() {
+  Box(modifier = Modifier.width(150.dp)) {
+    Square(Color.Red, Modifier.align(Alignment.TopStart) )
+    Text("""’Twas brillig, and the slithy toves
+      Did gyre and gimble in the wabe:
+All mimsy were the borogoves,
+      And the mome raths outgrabe.
+    """.trimIndent())
+  }
+}
 
 @Composable
 fun Greeting(name: String) {
