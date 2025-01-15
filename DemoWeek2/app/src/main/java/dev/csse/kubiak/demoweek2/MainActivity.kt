@@ -47,7 +47,6 @@ fun Greeting(name: String) {
     .background(Color.Cyan)
     .border(5.dp, Color.Red)
     .padding(5.dp, 20.dp, 10.dp, 5.dp)
-
   ) {
     Text(text = "Hello,")
     Text(text = name)
@@ -58,4 +57,15 @@ fun Greeting(name: String) {
 @Composable
 fun GreetingPreview() {
   Greeting("Layouts")
+}
+
+@Preview
+@Composable
+fun ModOrderPreview() {
+  Text(
+    text = "Poppy",
+    modifier = Modifier.background(Color.Yellow)
+      .border(2.dp, Color.Red)
+      .padding(5.dp, 3.dp, 10.dp, 2.dp)
+  )
 }
