@@ -2,6 +2,7 @@ package dev.csse.kubiak.demoweek2
 
 import android.R
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -74,7 +75,10 @@ fun CounterScreen() {
     var increment: Int? by remember { mutableStateOf(1) }
 
     Text("Count = $clickCount")
-    IncrementButton(onClick = { clickCount += increment ?: 0})
+    IncrementButton(onClick = {
+      Log.d("CounterScreen", "onClick called, count = $clickCount")
+      clickCount += increment ?: 0
+    })
     NumberField("Count up by", increment, { v -> increment = v })
   }
 }
