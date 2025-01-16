@@ -59,39 +59,44 @@ class MainActivity : ComponentActivity() {
     super.onCreate(savedInstanceState)
     enableEdgeToEdge()
     setContent {
-      Column(modifier = Modifier.padding(40.dp)){
-        ButtonClickExample()
-        NumberField("Increment")
-      }
+      CounterScreen()
     }
   }
 }
 
-@Preview
 @Composable
-fun ButtonClickExample() {
-  var clickCount by remember { mutableStateOf(0) }
+fun CounterScreen() {
+  Column(
+    modifier = Modifier.padding(40.dp),
+    horizontalAlignment = Alignment.CenterHorizontally
+  ) {
+    var clickCount by remember { mutableStateOf(0) }
+    var increment: Int? by remember { mutableStateOf(1) }
 
+    Text("Count = $clickCount")
+    IncrementButton(onClick = { clickCount += increment ?: 0})
+    NumberField("Count up by", increment, { v -> increment = v })
+  }
+}
+
+@Composable
+fun IncrementButton(onClick: () -> Unit) {
   Column {
-    Button(
-      onClick = { clickCount++ }
-    ) {
+    Button(onClick = onClick) {
       Text("Click to increment")
     }
-    Text("Click count = $clickCount")
   }
 }
 
 @Composable
 fun NumberField(
   labelText: String,
+  value: Int?,
+  onValueChange: (Int?) -> Unit,
   modifier: Modifier = Modifier
 ) {
-  var textInput by remember { mutableStateOf("") }
-
-  TextField(
-    value = textInput,
-    onValueChange = { textInput = it },
+  TextField(value = (value ?: "").toString(),
+    onValueChange = { v -> onValueChange(v.toIntOrNull()) },
     label = { Text(labelText) },
     singleLine = true,
     keyboardOptions = KeyboardOptions(
@@ -196,19 +201,13 @@ fun BankCardUi() {
     Box {
       BankCardBackground(baseColor = Color(0xFF1252c8))
       SpaceWrapper(
-        modifier = Modifier.align(Alignment.TopStart),
-        space = 32.dp,
-        top = true,
-        left = true
+        modifier = Modifier.align(Alignment.TopStart), space = 32.dp, top = true, left = true
       ) {
         BankCardLabelAndText(label = "card holder", text = "John Doe")
       }
       BankCardNumber("1234567890123456")
       SpaceWrapper(
-        modifier = Modifier.align(Alignment.BottomStart),
-        space = 32.dp,
-        bottom = true,
-        left = true
+        modifier = Modifier.align(Alignment.BottomStart), space = 32.dp, bottom = true, left = true
       ) {
         Row {
           BankCardLabelAndText(label = "expires", text = "01/29")
@@ -217,10 +216,7 @@ fun BankCardUi() {
         }
       }
       SpaceWrapper(
-        modifier = Modifier.align(Alignment.BottomEnd),
-        space = 32.dp,
-        bottom = true,
-        right = true
+        modifier = Modifier.align(Alignment.BottomEnd), space = 32.dp, bottom = true, right = true
       ) {
         // Feel free to use an image instead
         Text(
@@ -262,10 +258,7 @@ fun BankCardNumber(cardNumber: String) {
 
     // Display the last four digits
     Text(
-      text = cardNumber.takeLast(4),
-      fontSize = 20.sp,
-      letterSpacing = 1.sp,
-      color = Color.White
+      text = cardNumber.takeLast(4), fontSize = 20.sp, letterSpacing = 1.sp, color = Color.White
     )
   }
 }
@@ -273,31 +266,24 @@ fun BankCardNumber(cardNumber: String) {
 
 @Composable
 fun BankCardDotGroup() {
-  Canvas(
-    modifier = Modifier.width(48.dp),
-    onDraw = { // You can adjust the width as needed
-      val dotRadius = 4.dp.toPx()
-      val spaceBetweenDots = 8.dp.toPx()
-      for (i in 0 until 4) { // Draw four dots
-        drawCircle(
-          color = Color.White,
-          radius = dotRadius,
-          center = Offset(
-            x = i * (dotRadius * 2 + spaceBetweenDots) + dotRadius,
-            y = center.y
-          )
+  Canvas(modifier = Modifier.width(48.dp), onDraw = { // You can adjust the width as needed
+    val dotRadius = 4.dp.toPx()
+    val spaceBetweenDots = 8.dp.toPx()
+    for (i in 0 until 4) { // Draw four dots
+      drawCircle(
+        color = Color.White, radius = dotRadius, center = Offset(
+          x = i * (dotRadius * 2 + spaceBetweenDots) + dotRadius, y = center.y
         )
-      }
-    })
+      )
+    }
+  })
 }
 
 
 @Composable
 fun BankCardLabelAndText(label: String, text: String) {
   Column(
-    modifier = Modifier
-      .wrapContentSize(),
-    verticalArrangement = Arrangement.SpaceBetween
+    modifier = Modifier.wrapContentSize(), verticalArrangement = Arrangement.SpaceBetween
   ) {
     Text(
       text = label.uppercase(),
@@ -344,8 +330,7 @@ fun SpaceWrapper(
 @Preview
 fun BankCardUiPreview() {
   Box(
-    Modifier
-      .padding(16.dp)
+    Modifier.padding(16.dp)
   ) {
     BankCardUi()
   }
