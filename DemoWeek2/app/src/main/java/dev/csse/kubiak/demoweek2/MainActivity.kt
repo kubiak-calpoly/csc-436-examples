@@ -23,11 +23,13 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.mutableStateOf
@@ -44,6 +46,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -55,9 +58,49 @@ class MainActivity : ComponentActivity() {
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     enableEdgeToEdge()
-
+    setContent {
+      Column(modifier = Modifier.padding(40.dp)){
+        ButtonClickExample()
+        NumberField("Increment")
+      }
+    }
   }
 }
+
+@Preview
+@Composable
+fun ButtonClickExample() {
+  var clickCount by remember { mutableStateOf(0) }
+
+  Column {
+    Button(
+      onClick = { clickCount++ }
+    ) {
+      Text("Click to increment")
+    }
+    Text("Click count = $clickCount")
+  }
+}
+
+@Composable
+fun NumberField(
+  labelText: String,
+  modifier: Modifier = Modifier
+) {
+  var textInput by remember { mutableStateOf("") }
+
+  TextField(
+    value = textInput,
+    onValueChange = { textInput = it },
+    label = { Text(labelText) },
+    singleLine = true,
+    keyboardOptions = KeyboardOptions(
+      keyboardType = KeyboardType.Number
+    ),
+    modifier = modifier
+  )
+}
+
 
 @Composable
 fun ColumnDemo(
