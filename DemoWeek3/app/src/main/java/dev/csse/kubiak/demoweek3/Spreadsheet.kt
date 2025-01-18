@@ -68,8 +68,9 @@ fun ColumnHeader(numCols: Int) {
 
 @Composable
 fun RowData(rowNum: Int, numCols: Int) {
-  val zeroes = Array<Int>(numCols) { 0 }
-  var data: Array<Int> by remember { mutableStateOf(zeroes) }
+  var data1: Int by remember { mutableStateOf(0) }
+  var data2: Int by remember { mutableStateOf(0) }
+
   Row(verticalAlignment = Alignment.CenterVertically,
     horizontalArrangement = Arrangement.SpaceBetween,
     modifier = Modifier.fillMaxWidth()) {
@@ -78,26 +79,24 @@ fun RowData(rowNum: Int, numCols: Int) {
       fontSize = fontSize,
       modifier = Modifier.width(rowHeaderWidth)
     )
-    for (col in (1)..numCols) {
-      NumberField(
-        data[col - 1], { x: Int -> data[col - 1] = x },
-        modifier = Modifier.width(columnWidth)
-      )
+    for ( col in (1)..numCols ) {
+      Cell(modifier = Modifier.width(columnWidth))
     }
   }
 }
 
 @Composable
-fun NumberField(
-  value: Int,
-  onValueChange: (Int) -> Unit,
+fun Cell(
   modifier: Modifier = Modifier
 ) {
+  var data: Int? by remember { mutableStateOf(null) }
+
   TextField(
-    value = value.toString(),
-    onValueChange = { x: String -> onValueChange(x.toIntOrNull() ?: 0) },
+    value = (data ?: "").toString(),
+    onValueChange = { x: String -> data = x.toIntOrNull() },
     singleLine = true,
-    textStyle = TextStyle(fontSize = fontSize, textAlign = TextAlign.End),
+    textStyle = TextStyle(
+      fontSize = fontSize, textAlign = TextAlign.End),
     keyboardOptions = KeyboardOptions(
       keyboardType = KeyboardType.Number
     ),
