@@ -1,7 +1,9 @@
 package dev.csse.kubiak.demoweek3
 
+import android.content.res.Configuration
 import android.nfc.Tag
 import android.os.Bundle
+import android.os.PersistableBundle
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -16,6 +18,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
@@ -29,9 +32,10 @@ class MainActivity : ComponentActivity() {
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     enableEdgeToEdge()
-    Log.i(TAG, "onCreate")
+    Log.i(TAG, "onCreate $savedInstanceState")
     setContent {
-      var name: String by remember { mutableStateOf("Android") }
+      var name: String by rememberSaveable { mutableStateOf("Android") }
+
       Column( modifier = Modifier.padding(24.dp) ) {
         Greeting( name = name )
         TextField( value = name,
@@ -40,6 +44,11 @@ class MainActivity : ComponentActivity() {
         )
       }
     }
+  }
+
+  override fun onSaveInstanceState(outState: Bundle) {
+    super.onSaveInstanceState(outState)
+    Log.i(TAG, "onSaveInstanceState")
   }
 
   override fun onStart() {
