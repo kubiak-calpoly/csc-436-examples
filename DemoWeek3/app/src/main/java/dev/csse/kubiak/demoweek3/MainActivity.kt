@@ -32,56 +32,10 @@ class MainActivity : ComponentActivity() {
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     enableEdgeToEdge()
-    Log.i(TAG, "onCreate $savedInstanceState")
     setContent {
-      var name: String by rememberSaveable { mutableStateOf("Android") }
-
-      Column( modifier = Modifier.padding(24.dp) ) {
-        Greeting( name = name )
-        TextField( value = name,
-          onValueChange =  { x: String -> name = x },
-          label = { Text("What is your name?") }
-        )
-      }
+      Spreadsheet()
     }
   }
-
-  override fun onSaveInstanceState(outState: Bundle) {
-    super.onSaveInstanceState(outState)
-    Log.i(TAG, "onSaveInstanceState")
-  }
-
-  override fun onStart() {
-    super.onStart()
-    Log.i(TAG, "onStart")
-  }
-
-  override fun onResume() {
-    super.onResume()
-    Log.i(TAG, "onResume")
-  }
-
-  override fun onPause() {
-    super.onPause()
-    Log.i(TAG, "onPause")
-  }
-
-  override fun onStop() {
-    super.onStop()
-    Log.i(TAG, "onStop")
-  }
-
-  override fun onDestroy() {
-    super.onDestroy()
-    Log.i(TAG, "onDestroy")
-  }
-
 }
 
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-  Text(
-    text = "Hello $name!",
-    modifier = modifier
-  )
-}
+
