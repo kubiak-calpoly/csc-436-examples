@@ -11,6 +11,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.mutableStateOf
@@ -24,6 +25,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import kotlinx.coroutines.flow.callbackFlow
 
 val fontSize = 24.sp
 val columnWidth = 16.dp * 5
@@ -31,24 +34,31 @@ val rowHeaderWidth = 16.dp * 3
 
 @Preview
 @Composable
-fun Spreadsheet() {
-  val numRows = 3
-  val numCols = 3
+fun SpreadsheetPreview() {
+  Spreadsheet()
+}
+
+@Composable
+fun Spreadsheet(
+  sheetViewModel: SpreadsheetViewModel = viewModel()
+) {
+  val columnNames = sheetViewModel.columnNames
+  val rowNumbers = sheetViewModel.rowNumbers
 
   Column(
     modifier = Modifier
       .fillMaxWidth()
       .padding(24.dp)
   ) {
-    ColumnHeader(numCols)
-    for (row in (1)..numRows) {
-      RowData(row, numCols)
+    ColumnHeader(columnNames)
+    for (row in rowNumbers) {
+      RowData(row, columnNames)
     }
   }
 }
 
 @Composable
-fun ColumnHeader(numCols: Int) {
+fun ColumnHeader(columnNames: List<String>) {
   Row(verticalAlignment = Alignment.CenterVertically,
     horizontalArrangement = Arrangement.SpaceBetween,
     modifier = Modifier.fillMaxWidth() ) {
@@ -57,9 +67,9 @@ fun ColumnHeader(numCols: Int) {
       fontSize = fontSize,
       modifier = Modifier.width(rowHeaderWidth)
     )
-    for (col in (1)..numCols) {
+    for (col in columnNames) {
       Text(
-        Char(col + 'A'.code - 1).toString(),
+        col,
         fontSize = fontSize,
         textAlign = TextAlign.Center,
         modifier = Modifier.width(columnWidth)
@@ -69,10 +79,7 @@ fun ColumnHeader(numCols: Int) {
 }
 
 @Composable
-fun RowData(rowNum: Int, numCols: Int) {
-  val initialData = Array<Int?>(numCols) {i -> null}
-  var rowData: MutableList<Int?> =
-    remember { mutableStateListOf<Int?>(*initialData) }
+fun RowData(rowNum: Int, columnNames: List<String>) {
   Row(verticalAlignment = Alignment.CenterVertically,
     horizontalArrangement = Arrangement.SpaceBetween,
     modifier = Modifier.fillMaxWidth()) {
@@ -81,24 +88,27 @@ fun RowData(rowNum: Int, numCols: Int) {
       fontSize = fontSize,
       modifier = Modifier.width(rowHeaderWidth)
     )
-    for ( col in (1)..numCols ) {
+    for ( col in columnNames ) {
       Cell(
-        data = rowData[col-1],
-        onDataChanged = {x -> rowData[col-1] = x},
-        modifier = Modifier.width(columnWidth))
+        key = "${col}${rowNum}",
+        modifier = Modifier.width(columnWidth)
+      )
     }
   }
 }
 
 @Composable
 fun Cell(
-  data: Int?,
-  onDataChanged: (Int?) -> Unit,
+  key: String,
   modifier: Modifier = Modifier
 ) {
-    TextField(
-    value = (data ?: "").toString(),
-    onValueChange = { x: String -> onDataChanged(x.toIntOrNull()) },
+  val sheetViewModel = viewModel<SpreadsheetViewModel>()
+  val value = sheetViewModel.data[key]
+
+  TextField(
+    value = (value ?: "").toString(),
+    onValueChange = { x: String ->
+      sheetViewModel.data[key] = x.toIntOrNull() },
     singleLine = true,
     textStyle = TextStyle(
       fontSize = fontSize, textAlign = TextAlign.End),
