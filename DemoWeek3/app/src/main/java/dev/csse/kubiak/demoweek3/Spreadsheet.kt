@@ -11,9 +11,11 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.TextStyle
@@ -68,9 +70,9 @@ fun ColumnHeader(numCols: Int) {
 
 @Composable
 fun RowData(rowNum: Int, numCols: Int) {
-  var data1: Int by remember { mutableStateOf(0) }
-  var data2: Int by remember { mutableStateOf(0) }
-
+  val initialData = Array<Int?>(numCols) {i -> null}
+  var rowData: MutableList<Int?> =
+    remember { mutableStateListOf<Int?>(*initialData) }
   Row(verticalAlignment = Alignment.CenterVertically,
     horizontalArrangement = Arrangement.SpaceBetween,
     modifier = Modifier.fillMaxWidth()) {
@@ -80,20 +82,23 @@ fun RowData(rowNum: Int, numCols: Int) {
       modifier = Modifier.width(rowHeaderWidth)
     )
     for ( col in (1)..numCols ) {
-      Cell(modifier = Modifier.width(columnWidth))
+      Cell(
+        data = rowData[col-1],
+        onDataChanged = {x -> rowData[col-1] = x},
+        modifier = Modifier.width(columnWidth))
     }
   }
 }
 
 @Composable
 fun Cell(
+  data: Int?,
+  onDataChanged: (Int?) -> Unit,
   modifier: Modifier = Modifier
 ) {
-  var data: Int? by remember { mutableStateOf(null) }
-
-  TextField(
+    TextField(
     value = (data ?: "").toString(),
-    onValueChange = { x: String -> data = x.toIntOrNull() },
+    onValueChange = { x: String -> onDataChanged(x.toIntOrNull()) },
     singleLine = true,
     textStyle = TextStyle(
       fontSize = fontSize, textAlign = TextAlign.End),
