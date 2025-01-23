@@ -10,6 +10,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateListOf
@@ -90,7 +91,7 @@ fun RowData(rowNum: Int, columnNames: List<String>) {
     )
     for ( col in columnNames ) {
       Cell(
-        key = "${col}${rowNum}",
+        key = "$col$rowNum",
         modifier = Modifier.width(columnWidth)
       )
     }
@@ -100,15 +101,15 @@ fun RowData(rowNum: Int, columnNames: List<String>) {
 @Composable
 fun Cell(
   key: String,
-  modifier: Modifier = Modifier
+  modifier: Modifier = Modifier,
+  sheetViewModel: SpreadsheetViewModel = viewModel()
 ) {
-  val sheetViewModel = viewModel<SpreadsheetViewModel>()
-  val value = sheetViewModel.data[key]
+  val data = sheetViewModel.data[key]
 
   TextField(
-    value = (value ?: "").toString(),
+    value = (data ?: "").toString(),
     onValueChange = { x: String ->
-      sheetViewModel.data[key] = x.toIntOrNull() },
+       sheetViewModel.data[key] = x.toIntOrNull() },
     singleLine = true,
     textStyle = TextStyle(
       fontSize = fontSize, textAlign = TextAlign.End),

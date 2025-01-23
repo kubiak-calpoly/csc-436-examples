@@ -7,16 +7,12 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 
-val initialColumns = arrayOf("A", "B", "C")
-val initialRows = arrayOf(1, 2, 3)
 
 class SpreadsheetViewModel : ViewModel() {
-  var columnNames =
-    mutableStateListOf<String>(*initialColumns)
 
-  var rowNumbers =
-    mutableStateListOf<Int>(*initialRows)
+  val columnNames = mutableStateListOf("A", "B", "C")
+  val rowNumbers = mutableStateListOf(1, 2, 3)
 
-  var data = mutableStateMapOf<String, Int?>()
+  val data = mutableStateMapOf<String, Int?>()
 }
 
