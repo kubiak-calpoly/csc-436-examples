@@ -1,6 +1,5 @@
 package dev.csse.kubiak.demoweek3
 
-import android.R
 import android.content.res.Configuration
 import android.nfc.Tag
 import android.os.Bundle
