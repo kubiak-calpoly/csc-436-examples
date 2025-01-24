@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
@@ -39,12 +40,17 @@ class MainActivity : ComponentActivity() {
     enableEdgeToEdge()
     setContent {
       DemoWeek3Theme {
-        Column {
-          Text(
-            text = "Some Data",
-            style = MaterialTheme.typography.titleLarge
-          )
-          Spreadsheet(viewModel())
+        Surface(
+          modifier = Modifier.fillMaxSize(),
+          color = MaterialTheme.colorScheme.background
+        ) {
+          Column {
+            Text(
+              text = "Some Data",
+              style = MaterialTheme.typography.titleLarge
+            )
+            Spreadsheet(viewModel())
+          }
         }
       }
     }
