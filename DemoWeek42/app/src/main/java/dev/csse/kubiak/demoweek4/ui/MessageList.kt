@@ -1,11 +1,10 @@
 package dev.csse.kubiak.demoweek4.ui
 
-import android.R
-import android.nfc.Tag
-import android.telephony.TelephonyCallback
 import android.util.Log
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
@@ -25,8 +24,15 @@ val TAG = "MessageList"
 
 @Composable
 fun MessageList(messages: List<Message>) {
-  Column {
-    messages.forEach { message ->
+//  Column( modifier = Modifier
+//        .fillMaxHeight()
+//        .verticalScroll(rememberScrollState()) ) {
+//    messages.forEach { message ->
+//      MessageRow(message)
+//    }
+//  }
+  LazyColumn {
+    items(messages) { message ->
       MessageRow(message)
     }
   }
@@ -45,11 +51,7 @@ fun MessageRow(message: Message) {
 fun MessageListPreview() {
   DemoWeek4Theme {
     Surface {
-      Column( modifier = Modifier
-        .fillMaxHeight()
-        .verticalScroll(rememberScrollState()) ) {
-        MessageList(sampleMessages())
-      }
+      MessageList(sampleMessages())
     }
   }
 }
