@@ -42,39 +42,28 @@ import dev.csse.kubiak.demoweek4.ui.theme.DemoWeek4Theme
 
 @Composable
 fun ToDoScreen(
-   modifier: Modifier = Modifier,
-   todoViewModel: ToDoViewModel = viewModel()
+   modifier: Modifier = Modifier
 ) {
-   Column(
-      modifier = modifier
-         .fillMaxSize()
-   ) {
-      // AddTaskInput(todoViewModel::addTask)
-      AddTaskInput { s -> todoViewModel.addTask(s) }
-      TaskList(
-         taskList = todoViewModel.taskList,
-         onDeleteTask = { t ->
-            todoViewModel.deleteTask(t) },
-         onToggleTaskComplete = { t ->
-            todoViewModel.toggleTaskCompleted(t) }
-      )
-   }
+  TaskList( modifier = modifier.fillMaxSize() )
 }
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
 fun TaskList(
-   taskList: List<Task>,
-   onDeleteTask: (Task) -> Unit,
-   onToggleTaskComplete: (Task) -> Unit
+   modifier: Modifier = Modifier,
+   todoViewModel: ToDoViewModel = viewModel()
 ) {
-   LazyColumn {
+   LazyColumn( modifier = modifier ) {
+      stickyHeader {
+         AddTaskInput { s -> todoViewModel.addTask(s) }
+      }
       items(
-         items = taskList
+         items = todoViewModel.taskList
       ) { task ->
         TaskCard(
           task = task,
-          toggleCompleted = onToggleTaskComplete
+          toggleCompleted = { t ->
+             todoViewModel.toggleTaskCompleted(t) }
         )
       }
    }
@@ -88,6 +77,7 @@ fun AddTaskInput(onEnterTask: (String) -> Unit) {
    OutlinedTextField(
       modifier = Modifier
          .fillMaxWidth()
+         .background(Color.White)
          .padding(6.dp),
       value = taskBody,
       onValueChange = { taskBody = it },
@@ -140,9 +130,10 @@ fun TaskCard(
 @Preview(showBackground = true)
 @Composable
 fun ToDoScreenPreview() {
-   val viewModel = ToDoViewModel()
-   viewModel.createTestTasks(5)
+   val todoViewModel = viewModel<ToDoViewModel>()
+   todoViewModel.createTestTasks(5)
+
    DemoWeek4Theme(dynamicColor = false ) {
-      ToDoScreen(todoViewModel = viewModel)
+      ToDoScreen()
    }
 }
