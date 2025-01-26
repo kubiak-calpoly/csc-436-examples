@@ -16,7 +16,9 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Checkbox
@@ -57,6 +59,21 @@ fun ToDoScreen(
   modifier: Modifier = Modifier,
   todoViewModel: ToDoViewModel = viewModel()
 ) {
+  var showDeleteTasksDialog by remember { mutableStateOf(false) }
+
+
+  if (showDeleteTasksDialog) {
+    DeleteTasksDialog(
+      onDismiss = {
+        showDeleteTasksDialog = false
+      },
+      onConfirm = {
+        showDeleteTasksDialog = false
+        todoViewModel.deleteCompletedTasks()
+      }
+    )
+  }
+
   Scaffold(
     topBar = {
       TopAppBar(
@@ -70,7 +87,7 @@ fun ToDoScreen(
         ),
         actions = {
           IconButton(
-            onClick = { todoViewModel.deleteCompletedTasks() },
+            onClick = { showDeleteTasksDialog = true },
             enabled = todoViewModel.completedTasksExist
           ) {
             Icon(
@@ -171,6 +188,43 @@ fun TaskCard(
       )
     }
   }
+}
+
+@Composable
+fun DeleteTasksDialog(
+  onConfirm: () -> Unit,
+  onDismiss: () -> Unit
+) {
+  AlertDialog(
+    onDismissRequest = {
+      onDismiss()
+    },
+    title = {
+      Text("Delete all completed tasks?")
+    },
+    confirmButton = {
+      Button(
+        colors = ButtonDefaults.buttonColors(
+          containerColor = MaterialTheme.colorScheme.primary
+        ),
+        onClick = {
+          onConfirm()
+        }) {
+        Text("Yes")
+      }
+    },
+    dismissButton = {
+      Button(
+        colors = ButtonDefaults.buttonColors(
+          containerColor = MaterialTheme.colorScheme.secondary
+        ),
+        onClick = {
+          onDismiss()
+        }) {
+        Text("No")
+      }
+    },
+  )
 }
 
 @Preview(showBackground = true)
