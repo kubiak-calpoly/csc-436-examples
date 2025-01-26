@@ -14,6 +14,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Card
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -32,9 +33,18 @@ data class City(
 
 @Composable
 fun Carousel(cities: List<City>) {
-  LazyRow(horizontalArrangement = Arrangement.spacedBy(20.dp)) {
+  LazyRow(
+    verticalAlignment = Alignment.CenterVertically,
+    horizontalArrangement = Arrangement.spacedBy(20.dp)
+  ) {
+    item {
+      Text("Cities", style = MaterialTheme.typography.titleLarge )
+    }
     items(cities) { message ->
       CityCard(message)
+    }
+    item {
+      Text("See all…")
     }
   }
 }
