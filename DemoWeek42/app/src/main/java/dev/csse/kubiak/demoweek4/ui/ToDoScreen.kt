@@ -2,7 +2,9 @@ package dev.csse.kubiak.demoweek4.ui
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -10,18 +12,24 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Checkbox
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.SwipeToDismiss
 import androidx.compose.material3.SwipeToDismissBoxState
 import androidx.compose.material3.Text
+import androidx.compose.material3.dynamicDarkColorScheme
 import androidx.compose.material3.rememberSwipeToDismissBoxState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
@@ -101,14 +109,32 @@ fun TaskCard(
    toggleCompleted: (Task) -> Unit,
    modifier: Modifier = Modifier
 ) {
-   Text(
-      text = task.body,
-      fontSize = 26.sp,
-      modifier = Modifier.fillMaxWidth()
-         .padding(5.dp)
-         .background(Color.White)
-         .padding(5.dp)
-   )
+   Card(
+      modifier = modifier
+         .padding(8.dp)
+         .fillMaxWidth(),
+      colors = CardDefaults.cardColors(
+         containerColor = MaterialTheme.colorScheme.surfaceVariant
+      )
+   ) {
+      Row(modifier = modifier.fillMaxWidth(),
+         verticalAlignment = Alignment.CenterVertically,
+         horizontalArrangement = Arrangement.spacedBy(12.dp)
+      ) {
+         Checkbox(
+            checked = task.completed,
+            onCheckedChange = {
+               toggleCompleted(task)
+            }
+         )
+         Text(
+            text = task.body,
+            style = MaterialTheme.typography.bodyLarge,
+            modifier = modifier.padding(12.dp),
+            color = if (task.completed) Color.Gray else Color.Black
+         )
+      }
+   }
 }
 
 @Preview(showBackground = true)
@@ -116,7 +142,7 @@ fun TaskCard(
 fun ToDoScreenPreview() {
    val viewModel = ToDoViewModel()
    viewModel.createTestTasks(5)
-   DemoWeek4Theme {
+   DemoWeek4Theme(dynamicColor = false ) {
       ToDoScreen(todoViewModel = viewModel)
    }
 }
