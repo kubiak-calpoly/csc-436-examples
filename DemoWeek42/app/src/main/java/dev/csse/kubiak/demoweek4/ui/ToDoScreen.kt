@@ -42,6 +42,7 @@ import androidx.compose.material3.TopAppBarColors
 import androidx.compose.material3.dynamicDarkColorScheme
 import androidx.compose.material3.rememberSwipeToDismissBoxState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -69,7 +70,6 @@ fun ToDoScreen(
 ) {
   var showDeleteTasksDialog by remember { mutableStateOf(false) }
   var showAddTaskInput by remember { mutableStateOf(false) }
-  val addTaskFocusRequester = remember { FocusRequester() }
 
   if (showDeleteTasksDialog) {
     DeleteTasksDialog(
@@ -111,7 +111,7 @@ fun ToDoScreen(
       FloatingActionButton(
         onClick = {
           showAddTaskInput = true
-          addTaskFocusRequester.requestFocus()
+          // addTaskFocusRequester.requestFocus()
         }
       ) {
         Icon(
@@ -124,7 +124,6 @@ fun ToDoScreen(
     TaskList(
       showAddTaskInput = showAddTaskInput,
       onDismiss = {showAddTaskInput = false},
-      focusRequester = addTaskFocusRequester,
       modifier = modifier
         .fillMaxSize()
         .padding(innerPadding)
@@ -138,23 +137,28 @@ fun TaskList(
   modifier: Modifier = Modifier,
   showAddTaskInput: Boolean = true,
   onDismiss: () -> Unit = {},
-  focusRequester: FocusRequester?,
   todoViewModel: ToDoViewModel = viewModel()
 ) {
 
-  val focusModifier =
-    if (focusRequester != null)
-      Modifier.focusRequester(focusRequester)
-    else
-      Modifier
+
 
   LazyColumn(modifier = modifier) {
     stickyHeader {
-      AddTaskInput(
-        modifier = if (!showAddTaskInput) focusModifier.height(0.dp).clipToBounds() else focusModifier
-      ) {
-        s -> todoViewModel.addTask(s)
-        onDismiss()
+      val focusRequester = remember { FocusRequester() }
+
+      LaunchedEffect(showAddTaskInput) {
+        if (showAddTaskInput){
+          focusRequester.requestFocus()
+        }
+      }
+
+      AnimatedVisibility(showAddTaskInput) {
+        AddTaskInput(
+          modifier = Modifier.focusRequester(focusRequester)
+        ) { s ->
+          todoViewModel.addTask(s)
+          onDismiss()
+        }
       }
     }
 
