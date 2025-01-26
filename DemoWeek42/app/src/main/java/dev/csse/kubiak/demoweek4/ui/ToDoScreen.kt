@@ -15,6 +15,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
@@ -24,6 +25,7 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Checkbox
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -60,7 +62,7 @@ fun ToDoScreen(
   todoViewModel: ToDoViewModel = viewModel()
 ) {
   var showDeleteTasksDialog by remember { mutableStateOf(false) }
-
+  var showAddTaskInput by remember { mutableStateOf(false) }
 
   if (showDeleteTasksDialog) {
     DeleteTasksDialog(
@@ -97,9 +99,20 @@ fun ToDoScreen(
           }
         }
       )
+    },
+    floatingActionButton = {
+      FloatingActionButton(
+        onClick = { showAddTaskInput = true }
+      ) {
+        Icon(
+          imageVector = Icons.Default.Add,
+          contentDescription = "Add a task"
+        )
+      }
     }
   ) { innerPadding ->
     TaskList(
+      showAddTaskInput = showAddTaskInput,
       modifier = modifier
         .fillMaxSize()
         .padding(innerPadding)
@@ -111,12 +124,15 @@ fun ToDoScreen(
 @Composable
 fun TaskList(
   modifier: Modifier = Modifier,
+  showAddTaskInput: Boolean = true,
   todoViewModel: ToDoViewModel = viewModel()
 ) {
   LazyColumn(modifier = modifier) {
-    stickyHeader {
-      AddTaskInput { s -> todoViewModel.addTask(s) }
-    }
+    if(showAddTaskInput)
+      stickyHeader {
+        AddTaskInput { s -> todoViewModel.addTask(s) }
+      }
+
     items(
       items = todoViewModel.taskList,
       key = { task -> task.id }
