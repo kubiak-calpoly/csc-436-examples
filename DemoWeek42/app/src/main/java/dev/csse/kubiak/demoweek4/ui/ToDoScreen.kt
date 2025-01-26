@@ -1,5 +1,6 @@
 package dev.csse.kubiak.demoweek4.ui
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -9,6 +10,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -46,6 +48,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.clipToBounds
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.input.ImeAction
@@ -63,6 +69,7 @@ fun ToDoScreen(
 ) {
   var showDeleteTasksDialog by remember { mutableStateOf(false) }
   var showAddTaskInput by remember { mutableStateOf(false) }
+  val addTaskFocusRequester = remember { FocusRequester() }
 
   if (showDeleteTasksDialog) {
     DeleteTasksDialog(
@@ -102,7 +109,10 @@ fun ToDoScreen(
     },
     floatingActionButton = {
       FloatingActionButton(
-        onClick = { showAddTaskInput = true }
+        onClick = {
+          showAddTaskInput = true
+          addTaskFocusRequester.requestFocus()
+        }
       ) {
         Icon(
           imageVector = Icons.Default.Add,
@@ -113,6 +123,8 @@ fun ToDoScreen(
   ) { innerPadding ->
     TaskList(
       showAddTaskInput = showAddTaskInput,
+      onDismiss = {showAddTaskInput = false},
+      focusRequester = addTaskFocusRequester,
       modifier = modifier
         .fillMaxSize()
         .padding(innerPadding)
@@ -125,13 +137,26 @@ fun ToDoScreen(
 fun TaskList(
   modifier: Modifier = Modifier,
   showAddTaskInput: Boolean = true,
+  onDismiss: () -> Unit = {},
+  focusRequester: FocusRequester?,
   todoViewModel: ToDoViewModel = viewModel()
 ) {
+
+  val focusModifier =
+    if (focusRequester != null)
+      Modifier.focusRequester(focusRequester)
+    else
+      Modifier
+
   LazyColumn(modifier = modifier) {
-    if(showAddTaskInput)
-      stickyHeader {
-        AddTaskInput { s -> todoViewModel.addTask(s) }
+    stickyHeader {
+      AddTaskInput(
+        modifier = if (!showAddTaskInput) focusModifier.height(0.dp).clipToBounds() else focusModifier
+      ) {
+        s -> todoViewModel.addTask(s)
+        onDismiss()
       }
+    }
 
     items(
       items = todoViewModel.taskList,
@@ -148,12 +173,15 @@ fun TaskList(
 }
 
 @Composable
-fun AddTaskInput(onEnterTask: (String) -> Unit) {
+fun AddTaskInput(
+  modifier: Modifier = Modifier,
+  onEnterTask: (String) -> Unit,
+) {
   val keyboardController = LocalSoftwareKeyboardController.current
   var taskBody by remember { mutableStateOf("") }
 
   OutlinedTextField(
-    modifier = Modifier
+    modifier = modifier
       .fillMaxWidth()
       .background(Color.White)
       .padding(6.dp),
