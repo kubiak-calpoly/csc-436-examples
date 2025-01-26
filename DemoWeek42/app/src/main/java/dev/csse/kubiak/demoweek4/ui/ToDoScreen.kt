@@ -26,9 +26,13 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.ScaffoldSubcomposeInMeasureFix
 import androidx.compose.material3.SwipeToDismiss
 import androidx.compose.material3.SwipeToDismissBoxState
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarColors
 import androidx.compose.material3.dynamicDarkColorScheme
 import androidx.compose.material3.rememberSwipeToDismissBoxState
 import androidx.compose.runtime.Composable
@@ -47,11 +51,43 @@ import androidx.compose.ui.unit.sp
 import dev.csse.kubiak.demoweek4.Task
 import dev.csse.kubiak.demoweek4.ui.theme.DemoWeek4Theme
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ToDoScreen(
-  modifier: Modifier = Modifier
+  modifier: Modifier = Modifier,
+  todoViewModel: ToDoViewModel = viewModel()
 ) {
-  TaskList(modifier = modifier.fillMaxSize())
+  Scaffold(
+    topBar = {
+      TopAppBar(
+        title = { Text("Todo List") },
+        colors = TopAppBarColors(
+          containerColor = MaterialTheme.colorScheme.primary,
+          scrolledContainerColor = MaterialTheme.colorScheme.primary,
+          navigationIconContentColor = MaterialTheme.colorScheme.onPrimary,
+          titleContentColor = MaterialTheme.colorScheme.onPrimary,
+          actionIconContentColor = MaterialTheme.colorScheme.onPrimary
+        ),
+        actions = {
+          IconButton(
+            onClick = { todoViewModel.deleteCompletedTasks() },
+            enabled = todoViewModel.completedTasksExist
+          ) {
+            Icon(
+              imageVector = Icons.Default.Delete,
+              contentDescription = "Delete completed tasks"
+            )
+          }
+        }
+      )
+    }
+  ) { innerPadding ->
+    TaskList(
+      modifier = modifier
+        .fillMaxSize()
+        .padding(innerPadding)
+    )
+  }
 }
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
@@ -60,39 +96,20 @@ fun TaskList(
   modifier: Modifier = Modifier,
   todoViewModel: ToDoViewModel = viewModel()
 ) {
-  Box(modifier = Modifier.fillMaxSize()) {
-    LazyColumn(modifier = modifier) {
-      stickyHeader {
-        AddTaskInput { s -> todoViewModel.addTask(s) }
-      }
-      items(
-        items = todoViewModel.taskList,
-        key =  { task -> task.id }
-      ) { task ->
-        TaskCard(
-          task = task,
-          toggleCompleted = { t ->
-            todoViewModel.toggleTaskCompleted(t)
-          }
-        )
-      }
+  LazyColumn(modifier = modifier) {
+    stickyHeader {
+      AddTaskInput { s -> todoViewModel.addTask(s) }
     }
-
-    Row(
-      modifier = Modifier
-        .align(Alignment.BottomCenter)
-        .padding(10.dp)
-    ) {
-      Button(
-        onClick = { todoViewModel.deleteCompletedTasks() },
-        enabled = todoViewModel.completedTasksExist
-      ) {
-        Icon(
-          imageVector = Icons.Default.Delete,
-          contentDescription = "Delete completed tasks"
-        )
-        Text("Delete Completed Tasks")
-      }
+    items(
+      items = todoViewModel.taskList,
+      key = { task -> task.id }
+    ) { task ->
+      TaskCard(
+        task = task,
+        toggleCompleted = { t ->
+          todoViewModel.toggleTaskCompleted(t)
+        }
+      )
     }
   }
 }
