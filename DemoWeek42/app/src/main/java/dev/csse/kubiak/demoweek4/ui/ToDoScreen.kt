@@ -66,7 +66,8 @@ fun TaskList(
         AddTaskInput { s -> todoViewModel.addTask(s) }
       }
       items(
-        items = todoViewModel.taskList
+        items = todoViewModel.taskList,
+        key =  { task -> task.id }
       ) { task ->
         TaskCard(
           task = task,
