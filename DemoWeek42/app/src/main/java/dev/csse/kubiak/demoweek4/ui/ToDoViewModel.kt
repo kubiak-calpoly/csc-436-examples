@@ -8,7 +8,7 @@ class ToDoViewModel : ViewModel() {
    val taskList = mutableStateListOf<Task>()
 
    fun addTask(body: String) {
-      taskList.add(Task(body = body))
+      taskList.add(0, Task(body = body))
    }
 
    fun deleteTask(task: Task) {
