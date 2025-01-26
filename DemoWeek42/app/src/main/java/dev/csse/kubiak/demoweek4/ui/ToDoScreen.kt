@@ -1,6 +1,7 @@
 package dev.csse.kubiak.demoweek4.ui
 
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -22,6 +23,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
@@ -39,12 +41,14 @@ fun ToDoScreen(
       modifier = modifier
          .fillMaxSize()
    ) {
-      AddTaskInput(todoViewModel::addTask)
+      // AddTaskInput(todoViewModel::addTask)
+      AddTaskInput { s -> todoViewModel.addTask(s) }
       TaskList(
          taskList = todoViewModel.taskList,
-         onDeleteTask = todoViewModel::deleteTask,
-         onArchiveTask = todoViewModel::archiveTask,
-         onToggleTaskComplete = todoViewModel::toggleTaskCompleted
+         onDeleteTask = { t ->
+            todoViewModel.deleteTask(t) },
+         onToggleTaskComplete = { t ->
+            todoViewModel.toggleTaskCompleted(t) }
       )
    }
 }
@@ -54,40 +58,18 @@ fun ToDoScreen(
 fun TaskList(
    taskList: List<Task>,
    onDeleteTask: (Task) -> Unit,
-   onArchiveTask: (Task) -> Unit,
    onToggleTaskComplete: (Task) -> Unit
 ) {
    LazyColumn {
       items(
-         items = taskList,
-         key = { task -> task.id }
+         items = taskList
       ) { task ->
-         val dismissState = rememberSwipeToDismissBoxState()
-
-         SwipeToDismiss(
-            state = dismissState,
-            background = { SwipeBackground(dismissState) },
-            modifier = Modifier
-               .padding(vertical = 1.dp)
-               .animateItemPlacement(),
-            dismissContent = {
-               TaskCard(
-                  task = task,
-                  toggleCompleted = onToggleTaskComplete
-               )
-            }
-         )
+        TaskCard(
+          task = task,
+          toggleCompleted = onToggleTaskComplete
+        )
       }
    }
-}
-
-@Composable
-@OptIn(ExperimentalMaterial3Api::class)
-fun SwipeBackground(
-   dismissState: SwipeToDismissBoxState,
-   modifier: Modifier = Modifier
-) {
-   // TODO: Implement later
 }
 
 @Composable
@@ -122,7 +104,10 @@ fun TaskCard(
    Text(
       text = task.body,
       fontSize = 26.sp,
-      modifier = modifier.padding(start = 12.dp)
+      modifier = Modifier.fillMaxWidth()
+         .padding(5.dp)
+         .background(Color.White)
+         .padding(5.dp)
    )
 }
 
