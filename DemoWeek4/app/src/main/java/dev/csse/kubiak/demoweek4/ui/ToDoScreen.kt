@@ -33,14 +33,9 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.ScaffoldSubcomposeInMeasureFix
-import androidx.compose.material3.SwipeToDismiss
-import androidx.compose.material3.SwipeToDismissBoxState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarColors
-import androidx.compose.material3.dynamicDarkColorScheme
-import androidx.compose.material3.rememberSwipeToDismissBoxState
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -87,9 +82,8 @@ fun ToDoScreen(
     topBar = {
       TopAppBar(
         title = { Text("Todo List") },
-        colors = TopAppBarColors(
+        colors = TopAppBarDefaults.topAppBarColors (
           containerColor = MaterialTheme.colorScheme.primary,
-          scrolledContainerColor = MaterialTheme.colorScheme.primary,
           navigationIconContentColor = MaterialTheme.colorScheme.onPrimary,
           titleContentColor = MaterialTheme.colorScheme.onPrimary,
           actionIconContentColor = MaterialTheme.colorScheme.onPrimary
