@@ -30,7 +30,7 @@ data class Message(
   var index: Int = 0
 )
 
-val TAG = "MessageList"
+private val TAG = "MessageList"
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable

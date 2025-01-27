@@ -1,5 +1,7 @@
 package dev.csse.kubiak.demoweek4.ui
 
+
+import android.util.Log
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -45,6 +47,8 @@ import androidx.compose.ui.unit.sp
 import dev.csse.kubiak.demoweek4.Task
 import dev.csse.kubiak.demoweek4.ui.theme.DemoWeek4Theme
 
+private val TAG = "TodoList"
+
 @Composable
 fun ToDoScreen(
   modifier: Modifier = Modifier
@@ -64,8 +68,7 @@ fun TaskList(
         AddTaskInput { s -> todoViewModel.addTask(s) }
       }
       items(
-        items = todoViewModel.taskList,
-        key =  { task -> task.id }
+        items = todoViewModel.taskList
       ) { task ->
         TaskCard(
           task = task,
@@ -119,6 +122,7 @@ fun TaskCard(
   toggleCompleted: (Task) -> Unit,
   modifier: Modifier = Modifier
 ) {
+  Log.i(TAG, "Recomposing task: ${task.body}")
   Card(
     modifier = modifier
       .padding(8.dp)
