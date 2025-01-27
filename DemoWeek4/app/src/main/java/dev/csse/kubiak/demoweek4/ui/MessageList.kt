@@ -8,6 +8,8 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
@@ -27,8 +29,8 @@ val TAG = "MessageList"
 
 @Composable
 fun MessageList(messages: List<Message>) {
-  Column {
-    messages.forEach { message ->
+  LazyColumn {
+    items(messages) { message ->
       MessageRow(message)
     }
   }
