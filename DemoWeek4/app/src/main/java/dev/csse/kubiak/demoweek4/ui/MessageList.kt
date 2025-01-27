@@ -1,10 +1,8 @@
 package dev.csse.kubiak.demoweek4.ui
 
-import android.R
 import android.util.Log
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -12,7 +10,6 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.systemGesturesPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
@@ -27,7 +24,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import dev.csse.kubiak.demoweek4.ui.theme.DemoWeek4Theme
-import java.nio.file.WatchEvent
 
 data class Message(
   var text: String = "",
@@ -39,35 +35,32 @@ val TAG = "MessageList"
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun MessageList(messages: List<Message>) {
-  Box(modifier = Modifier.fillMaxSize() ) {
-    LazyColumn(
-      modifier = Modifier.fillMaxWidth()
-        .background(Color(0xFF424832))
-    ) {
+  Box(modifier = Modifier.fillMaxSize()) {
+    LazyColumn {
       stickyHeader {
         Row(
-          modifier = Modifier.fillMaxWidth()
-            .border(1.dp, Color(0xFF000000))
-            .background(Color(0xFFF8F8D0))
+          modifier = Modifier
+            .fillMaxWidth()
+            .background(Color(0xff000000))
             .padding(10.dp)
         ) {
-
           Text(
             "Messages",
+            color = Color.White,
             style = MaterialTheme.typography.titleLarge
           )
         }
-
       }
       items(messages) { message ->
         MessageRow(message)
       }
     }
+
     Row(modifier = Modifier
-      .align(Alignment.BottomCenter )
-      .border(1.dp, Color(0xFF000000))
-      .background(Color(0xFFF8F8D0))
-      .padding(10.dp)) {
+      .align(Alignment.BottomCenter)
+      .background(Color(0xfff8f8d0))
+      .padding(10.dp)
+    ) {
       Text("Sticky Footer")
     }
   }
@@ -75,26 +68,32 @@ fun MessageList(messages: List<Message>) {
 
 
 @Composable
-fun MessageRow(message: Message) {
+fun MessageRow(
+  message: Message,
+  modifier: Modifier = Modifier
+) {
   Log.i(TAG, "Composing MessageRow ${message.index}")
-  Text(message.text,
-    style = MaterialTheme.typography.titleLarge,
-    modifier = Modifier.fillMaxWidth()
-      .padding(5.dp)
-      .background(Color.White)
-      .padding(5.dp))
+  Row(modifier = modifier.fillMaxWidth()) {
+    Text(
+      message.text,
+      style = MaterialTheme.typography.titleLarge
+    )
+  }
 }
 
 @Preview
 @Composable
 fun MessageListPreview() {
-  val messages = Array<Message>(200) {
-      n -> Message("This is message $n", n)
-  }
-
   DemoWeek4Theme {
     Surface {
-      MessageList(listOf(*messages))
+      MessageList(sampleMessages())
     }
   }
+}
+
+fun sampleMessages(): List<Message> {
+  val messages = Array<Message>(200) { n ->
+    Message("This is message $n", n)
+  }
+  return listOf(*messages)
 }
