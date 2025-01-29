@@ -1,8 +1,10 @@
 package dev.csse.kubiak.demoweek4.ui
 
+import android.R
 import android.util.Log
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -30,50 +32,49 @@ data class Message(
   var index: Int = 0
 )
 
-private val TAG = "MessageList"
+val TAG = "MessageList"
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun MessageList(messages: List<Message>) {
-  Box(modifier = Modifier.fillMaxSize()) {
+  Box(modifier = Modifier.fillMaxSize() ) {
     LazyColumn {
       stickyHeader {
         Row(
-          modifier = Modifier
-            .fillMaxWidth()
+          modifier = Modifier.fillMaxWidth()
             .background(Color(0xff000000))
             .padding(10.dp)
         ) {
+
           Text(
             "Messages",
             color = Color.White,
             style = MaterialTheme.typography.titleLarge
           )
         }
+
       }
       items(messages) { message ->
         MessageRow(message)
       }
     }
-
     Row(modifier = Modifier
-      .align(Alignment.BottomCenter)
-      .background(Color(0xfff8f8d0))
-      .padding(10.dp)
-    ) {
+      .align(Alignment.BottomCenter )
+      .border(1.dp, Color(0xFF000000))
+      .background(Color(0xFFF8F8D0))
+      .padding(10.dp)) {
       Text("Sticky Footer")
     }
+
   }
 }
 
 
 @Composable
-fun MessageRow(
-  message: Message,
-  modifier: Modifier = Modifier
-) {
+fun MessageRow(message: Message,
+               modifier: Modifier = Modifier) {
   Log.i(TAG, "Composing MessageRow ${message.index}")
-  Row(modifier = modifier.fillMaxWidth()) {
+  Row(modifier = modifier.fillMaxWidth() ) {
     Text(
       message.text,
       style = MaterialTheme.typography.titleLarge
@@ -86,7 +87,7 @@ fun MessageRow(
 fun MessageListPreview() {
   DemoWeek4Theme {
     Surface {
-      MessageList(sampleMessages())
+       MessageList(sampleMessages())
     }
   }
 }
