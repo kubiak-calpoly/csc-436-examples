@@ -71,7 +71,7 @@ fun ToDoScreen(
 }
 
 
-@OptIn(::ExperimentalMaterial3Apiclass, ExperimentalFoundationApi::class)
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun TaskList(
   modifier: Modifier = Modifier,
