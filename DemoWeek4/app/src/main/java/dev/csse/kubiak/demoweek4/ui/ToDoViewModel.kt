@@ -10,7 +10,7 @@ class ToDoViewModel : ViewModel() {
    private val archivedTasks = mutableListOf<Task>()
 
    fun addTask(body: String) {
-      taskList.add(Task(body = body))
+      taskList.add(0, Task(body = body))
    }
 
    fun deleteTask(task: Task) {
