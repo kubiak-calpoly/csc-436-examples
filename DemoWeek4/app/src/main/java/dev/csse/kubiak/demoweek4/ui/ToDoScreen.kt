@@ -1,17 +1,14 @@
 package dev.csse.kubiak.demoweek4.ui
 
-import android.util.Log
+import android.R
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -34,21 +31,24 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SwipeToDismiss
+import androidx.compose.material3.SwipeToDismissBoxState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.TopAppBarColors
+import androidx.compose.material3.dynamicDarkColorScheme
+import androidx.compose.material3.rememberSwipeToDismissBoxState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.focus.focusRequester
+
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.input.ImeAction
@@ -64,73 +64,112 @@ fun ToDoScreen(
   modifier: Modifier = Modifier,
   todoViewModel: ToDoViewModel = viewModel()
 ) {
-  TaskList(
-    modifier = modifier
-      .fillMaxSize()
-  )
-}
+  var showDeleteTasksDialog by remember { mutableStateOf(false) }
+  var showAddTaskInput by remember { mutableStateOf(false) }
 
+  if (showDeleteTasksDialog) {
 
-@OptIn(ExperimentalFoundationApi::class)
-@Composable
-fun TaskList(
-  modifier: Modifier = Modifier,
-  showAddTaskInput: Boolean = true,
-  onDismiss: () -> Unit = {},
-  todoViewModel: ToDoViewModel = viewModel()
-) {
-
-
-  Box(modifier = Modifier.fillMaxSize() ) {
-
-    LazyColumn(modifier = modifier) {
-      stickyHeader {
-        val focusRequester = remember { FocusRequester() }
-
-        LaunchedEffect(showAddTaskInput) {
-          if (showAddTaskInput) {
-            focusRequester.requestFocus()
-          }
-        }
-
-        AnimatedVisibility(showAddTaskInput) {
-          AddTaskInput(
-            modifier = Modifier.focusRequester(focusRequester)
-          ) { s ->
-            todoViewModel.addTask(s)
-            onDismiss()
-          }
-        }
+    DeleteTasksDialog(
+      onDismiss = {
+        showDeleteTasksDialog = false
+      },
+      onConfirm = {
+        showDeleteTasksDialog = false
+        todoViewModel.deleteCompletedTasks()
       }
+    )
+  }
 
-      items(
-        items = todoViewModel.taskList)
-      { task ->
-        TaskCard(
-          task = task,
-          toggleCompleted = todoViewModel::toggleTaskCompleted
+  Scaffold(
+    topBar = {
+      TopAppBar(
+        title = { Text("Todo List") },
+        colors = TopAppBarColors(
+          containerColor = MaterialTheme.colorScheme.primary,
+          scrolledContainerColor = MaterialTheme.colorScheme.primary,
+          navigationIconContentColor = MaterialTheme.colorScheme.onPrimary,
+          titleContentColor = MaterialTheme.colorScheme.onPrimary,
+          actionIconContentColor = MaterialTheme.colorScheme.onPrimary
+        ),
+        actions = {
+          IconButton(
+            onClick = { showDeleteTasksDialog = true },
+            enabled = todoViewModel.completedTasksExist
+          ) {
+            Icon(
+              imageVector = Icons.Default.Delete,
+              contentDescription = "Delete completed tasks"
+            )
+          }
+        }
+
+      )
+    },
+    floatingActionButton = {
+      FloatingActionButton(
+        onClick = { showAddTaskInput = true }
+      ) {
+        Icon(
+          imageVector = Icons.Default.Add,
+          contentDescription = "Add a task"
         )
       }
     }
-    Button(
-      modifier = Modifier.align(Alignment.BottomCenter),
-      onClick =  {todoViewModel.deleteCompletedTasks() },
-      enabled = todoViewModel.completedTasksExist
-    ) {
-      Icon(
-        imageVector = Icons.Default.Delete,
-        contentDescription = "Delete completed tasks"
-      )
-      Text("Delete Completed Tasks")
+  ) { innerPadding ->
+    TaskList(
+      showAddTaskInput = showAddTaskInput,
+      onDone = { showAddTaskInput = false },
+      modifier = modifier
+        .fillMaxSize()
+        .padding(innerPadding)
+    )
+  }
+}
+
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
+@Composable
+fun TaskList(
+  showAddTaskInput: Boolean = true,
+  onDone: () -> Unit = {},
+  modifier: Modifier = Modifier,
+  todoViewModel: ToDoViewModel = viewModel()
+) {
+  val focusRequester = remember { FocusRequester() }
+
+  LazyColumn(modifier = modifier) {
+    stickyHeader {
+
+      LaunchedEffect(showAddTaskInput) {
+        if (showAddTaskInput) {
+          focusRequester.requestFocus()
+        }
+      }
+
+      AnimatedVisibility(showAddTaskInput) {
+        AddTaskInput(modifier = Modifier.focusRequester(focusRequester)) { s ->
+          todoViewModel.addTask(s)
+          onDone()
+        }
+      }
     }
 
+    items(
+      items = todoViewModel.taskList
+    ) { task ->
+      TaskCard(
+        task = task,
+        toggleCompleted = { t ->
+          todoViewModel.toggleTaskCompleted(t)
+        }
+      )
+    }
   }
 }
 
 @Composable
 fun AddTaskInput(
   modifier: Modifier = Modifier,
-  onEnterTask: (String) -> Unit,
+  onEnterTask: (String) -> Unit
 ) {
   val keyboardController = LocalSoftwareKeyboardController.current
   var taskBody by remember { mutableStateOf("") }
@@ -160,7 +199,6 @@ fun TaskCard(
   toggleCompleted: (Task) -> Unit,
   modifier: Modifier = Modifier
 ) {
-  Log.i(TAG, "Rendering ${task.body}")
   Card(
     modifier = modifier
       .padding(8.dp)
@@ -187,6 +225,17 @@ fun TaskCard(
         color = if (task.completed) Color.Gray else Color.Black
       )
     }
+  }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun ToDoScreenPreview() {
+  val todoViewModel = viewModel<ToDoViewModel>()
+  todoViewModel.createTestTasks(5)
+
+  DemoWeek4Theme(dynamicColor = false) {
+    ToDoScreen()
   }
 }
 
@@ -227,13 +276,3 @@ fun DeleteTasksDialog(
   )
 }
 
-@Preview(showBackground = true)
-@Composable
-fun ToDoScreenPreview() {
-  val todoViewModel = viewModel<ToDoViewModel>()
-  todoViewModel.createTestTasks(5)
-
-  DemoWeek4Theme(dynamicColor = false) {
-    ToDoScreen()
-  }
-}

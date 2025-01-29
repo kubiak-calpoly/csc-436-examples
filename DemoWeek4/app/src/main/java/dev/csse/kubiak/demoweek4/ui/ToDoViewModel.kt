@@ -7,12 +7,23 @@ import dev.csse.kubiak.demoweek4.Task
 class ToDoViewModel : ViewModel() {
    val taskList = mutableStateListOf<Task>()
 
+   private val archivedTasks = mutableListOf<Task>()
+
    fun addTask(body: String) {
-      taskList.add(Task(body = body))
+      taskList.add(0, Task(body = body))
    }
 
    fun deleteTask(task: Task) {
       taskList.remove(task)
+   }
+
+   val archivedTasksExist: Boolean
+      get() = archivedTasks.isNotEmpty()
+
+   fun archiveTask(task: Task) {
+      // Remove from current task list but archive for later
+      taskList.remove(task)
+      archivedTasks.add(task)
    }
 
    val completedTasksExist: Boolean
@@ -35,5 +46,11 @@ class ToDoViewModel : ViewModel() {
       // need to replace element in the list for notification to go through
       val index = taskList.indexOf(task)
       taskList[index] = taskList[index].copy(completed = !task.completed)
+   }
+
+   fun restoreArchivedTasks() {
+      // Restore all archived tasks, then clear the list
+      archivedTasks.forEach { addTask(it.body) }
+      archivedTasks.clear()
    }
 }
