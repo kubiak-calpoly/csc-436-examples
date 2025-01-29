@@ -1,5 +1,6 @@
 package dev.csse.kubiak.demoweek4.ui
 
+import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
@@ -63,69 +64,14 @@ fun ToDoScreen(
   modifier: Modifier = Modifier,
   todoViewModel: ToDoViewModel = viewModel()
 ) {
-  var showDeleteTasksDialog by remember { mutableStateOf(false) }
-  var showAddTaskInput by remember { mutableStateOf(false) }
-
-  if (showDeleteTasksDialog) {
-    DeleteTasksDialog(
-      onDismiss = {
-        showDeleteTasksDialog = false
-      },
-      onConfirm = {
-        showDeleteTasksDialog = false
-        todoViewModel.deleteCompletedTasks()
-      }
-    )
-  }
-
-  Scaffold(
-    topBar = {
-      TopAppBar(
-        title = { Text("Todo List") },
-        colors = TopAppBarDefaults.topAppBarColors (
-          containerColor = MaterialTheme.colorScheme.primary,
-          navigationIconContentColor = MaterialTheme.colorScheme.onPrimary,
-          titleContentColor = MaterialTheme.colorScheme.onPrimary,
-          actionIconContentColor = MaterialTheme.colorScheme.onPrimary
-        ),
-        actions = {
-          IconButton(
-            onClick = { showDeleteTasksDialog = true },
-            enabled = todoViewModel.completedTasksExist
-          ) {
-            Icon(
-              imageVector = Icons.Default.Delete,
-              contentDescription = "Delete completed tasks"
-            )
-          }
-        }
-      )
-    },
-    floatingActionButton = {
-      FloatingActionButton(
-        onClick = {
-          showAddTaskInput = true
-          // addTaskFocusRequester.requestFocus()
-        }
-      ) {
-        Icon(
-          imageVector = Icons.Default.Add,
-          contentDescription = "Add a task"
-        )
-      }
-    }
-  ) { innerPadding ->
-    TaskList(
-      showAddTaskInput = showAddTaskInput,
-      onDismiss = {showAddTaskInput = false},
-      modifier = modifier
-        .fillMaxSize()
-        .padding(innerPadding)
-    )
-  }
+  TaskList(
+    modifier = modifier
+      .fillMaxSize()
+  )
 }
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
+
+@OptIn(::ExperimentalMaterial3Apiclass, ExperimentalFoundationApi::class)
 @Composable
 fun TaskList(
   modifier: Modifier = Modifier,
@@ -135,38 +81,49 @@ fun TaskList(
 ) {
 
 
+  Box(modifier = Modifier.fillMaxSize() ) {
 
-  LazyColumn(modifier = modifier) {
-    stickyHeader {
-      val focusRequester = remember { FocusRequester() }
+    LazyColumn(modifier = modifier) {
+      stickyHeader {
+        val focusRequester = remember { FocusRequester() }
 
-      LaunchedEffect(showAddTaskInput) {
-        if (showAddTaskInput){
-          focusRequester.requestFocus()
+        LaunchedEffect(showAddTaskInput) {
+          if (showAddTaskInput) {
+            focusRequester.requestFocus()
+          }
+        }
+
+        AnimatedVisibility(showAddTaskInput) {
+          AddTaskInput(
+            modifier = Modifier.focusRequester(focusRequester)
+          ) { s ->
+            todoViewModel.addTask(s)
+            onDismiss()
+          }
         }
       }
 
-      AnimatedVisibility(showAddTaskInput) {
-        AddTaskInput(
-          modifier = Modifier.focusRequester(focusRequester)
-        ) { s ->
-          todoViewModel.addTask(s)
-          onDismiss()
-        }
+      items(
+        items = todoViewModel.taskList)
+      { task ->
+        TaskCard(
+          task = task,
+          toggleCompleted = todoViewModel::toggleTaskCompleted
+        )
       }
     }
-
-    items(
-      items = todoViewModel.taskList,
-      key = { task -> task.id }
-    ) { task ->
-      TaskCard(
-        task = task,
-        toggleCompleted = { t ->
-          todoViewModel.toggleTaskCompleted(t)
-        }
+    Button(
+      modifier = Modifier.align(Alignment.BottomCenter),
+      onClick =  {todoViewModel.deleteCompletedTasks() },
+      enabled = todoViewModel.completedTasksExist
+    ) {
+      Icon(
+        imageVector = Icons.Default.Delete,
+        contentDescription = "Delete completed tasks"
       )
+      Text("Delete Completed Tasks")
     }
+
   }
 }
 
@@ -203,6 +160,7 @@ fun TaskCard(
   toggleCompleted: (Task) -> Unit,
   modifier: Modifier = Modifier
 ) {
+  Log.i(TAG, "Rendering ${task.body}")
   Card(
     modifier = modifier
       .padding(8.dp)
