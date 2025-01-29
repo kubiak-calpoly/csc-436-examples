@@ -62,8 +62,7 @@ fun TaskList(
       ) { task ->
         TaskCard(
           task = task,
-          toggleCompleted = { t ->
-             todoViewModel.toggleTaskCompleted(t) }
+          toggleCompleted = todoViewModel::toggleTaskCompleted
         )
       }
    }
