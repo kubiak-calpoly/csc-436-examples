@@ -55,7 +55,7 @@ fun TaskList(
 ) {
    LazyColumn( modifier = modifier ) {
       stickyHeader {
-         AddTaskInput { s -> todoViewModel.addTask(s) }
+         AddTaskInput(todoViewModel::addTask)
       }
       items(
          items = todoViewModel.taskList
