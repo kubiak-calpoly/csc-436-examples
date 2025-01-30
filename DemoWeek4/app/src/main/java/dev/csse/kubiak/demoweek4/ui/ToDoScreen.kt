@@ -17,6 +17,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Checkbox
@@ -46,7 +48,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.runtime.LaunchedEffect
-
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.input.ImeAction
@@ -106,7 +107,7 @@ fun ToDoScreen(
   ) { innerPadding ->
     TaskList(
       showTaskInput = showTaskInput,
-      onDone = { showTaskInput = false },
+      onDismissInput = { showTaskInput = false },
       modifier = modifier
         .fillMaxSize()
         .padding(innerPadding)
@@ -154,29 +155,29 @@ fun DeleteConfirmationDialog(
 fun TaskList(
   modifier: Modifier = Modifier,
   showTaskInput: Boolean = true,
-  onDone: () -> Unit,
+  onDismissInput: () -> Unit,
   todoViewModel: ToDoViewModel = viewModel()
 ) {
   val focusRequester = remember { FocusRequester() }
 
   LazyColumn(modifier = modifier) {
-      stickyHeader {
-         LaunchedEffect(showTaskInput) {
-            if (showTaskInput) {
-               focusRequester.requestFocus()
-            }
-         }
-         AnimatedVisibility(showTaskInput) {
-            AddTaskInput(
-               modifier =
-               Modifier.focusRequester(focusRequester)
-            )
-            { s ->
-               todoViewModel.addTask(s)
-               onDone()
-            }
-         }
+    stickyHeader {
+      LaunchedEffect(showTaskInput) {
+        if (showTaskInput) {
+          focusRequester.requestFocus()
+        }
       }
+      AnimatedVisibility(showTaskInput) {
+        AddTaskInput(
+          modifier = Modifier.focusRequester(focusRequester),
+          onDismiss = onDismissInput
+        )
+        { s ->
+          todoViewModel.addTask(s)
+          onDismissInput()
+        }
+      }
+    }
     items(
       items = todoViewModel.taskList,
       key = { t -> t.id }
@@ -193,28 +194,51 @@ fun TaskList(
 @Composable
 fun AddTaskInput(
   modifier: Modifier = Modifier,
-  onEnterTask: (String) -> Unit
+  onDismiss: () -> Unit,
+  onEnterTask: (Task) -> Unit,
 ) {
   val keyboardController = LocalSoftwareKeyboardController.current
   var taskBody by remember { mutableStateOf("") }
 
-  OutlinedTextField(
-    modifier = modifier
-      .fillMaxWidth()
-      .background(Color.White)
-      .padding(6.dp),
-    value = taskBody,
-    onValueChange = { taskBody = it },
-    label = { Text("Enter task") },
-    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
-    keyboardActions = KeyboardActions(
-      onDone = {
-        onEnterTask(taskBody)
-        taskBody = ""
-        keyboardController?.hide()
-      }
+  Column(horizontalAlignment = Alignment.CenterHorizontally) {
+    OutlinedTextField(
+      modifier = modifier
+        .fillMaxWidth()
+        .background(Color.White)
+        .padding(6.dp),
+      value = taskBody,
+      onValueChange = { taskBody = it },
+      label = { Text("Enter task") },
+      keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+      keyboardActions = KeyboardActions(
+        onDone = {
+          keyboardController?.hide()
+          onEnterTask(Task(body = taskBody))
+        }
+      )
     )
-  )
+    Row(horizontalArrangement = Arrangement.spacedBy(10.dp) ) {
+      Button(
+        colors = ButtonDefaults.buttonColors(
+          containerColor = MaterialTheme.colorScheme.secondary
+        ),
+        onClick = {
+          onDismiss()
+        }) {
+        Text("Cancel")
+      }
+      Button(
+        colors = ButtonDefaults.buttonColors(
+          containerColor = MaterialTheme.colorScheme.primary
+        ),
+        onClick = {
+          onEnterTask(Task(body = taskBody))
+        }
+      ) {
+        Text("Add Task")
+      }
+    }
+  }
 }
 
 @Composable
