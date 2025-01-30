@@ -6,6 +6,7 @@ import dev.csse.kubiak.demoweek4.Task
 
 class ToDoViewModel : ViewModel() {
    val taskList = mutableStateListOf<Task>()
+   val tagList = mutableStateListOf<String>("Study", "Fun", "Work", "Food")
 
    fun addTask(task: Task) {
       taskList.add(0, task)
@@ -26,7 +27,7 @@ class ToDoViewModel : ViewModel() {
    fun createTestTasks(numTasks: Int = 10) {
       // Add tasks for testing purposes
       for (i in 1..numTasks) {
-         addTask(Task(body = "task $i"))
+         addTask(Task(body = "task $i", tags =  listOf("Work")))
       }
    }
 

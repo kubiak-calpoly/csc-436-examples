@@ -1,9 +1,12 @@
 package dev.csse.kubiak.demoweek4.ui
 
+import android.R
+import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -48,6 +51,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.input.ImeAction
@@ -61,50 +65,38 @@ import org.w3c.dom.Text
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ToDoScreen(
-  modifier: Modifier = Modifier,
-  todoViewModel: ToDoViewModel = viewModel()
+  modifier: Modifier = Modifier, todoViewModel: ToDoViewModel = viewModel()
 ) {
   var showConfirmationDialog by remember { mutableStateOf(false) }
   var showTaskInput by remember { mutableStateOf(false) }
 
-  Scaffold(
-    topBar = {
-      TopAppBar(
-        title = { Text("Todo List") },
-        colors = TopAppBarColors(
-          containerColor = MaterialTheme.colorScheme.primary,
-          scrolledContainerColor = MaterialTheme.colorScheme.primary,
-          navigationIconContentColor = MaterialTheme.colorScheme.onPrimary,
-          titleContentColor = MaterialTheme.colorScheme.onPrimary,
-          actionIconContentColor = MaterialTheme.colorScheme.onPrimary
-        ),
-        actions = {
-          IconButton(
-            onClick = {
-              showConfirmationDialog = true
-            },
-            enabled = todoViewModel.completedTasksExist
-          ) {
-            Icon(
-              imageVector = Icons.Default.Delete,
-              contentDescription = "Delete completed tasks"
-            )
-          }
-        }
-
-      )
-    },
-    floatingActionButton = {
-      FloatingActionButton(
-        onClick = { showTaskInput = true }
+  Scaffold(topBar = {
+    TopAppBar(title = { Text("Todo List") }, colors = TopAppBarColors(
+      containerColor = MaterialTheme.colorScheme.primary,
+      scrolledContainerColor = MaterialTheme.colorScheme.primary,
+      navigationIconContentColor = MaterialTheme.colorScheme.onPrimary,
+      titleContentColor = MaterialTheme.colorScheme.onPrimary,
+      actionIconContentColor = MaterialTheme.colorScheme.onPrimary
+    ), actions = {
+      IconButton(
+        onClick = {
+          showConfirmationDialog = true
+        }, enabled = todoViewModel.completedTasksExist
       ) {
         Icon(
-          imageVector = Icons.Default.Add,
-          contentDescription = "Add a task"
+          imageVector = Icons.Default.Delete, contentDescription = "Delete completed tasks"
         )
       }
     }
-  ) { innerPadding ->
+
+    )
+  }, floatingActionButton = {
+    FloatingActionButton(onClick = { showTaskInput = true }) {
+      Icon(
+        imageVector = Icons.Default.Add, contentDescription = "Add a task"
+      )
+    }
+  }) { innerPadding ->
     TaskList(
       showTaskInput = showTaskInput,
       onDismissInput = { showTaskInput = false },
@@ -115,39 +107,26 @@ fun ToDoScreen(
   }
 
   if (showConfirmationDialog) {
-    DeleteConfirmationDialog(
-      onConfirm = {
-        todoViewModel.deleteCompletedTasks()
-        showConfirmationDialog = false
-      },
-      onDismiss = {
-        showConfirmationDialog = false
-      }
-    )
+    DeleteConfirmationDialog(onConfirm = {
+      todoViewModel.deleteCompletedTasks()
+      showConfirmationDialog = false
+    }, onDismiss = {
+      showConfirmationDialog = false
+    })
   }
 }
 
 @Composable
 fun DeleteConfirmationDialog(
-  onConfirm: () -> Unit,
-  onDismiss: () -> Unit
+  onConfirm: () -> Unit, onDismiss: () -> Unit
 ) {
-  AlertDialog(
-    text = { Text("Ok to delete completed tasks?") },
-    onDismissRequest = {
-      onDismiss()
-    },
-    confirmButton = {
-      TextButton(
-        onClick = { onConfirm() }
-      ) { Text("Confirm") }
-    },
-    dismissButton = {
-      TextButton(
-        onClick = { onDismiss() }
-      ) { Text("Dismiss") }
-    }
-  ) // no body
+  AlertDialog(text = { Text("Ok to delete completed tasks?") }, onDismissRequest = {
+    onDismiss()
+  }, confirmButton = {
+    TextButton(onClick = { onConfirm() }) { Text("Confirm") }
+  }, dismissButton = {
+    TextButton(onClick = { onDismiss() }) { Text("Dismiss") }
+  }) // no body
 }
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
@@ -169,22 +148,16 @@ fun TaskList(
       }
       AnimatedVisibility(showTaskInput) {
         AddTaskInput(
-          modifier = Modifier.focusRequester(focusRequester),
-          onDismiss = onDismissInput
-        )
-        { s ->
+          modifier = Modifier.focusRequester(focusRequester), onDismiss = onDismissInput
+        ) { s ->
           todoViewModel.addTask(s)
           onDismissInput()
         }
       }
     }
-    items(
-      items = todoViewModel.taskList,
-      key = { t -> t.id }
-    ) { task ->
+    items(items = todoViewModel.taskList, key = { t -> t.id }) { task ->
       TaskCard(
-        task = task,
-        toggleCompleted = todoViewModel::toggleTaskCompleted
+        task = task, toggleCompleted = todoViewModel::toggleTaskCompleted
       )
     }
   }
@@ -194,11 +167,13 @@ fun TaskList(
 @Composable
 fun AddTaskInput(
   modifier: Modifier = Modifier,
+  todoViewModel: ToDoViewModel = viewModel(),
   onDismiss: () -> Unit,
   onEnterTask: (Task) -> Unit,
 ) {
   val keyboardController = LocalSoftwareKeyboardController.current
   var taskBody by remember { mutableStateOf("") }
+  val tagList = remember { mutableStateListOf<String>() }
 
   Column(horizontalAlignment = Alignment.CenterHorizontally) {
     OutlinedTextField(
@@ -210,31 +185,51 @@ fun AddTaskInput(
       onValueChange = { taskBody = it },
       label = { Text("Enter task") },
       keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
-      keyboardActions = KeyboardActions(
-        onDone = {
-          keyboardController?.hide()
-          onEnterTask(Task(body = taskBody))
-        }
-      )
+      keyboardActions = KeyboardActions(onDone = {
+        keyboardController?.hide()
+        onEnterTask(Task(body = taskBody, tags = tagList))
+      })
     )
-    Row(horizontalArrangement = Arrangement.spacedBy(10.dp) ) {
-      Button(
-        colors = ButtonDefaults.buttonColors(
-          containerColor = MaterialTheme.colorScheme.secondary
-        ),
-        onClick = {
-          onDismiss()
-        }) {
+
+    Row(
+      modifier = Modifier.fillMaxWidth(),
+      horizontalArrangement = Arrangement.SpaceEvenly
+    ) {
+      todoViewModel.tagList.forEach { tag ->
+        Row(
+          modifier = Modifier
+            .background(Color(0x18000000)),
+          verticalAlignment = Alignment.CenterVertically
+        ) {
+          Checkbox(
+            modifier = Modifier.padding(0.dp),
+            checked = tagList.contains(tag),
+            onCheckedChange = { checked ->
+              Log.d(TAG, "tag $tag is now $checked")
+              if (checked) tagList.add(tag) else tagList.remove(tag)
+            })
+          Text(
+            tag,
+            style = MaterialTheme.typography.labelMedium
+          )
+        }
+
+      }
+    }
+
+    Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+      Button(colors = ButtonDefaults.buttonColors(
+        containerColor = MaterialTheme.colorScheme.secondary
+      ), onClick = {
+        onDismiss()
+      }) {
         Text("Cancel")
       }
-      Button(
-        colors = ButtonDefaults.buttonColors(
-          containerColor = MaterialTheme.colorScheme.primary
-        ),
-        onClick = {
-          onEnterTask(Task(body = taskBody))
-        }
-      ) {
+      Button(colors = ButtonDefaults.buttonColors(
+        containerColor = MaterialTheme.colorScheme.primary
+      ), onClick = {
+        onEnterTask(Task(body = taskBody, tags = tagList))
+      }) {
         Text("Add Task")
       }
     }
@@ -243,35 +238,49 @@ fun AddTaskInput(
 
 @Composable
 fun TaskCard(
-  task: Task,
-  toggleCompleted: (Task) -> Unit,
-  modifier: Modifier = Modifier
+  task: Task, toggleCompleted: (Task) -> Unit, modifier: Modifier = Modifier
 ) {
   Card(
     modifier = modifier
       .padding(8.dp)
-      .fillMaxWidth(),
-    colors = CardDefaults.cardColors(
+      .fillMaxWidth(), colors = CardDefaults.cardColors(
       containerColor = MaterialTheme.colorScheme.surfaceVariant
     )
   ) {
     Row(
-      modifier = modifier.fillMaxWidth(),
-      verticalAlignment = Alignment.CenterVertically,
-      horizontalArrangement = Arrangement.spacedBy(12.dp)
+      modifier = modifier.fillMaxWidth().padding(8.dp, 0.dp),
+      verticalAlignment = Alignment.Top,
+      horizontalArrangement = Arrangement.SpaceBetween
     ) {
-      Checkbox(
-        checked = task.completed,
+      Checkbox(checked = task.completed,
+        modifier = Modifier.alignByBaseline(),
         onCheckedChange = {
           toggleCompleted(task)
-        }
-      )
+        })
       Text(
         text = task.body,
         style = MaterialTheme.typography.bodyLarge,
-        modifier = modifier.padding(12.dp),
+        modifier = modifier
+          .alignByBaseline()
+          .padding(12.dp)
+          .weight(1f),
         color = if (task.completed) Color.Gray else Color.Black
       )
+      Row(
+        modifier = Modifier.alignByBaseline(),
+        horizontalArrangement = Arrangement.spacedBy(4.dp)
+      ) {
+        task.tags.forEach { tag ->
+          Text(
+            tag,
+            modifier = Modifier
+              .alignByBaseline()
+              .background(MaterialTheme.colorScheme.primary)
+              .padding(4.dp),
+            color = MaterialTheme.colorScheme.onPrimary
+          )
+        }
+      }
     }
   }
 }
