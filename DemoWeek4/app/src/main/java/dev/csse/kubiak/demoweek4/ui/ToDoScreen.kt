@@ -1,5 +1,6 @@
 package dev.csse.kubiak.demoweek4.ui
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -159,21 +160,23 @@ fun TaskList(
   val focusRequester = remember { FocusRequester() }
 
   LazyColumn(modifier = modifier) {
-    if (showTaskInput) {
       stickyHeader {
-        LaunchedEffect(showTaskInput) {
-          focusRequester.requestFocus()
-        }
-        AddTaskInput(
-          modifier =
-          Modifier.focusRequester(focusRequester)
-        )
-        { s ->
-          todoViewModel.addTask(s)
-          onDone()
-        }
+         LaunchedEffect(showTaskInput) {
+            if (showTaskInput) {
+               focusRequester.requestFocus()
+            }
+         }
+         AnimatedVisibility(showTaskInput) {
+            AddTaskInput(
+               modifier =
+               Modifier.focusRequester(focusRequester)
+            )
+            { s ->
+               todoViewModel.addTask(s)
+               onDone()
+            }
+         }
       }
-    }
     items(
       items = todoViewModel.taskList,
       key = { t -> t.id }
