@@ -8,6 +8,8 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.BoxWithConstraintsScope
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -53,6 +55,7 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
@@ -177,10 +180,9 @@ fun AddTaskInput(
   var taskBody by remember { mutableStateOf("") }
   val tagList = remember { mutableStateListOf<String>() }
 
-  Column(horizontalAlignment = Alignment.CenterHorizontally) {
+  @Composable fun TaskTextInput(modifier: Modifier = Modifier) {
     OutlinedTextField(
       modifier = modifier
-        .fillMaxWidth()
         .background(Color.White)
         .padding(6.dp),
       value = taskBody,
@@ -192,10 +194,12 @@ fun AddTaskInput(
         onEnterTask(Task(body = taskBody, tags = tagList))
       })
     )
+  }
 
+  @Composable fun TaskTagsInput(modifier: Modifier = Modifier ) {
     Row(
-      modifier = Modifier.fillMaxWidth(),
-      horizontalArrangement = Arrangement.SpaceEvenly
+      modifier = modifier.padding(12.dp),
+      horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
       todoViewModel.tagList.forEach { tag ->
         Row(
@@ -204,7 +208,7 @@ fun AddTaskInput(
           verticalAlignment = Alignment.CenterVertically
         ) {
           Checkbox(
-            modifier = Modifier.padding(0.dp),
+            modifier = Modifier.padding(0.dp).scale(0.75f),
             checked = tagList.contains(tag),
             onCheckedChange = { checked ->
               Log.d(TAG, "tag $tag is now $checked")
@@ -215,11 +219,13 @@ fun AddTaskInput(
             style = MaterialTheme.typography.labelMedium
           )
         }
-
       }
     }
+  }
 
-    Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+  @Composable fun TaskInputButtons(modifier: Modifier = Modifier) {
+    Row(modifier = modifier,
+      horizontalArrangement = Arrangement.spacedBy(10.dp)) {
       Button(colors = ButtonDefaults.buttonColors(
         containerColor = MaterialTheme.colorScheme.secondary
       ), onClick = {
@@ -233,6 +239,26 @@ fun AddTaskInput(
         onEnterTask(Task(body = taskBody, tags = tagList))
       }) {
         Text("Add Task")
+      }
+    }
+  }
+
+  BoxWithConstraints {
+    if (this.maxWidth < 400.dp) {
+      Column(horizontalAlignment = Alignment.CenterHorizontally) {
+        TaskTextInput(modifier = modifier.fillMaxWidth())
+        TaskTagsInput()
+        TaskInputButtons()
+      }
+    } else {
+      Column {
+        TaskTextInput(modifier = modifier.fillMaxWidth())
+        Row(modifier = Modifier.fillMaxWidth(),
+          horizontalArrangement = Arrangement.SpaceBetween
+          ) {
+          TaskTagsInput()
+          TaskInputButtons(modifier = Modifier.padding(12.dp, 0.dp))
+        }
       }
     }
   }
