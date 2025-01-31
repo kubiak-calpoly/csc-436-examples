@@ -1,6 +1,7 @@
 package dev.csse.kubiak.demoweek4.ui
 
 import android.R
+import android.content.res.Configuration
 import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -53,6 +54,7 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
@@ -240,6 +242,38 @@ fun AddTaskInput(
 fun TaskCard(
   task: Task, toggleCompleted: (Task) -> Unit, modifier: Modifier = Modifier
 ) {
+
+  val config = LocalConfiguration.current
+
+  @Composable
+  fun TaskText(modifier: Modifier = Modifier) {
+    Text(
+      text = task.body,
+      style = MaterialTheme.typography.bodyLarge,
+      modifier = modifier,
+      color = if (task.completed) Color.Gray else Color.Black
+    )
+  }
+
+  @Composable
+  fun TaskTags(modifier: Modifier = Modifier) {
+    Row(
+      horizontalArrangement = Arrangement.spacedBy(4.dp),
+      modifier = modifier
+    ) {
+      task.tags.forEach { tag ->
+        Text(
+          tag,
+          modifier = Modifier
+            .alignByBaseline()
+            .background(MaterialTheme.colorScheme.primary)
+            .padding(4.dp),
+          color = MaterialTheme.colorScheme.onPrimary
+        )
+      }
+    }
+  }
+
   Card(
     modifier = modifier
       .padding(8.dp)
@@ -248,7 +282,9 @@ fun TaskCard(
     )
   ) {
     Row(
-      modifier = modifier.fillMaxWidth().padding(8.dp, 0.dp),
+      modifier = modifier
+        .fillMaxWidth()
+        .padding(8.dp, 0.dp),
       verticalAlignment = Alignment.Top,
       horizontalArrangement = Arrangement.SpaceBetween
     ) {
@@ -257,29 +293,18 @@ fun TaskCard(
         onCheckedChange = {
           toggleCompleted(task)
         })
-      Text(
-        text = task.body,
-        style = MaterialTheme.typography.bodyLarge,
-        modifier = modifier
+      if (config.orientation == Configuration.ORIENTATION_PORTRAIT) {
+        Column(modifier = Modifier.padding(12.dp)){
+          TaskText(modifier = Modifier
+            .fillMaxWidth() )
+          TaskTags(modifier = Modifier.padding(top = 8.dp))
+        }
+      } else {
+        TaskText(modifier = Modifier
           .alignByBaseline()
           .padding(12.dp)
-          .weight(1f),
-        color = if (task.completed) Color.Gray else Color.Black
-      )
-      Row(
-        modifier = Modifier.alignByBaseline(),
-        horizontalArrangement = Arrangement.spacedBy(4.dp)
-      ) {
-        task.tags.forEach { tag ->
-          Text(
-            tag,
-            modifier = Modifier
-              .alignByBaseline()
-              .background(MaterialTheme.colorScheme.primary)
-              .padding(4.dp),
-            color = MaterialTheme.colorScheme.onPrimary
-          )
-        }
+          .weight(1f))
+        TaskTags(modifier = Modifier.alignByBaseline())
       }
     }
   }
