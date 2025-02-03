@@ -55,6 +55,10 @@ fun PieScreen(
         })
       }
     }
+    PieCard(
+      pie = pieViewModel.getCurrent(),
+      modifier = Modifier.weight(1f)
+    )
   }
 }
 
@@ -79,6 +83,27 @@ fun PieChip(
   }
 }
 
+@Composable
+fun PieCard(modifier: Modifier = Modifier, pie: Pie) {
+  Card(modifier = modifier) {
+    Column(
+      modifier = Modifier.fillMaxWidth().padding(12.dp),
+      horizontalAlignment = Alignment.CenterHorizontally,
+      verticalArrangement = Arrangement.SpaceBetween
+    ) {
+      Text(
+
+        text = pie.name,
+        style = MaterialTheme.typography.titleLarge
+      )
+      Image(
+        painter = painterResource(pie.resourceId),
+        contentDescription = pie.name
+      )
+
+    }
+  }
+}
 
 @Preview
 @Composable
