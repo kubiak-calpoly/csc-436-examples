@@ -7,8 +7,9 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.staggeredgrid.LazyHorizontalStaggeredGrid
+import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
+import androidx.compose.foundation.lazy.staggeredgrid.items
 import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -33,12 +34,18 @@ fun PieScreen(
   modifier: Modifier = Modifier,
   pieViewModel: PieViewModel = viewModel()
 ) {
-  
 
-  LazyColumn(
+
+  Column(
     modifier = modifier,
     verticalArrangement = Arrangement.spacedBy(12.dp)
   ) {
+    LazyHorizontalStaggeredGrid(
+      modifier = Modifier.weight(1f),
+      rows = StaggeredGridCells.Adaptive(100.dp),
+      verticalArrangement = Arrangement.spacedBy(8.dp),
+      horizontalItemSpacing = 4.dp,
+    ) {
       items(
         items = pieViewModel.getPies(),
         key = { it.name }
@@ -47,6 +54,7 @@ fun PieScreen(
           pieViewModel.setCurrent(pie)
         })
       }
+    }
   }
 }
 
