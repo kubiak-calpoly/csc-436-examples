@@ -9,7 +9,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
-import androidx.compose.foundation.layout.BoxWithConstraintsScope
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -44,6 +43,8 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarColors
 import androidx.compose.material3.dynamicDarkColorScheme
 import androidx.compose.material3.rememberSwipeToDismissBoxState
+import androidx.compose.ui.platform.LocalConfiguration
+
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -55,9 +56,8 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.ui.draw.scale
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
@@ -72,8 +72,8 @@ import org.w3c.dom.Text
 fun ToDoScreen(
   modifier: Modifier = Modifier, todoViewModel: ToDoViewModel = viewModel()
 ) {
-  var showConfirmationDialog by remember { mutableStateOf(false) }
-  var showTaskInput by remember { mutableStateOf(false) }
+  var showConfirmationDialog by rememberSaveable { mutableStateOf(false) }
+  var showTaskInput by rememberSaveable { mutableStateOf(false) }
 
   Scaffold(topBar = {
     TopAppBar(title = { Text("Todo List") }, colors = TopAppBarColors(
@@ -180,9 +180,11 @@ fun AddTaskInput(
   var taskBody by remember { mutableStateOf("") }
   val tagList = remember { mutableStateListOf<String>() }
 
-  @Composable fun TaskTextInput(modifier: Modifier = Modifier) {
+  @Composable
+  fun TaskTextInput(modifier: Modifier = Modifier) {
     OutlinedTextField(
       modifier = modifier
+        .fillMaxWidth()
         .background(Color.White)
         .padding(6.dp),
       value = taskBody,
@@ -196,10 +198,11 @@ fun AddTaskInput(
     )
   }
 
-  @Composable fun TaskTagsInput(modifier: Modifier = Modifier ) {
+  @Composable
+  fun TaskTagsInput(modifier: Modifier = Modifier) {
     Row(
-      modifier = modifier.padding(12.dp),
-      horizontalArrangement = Arrangement.spacedBy(8.dp)
+      modifier = modifier,
+      horizontalArrangement = Arrangement.SpaceEvenly
     ) {
       todoViewModel.tagList.forEach { tag ->
         Row(
@@ -208,7 +211,7 @@ fun AddTaskInput(
           verticalAlignment = Alignment.CenterVertically
         ) {
           Checkbox(
-            modifier = Modifier.padding(0.dp).scale(0.75f),
+            modifier = Modifier.padding(0.dp),
             checked = tagList.contains(tag),
             onCheckedChange = { checked ->
               Log.d(TAG, "tag $tag is now $checked")
@@ -219,13 +222,14 @@ fun AddTaskInput(
             style = MaterialTheme.typography.labelMedium
           )
         }
+
       }
     }
   }
 
-  @Composable fun TaskInputButtons(modifier: Modifier = Modifier) {
-    Row(modifier = modifier,
-      horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+  @Composable
+  fun TaskInputButtons() {
+    Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
       Button(colors = ButtonDefaults.buttonColors(
         containerColor = MaterialTheme.colorScheme.secondary
       ), onClick = {
@@ -244,31 +248,32 @@ fun AddTaskInput(
   }
 
   BoxWithConstraints {
-    if (this.maxWidth < 400.dp) {
-      Column(horizontalAlignment = Alignment.CenterHorizontally) {
-        TaskTextInput(modifier = modifier.fillMaxWidth())
-        TaskTagsInput()
-        TaskInputButtons()
+    if (this.maxWidth >= 400.dp) {
+      Column {
+        TaskTextInput(modifier)
+        Row(modifier = Modifier.fillMaxWidth() ){
+          TaskTagsInput(modifier = Modifier.weight(1f))
+          TaskInputButtons()
+        }
       }
     } else {
-      Column {
-        TaskTextInput(modifier = modifier.fillMaxWidth())
-        Row(modifier = Modifier.fillMaxWidth(),
-          horizontalArrangement = Arrangement.SpaceBetween
-          ) {
-          TaskTagsInput()
-          TaskInputButtons(modifier = Modifier.padding(12.dp, 0.dp))
-        }
+      Column(horizontalAlignment = Alignment.CenterHorizontally) {
+        TaskTextInput(modifier)
+        TaskTagsInput(Modifier.fillMaxWidth())
+        TaskInputButtons()
       }
     }
   }
+
+
 }
 
 @Composable
 fun TaskCard(
-  task: Task, toggleCompleted: (Task) -> Unit, modifier: Modifier = Modifier
+  task: Task,
+  toggleCompleted: (Task) -> Unit,
+  modifier: Modifier = Modifier
 ) {
-
   val config = LocalConfiguration.current
 
   @Composable
@@ -284,8 +289,8 @@ fun TaskCard(
   @Composable
   fun TaskTags(modifier: Modifier = Modifier) {
     Row(
-      horizontalArrangement = Arrangement.spacedBy(4.dp),
-      modifier = modifier
+      modifier = modifier,
+      horizontalArrangement = Arrangement.spacedBy(4.dp)
     ) {
       task.tags.forEach { tag ->
         Text(
@@ -319,17 +324,21 @@ fun TaskCard(
         onCheckedChange = {
           toggleCompleted(task)
         })
+
       if (config.orientation == Configuration.ORIENTATION_PORTRAIT) {
-        Column(modifier = Modifier.padding(12.dp)){
-          TaskText(modifier = Modifier
-            .fillMaxWidth() )
+        Column(modifier = Modifier.padding(12.dp)) {
+          TaskText(modifier = Modifier.fillMaxWidth())
           TaskTags(modifier = Modifier.padding(top = 8.dp))
         }
       } else {
-        TaskText(modifier = Modifier
-          .alignByBaseline()
-          .padding(12.dp)
-          .weight(1f))
+
+        TaskText(
+          modifier = Modifier
+            .alignByBaseline()
+            .padding(12.dp)
+            .weight(1f)
+        )
+
         TaskTags(modifier = Modifier.alignByBaseline())
       }
     }
@@ -340,7 +349,9 @@ fun TaskCard(
 @Composable
 fun ToDoScreenPreview() {
   val todoViewModel = viewModel<ToDoViewModel>()
-  todoViewModel.createTestTasks(5)
+
+  if (todoViewModel.taskList.isEmpty())
+    todoViewModel.createTestTasks(5)
 
   DemoWeek4Theme(dynamicColor = false) {
     ToDoScreen()
