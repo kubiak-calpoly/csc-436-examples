@@ -7,11 +7,9 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
-import dev.csse.kubiak.demoweek5.ui.PieScreen
+import dev.csse.kubiak.demoweek5.ui.PieApp
+import dev.csse.kubiak.demoweek5.ui.PieGridScreen
 import dev.csse.kubiak.demoweek5.ui.theme.DemoWeek5Theme
 
 class MainActivity : ComponentActivity() {
@@ -21,7 +19,7 @@ class MainActivity : ComponentActivity() {
     setContent {
       DemoWeek5Theme {
         Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-          PieScreen(modifier = Modifier.padding(innerPadding))
+          PieApp(modifier = Modifier.padding(innerPadding))
         }
       }
     }
