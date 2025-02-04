@@ -17,10 +17,8 @@ class MainActivity : ComponentActivity() {
     super.onCreate(savedInstanceState)
     enableEdgeToEdge()
     setContent {
-      DemoWeek5Theme {
-        Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-          PieApp(modifier = Modifier.padding(innerPadding))
-        }
+      DemoWeek5Theme(dynamicColor =  false) {
+        PieApp()
       }
     }
   }

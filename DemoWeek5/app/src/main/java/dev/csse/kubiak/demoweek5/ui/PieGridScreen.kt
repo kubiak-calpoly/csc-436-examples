@@ -13,6 +13,7 @@ import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.lazy.staggeredgrid.items
 import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -31,28 +32,33 @@ fun PieGridScreen(
   pies: List<Pie>,
   selectedPie: Pie? = null,
   onPieSelection: (Pie) -> Unit,
-  modifier: Modifier = Modifier,
 ) {
   val config = LocalConfiguration.current
 
-  if (config.orientation == Configuration.ORIENTATION_PORTRAIT) {
-    Column(
-      modifier = modifier,
-      verticalArrangement = Arrangement.spacedBy(12.dp)
-    ) {
-      PieGrid(
-        pies, modifier = Modifier.weight(1f),
-        onSelect = onPieSelection
-      )
-      if (selectedPie != null) {
-        PieCard(
-          pie = selectedPie,
-          modifier = Modifier.weight(1f)
+  Scaffold(
+    topBar = { PieAppBar("Pie-terest")}
+  ) { innerPadding ->
+
+    if (config.orientation == Configuration.ORIENTATION_PORTRAIT) {
+      Column(
+        modifier = Modifier.padding(innerPadding),
+        verticalArrangement = Arrangement.spacedBy(12.dp)
+      ) {
+        PieGrid(
+          pies, modifier = Modifier.weight(1f),
+          onSelect = onPieSelection
         )
+        if (selectedPie != null) {
+          PieCard(
+            pie = selectedPie,
+            modifier = Modifier.weight(1f)
+          )
+        }
       }
-    }
-  } else {
-      Row {
+    } else {
+      Row(
+        modifier = Modifier.padding(innerPadding)
+      ) {
         PieGrid(
           pies, modifier = Modifier.weight(1f),
           onSelect = onPieSelection
@@ -66,7 +72,7 @@ fun PieGridScreen(
       }
     }
   }
-
+}
 
 
 @Composable
@@ -144,9 +150,9 @@ fun PieScreenDemo() {
     pieViewModel.createSampleData()
 
   DemoWeek5Theme {
-    PieGridScreen(pieViewModel.getPies(),
-      onPieSelection = {},
-      modifier = Modifier.padding(4.dp, 8.dp)
+    PieGridScreen(
+      pieViewModel.getPies(),
+      onPieSelection = {}
     )
   }
 }

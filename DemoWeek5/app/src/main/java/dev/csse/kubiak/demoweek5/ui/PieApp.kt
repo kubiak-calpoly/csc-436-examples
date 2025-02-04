@@ -12,6 +12,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import dev.csse.kubiak.demoweek5.Pie
 import kotlinx.serialization.Serializable
 
 sealed class Routes {
@@ -30,9 +31,7 @@ fun PieApp(
 
   if (pieViewModel.pieList.isEmpty()) pieViewModel.createSampleData()
 
-  Log.d("PieApp", "${pieViewModel.getPies().size} pies in viewmodel")
-
-  NavHost(
+    NavHost(
     navController = navController, startDestination = Routes.List
   ) {
     composable<Routes.List> {

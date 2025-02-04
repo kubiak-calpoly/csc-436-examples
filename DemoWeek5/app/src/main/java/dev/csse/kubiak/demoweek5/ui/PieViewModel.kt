@@ -5,6 +5,8 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.text.intl.Locale
+import androidx.compose.ui.text.toLowerCase
 import androidx.lifecycle.ViewModel
 import dev.csse.kubiak.demoweek5.Pie
 import dev.csse.kubiak.demoweek5.R
@@ -19,8 +21,7 @@ class PieViewModel : ViewModel() {
   }
 
   fun getCurrent() : Pie {
-    return currentPie ?:
-      Pie("Mystery Pie", R.drawable.apple_pie )
+    return currentPie ?: Pie()
   }
 
   fun setCurrent(pie : Pie) {
@@ -151,6 +152,12 @@ fun arrayOfPies() : List<Pie> {
     "Winterberry Pie",
     "Yam Pie"
   ).map { s ->
-    Pie(name = s, resourceId = R.drawable.apple_pie )
+    val words = s.split(" ")
+    Pie(
+      name = s,
+      resourceId = R.drawable.apple_pie,
+      crust = "shortcrust",
+      filling = words[words.size - 2].toLowerCase(Locale.current)
+    )
   }
 }
