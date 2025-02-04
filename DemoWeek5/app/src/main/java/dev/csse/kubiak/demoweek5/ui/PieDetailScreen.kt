@@ -24,9 +24,12 @@ import dev.csse.kubiak.demoweek5.Pie
 import dev.csse.kubiak.demoweek5.ui.theme.DemoWeek5Theme
 
 @Composable
-fun PieDetailScreen(pie: Pie, modifier: Modifier = Modifier) {
+fun PieDetailScreen(pie: Pie, modifier: Modifier = Modifier, onUpClick: () -> Unit  = {}) {
   Scaffold(
-    topBar = { PieAppBar(title =  pie.name ) }
+    topBar = { PieAppBar(
+      title =  pie.name,
+      onUpClick = onUpClick
+    )}
   ){ innerPadding ->
     Column(
       modifier = Modifier
@@ -41,13 +44,15 @@ fun PieDetailScreen(pie: Pie, modifier: Modifier = Modifier) {
         contentDescription = pie.name
       )
       Card(modifier = Modifier.weight(1f).padding(20.dp)) {
-        Row {
-          Text("Filling", modifier = Modifier.width(60.dp))
-          Text(pie.filling, modifier = Modifier.weight(1f))
-        }
-        Row {
-          Text("Crust", modifier = Modifier.width(60.dp))
-          Text(pie.crust, modifier = Modifier.weight(1f))
+        Column(modifier = Modifier.padding(8.dp)) {
+          Row {
+            Text("Filling", modifier = Modifier.width(60.dp))
+            Text(pie.filling, modifier = Modifier.weight(1f))
+          }
+          Row {
+            Text("Crust", modifier = Modifier.width(60.dp))
+            Text(pie.crust, modifier = Modifier.weight(1f))
+          }
         }
       }
     }

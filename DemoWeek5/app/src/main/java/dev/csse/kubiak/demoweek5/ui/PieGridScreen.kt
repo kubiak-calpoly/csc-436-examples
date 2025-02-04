@@ -29,56 +29,8 @@ import dev.csse.kubiak.demoweek5.ui.theme.DemoWeek5Theme
 
 @Composable
 fun PieGridScreen(
-  pies: List<Pie>,
-  selectedPie: Pie? = null,
-  onPieSelection: (Pie) -> Unit,
-) {
-  val config = LocalConfiguration.current
-
-  Scaffold(
-    topBar = { PieAppBar("Pie-terest")}
-  ) { innerPadding ->
-
-    if (config.orientation == Configuration.ORIENTATION_PORTRAIT) {
-      Column(
-        modifier = Modifier.padding(innerPadding),
-        verticalArrangement = Arrangement.spacedBy(12.dp)
-      ) {
-        PieGrid(
-          pies, modifier = Modifier.weight(1f),
-          onSelect = onPieSelection
-        )
-        if (selectedPie != null) {
-          PieCard(
-            pie = selectedPie,
-            modifier = Modifier.weight(1f)
-          )
-        }
-      }
-    } else {
-      Row(
-        modifier = Modifier.padding(innerPadding)
-      ) {
-        PieGrid(
-          pies, modifier = Modifier.weight(1f),
-          onSelect = onPieSelection
-        )
-        if (selectedPie != null) {
-          PieCard(
-            pie = selectedPie,
-            modifier = Modifier.weight(1f)
-          )
-        }
-      }
-    }
-  }
-}
-
-
-@Composable
-fun PieGrid(
   pies: List<Pie>, modifier: Modifier = Modifier,
-  onSelect: (Pie) -> Unit
+  onSelect: (Pie) -> Unit = {}
 ) {
   LazyHorizontalStaggeredGrid(
     modifier = modifier,
@@ -117,29 +69,6 @@ fun PieChip(
   }
 }
 
-@Composable
-fun PieCard(pie: Pie, modifier: Modifier = Modifier) {
-  Card(modifier = modifier) {
-    Column(
-      modifier = Modifier
-        .fillMaxWidth()
-        .padding(12.dp),
-      horizontalAlignment = Alignment.CenterHorizontally,
-      verticalArrangement = Arrangement.SpaceBetween
-    ) {
-      Text(
-
-        text = pie.name,
-        style = MaterialTheme.typography.titleLarge
-      )
-      Image(
-        painter = painterResource(pie.resourceId),
-        contentDescription = pie.name
-      )
-
-    }
-  }
-}
 
 @Preview
 @Composable
@@ -151,8 +80,7 @@ fun PieScreenDemo() {
 
   DemoWeek5Theme {
     PieGridScreen(
-      pieViewModel.getPies(),
-      onPieSelection = {}
+      pieViewModel.getPies()
     )
   }
 }

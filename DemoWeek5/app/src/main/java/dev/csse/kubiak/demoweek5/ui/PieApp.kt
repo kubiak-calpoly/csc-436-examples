@@ -1,8 +1,14 @@
 package dev.csse.kubiak.demoweek5.ui
 
 import android.util.Log
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
@@ -25,29 +31,50 @@ sealed class Routes {
 
 @Composable
 fun PieApp(
-  modifier: Modifier = Modifier, pieViewModel: PieViewModel = viewModel()
+  modifier: Modifier = Modifier,
+  pieViewModel: PieViewModel = viewModel()
 ) {
   val navController = rememberNavController()
 
   if (pieViewModel.pieList.isEmpty()) pieViewModel.createSampleData()
 
-    NavHost(
+  NavHost(
     navController = navController, startDestination = Routes.List
   ) {
     composable<Routes.List> {
-      PieGridScreen(
-        pies = pieViewModel.getPies(),
-        selectedPie = pieViewModel.getCurrent(),
-        onPieSelection = { pie ->
-          pieViewModel.setCurrent(pie)
-          navController.navigate(Routes.Detail)
+      val pies = pieViewModel.getPies()
+
+      Scaffold(
+        topBar = {
+          PieAppBar("π-terest")
         }
-      )
+      ) { innerPadding ->
+        PieGridScreen(
+          pies = pies,
+          onSelect = { pie ->
+            pieViewModel.setCurrent(pie)
+            navController.navigate(Routes.Detail)
+          },
+          modifier = Modifier.padding(innerPadding)
+        )
+      }
     }
+
     composable<Routes.Detail> {
-      PieDetailScreen(
-        pie = pieViewModel.getCurrent()
-      )
+      val pie = pieViewModel.getCurrent()
+
+      Scaffold(
+        topBar = {
+          PieAppBar(pie?.name ?: "No Pie",
+            canNavigateBack = true,
+            onUpClick = { navController.navigateUp() })
+        }
+      ) { innerPadding ->
+        PieDetailScreen(
+          pie = pie,
+          modifier = Modifier.padding(innerPadding)
+        )
+      }
     }
   }
 }
@@ -56,11 +83,23 @@ fun PieApp(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PieAppBar(
-  title: String, modifier: Modifier = Modifier
+  title: String,
+  modifier: Modifier = Modifier,
+  canNavigateBack: Boolean = false,
+  onUpClick: () -> Unit = { },
 ) {
   TopAppBar(
-    title = { Text(title) }, colors = TopAppBarDefaults.topAppBarColors(
+    title = { Text(title) },
+    colors = TopAppBarDefaults.topAppBarColors(
       containerColor = MaterialTheme.colorScheme.primaryContainer
-    ), modifier = modifier
+    ),
+    modifier = modifier,
+    navigationIcon = {
+      if (canNavigateBack) {
+        IconButton(onClick = onUpClick) {
+          Icon(Icons.AutoMirrored.Filled.ArrowBack, "Back")
+        }
+      }
+    }
   )
 }
