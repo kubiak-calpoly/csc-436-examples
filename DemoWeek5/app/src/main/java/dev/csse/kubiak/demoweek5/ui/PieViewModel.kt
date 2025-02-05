@@ -18,9 +18,8 @@ class PieViewModel : ViewModel() {
     return pieList
   }
 
-  fun getCurrent() : Pie {
-    return currentPie ?:
-      Pie("Mystery Pie", R.drawable.apple_pie )
+  fun getCurrent() : Pie? {
+    return currentPie
   }
 
   fun setCurrent(pie : Pie) {
@@ -151,6 +150,6 @@ fun arrayOfPies() : List<Pie> {
     "Winterberry Pie",
     "Yam Pie"
   ).map { s ->
-    Pie(name = s, resourceId = R.drawable.apple_pie )
+    Pie(name = s)
   }
 }

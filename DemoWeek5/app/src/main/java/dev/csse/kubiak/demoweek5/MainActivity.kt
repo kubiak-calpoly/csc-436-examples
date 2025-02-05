@@ -18,9 +18,7 @@ class MainActivity : ComponentActivity() {
     enableEdgeToEdge()
     setContent {
       DemoWeek5Theme {
-        Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-          PieApp(modifier = Modifier.padding(innerPadding))
-        }
+        PieApp()
       }
     }
   }
