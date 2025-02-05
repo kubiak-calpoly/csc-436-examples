@@ -11,16 +11,21 @@ import androidx.lifecycle.ViewModel
 import dev.csse.kubiak.demoweek5.Pie
 import dev.csse.kubiak.demoweek5.R
 
+private val samplePies = arrayOfPies()
 
 class PieGridViewModel : ViewModel() {
   private val pieList = mutableStateListOf<Pie>()
+
+  fun hasPies() : Boolean {
+    return !getPies().isEmpty()
+  }
 
   fun getPies() : List<Pie> {
     return pieList
   }
 
   fun createSampleData() {
-    for (pie in arrayOfPies())
+    for (pie in samplePies)
       pieList.add(pie)
   }
 }
@@ -29,11 +34,12 @@ class PieDetailViewModel: ViewModel() {
   private var currentPie: Pie by mutableStateOf<Pie>(Pie())
 
   fun getCurrent() : Pie {
-    return currentPie ?: Pie()
+    return currentPie
   }
 
-  fun setCurrent(pie : Pie) {
-    currentPie = pie
+  fun loadById(id: Int) {
+    val found = samplePies.find { pie -> pie.id == id }
+    currentPie = found ?: Pie()
   }
 }
 
@@ -154,9 +160,10 @@ fun arrayOfPies() : List<Pie> {
     "Wild Blueberry Pie",
     "Winterberry Pie",
     "Yam Pie"
-  ).map { s ->
+  ).mapIndexed { i, s ->
     val words = s.split(" ")
     Pie(
+      id = i,
       name = s,
       resourceId = R.drawable.apple_pie,
       crust = "shortcrust",

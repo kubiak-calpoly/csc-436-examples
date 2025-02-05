@@ -19,45 +19,44 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
-import androidx.lifecycle.viewmodel.compose.viewModel
 import dev.csse.kubiak.demoweek5.Pie
 import dev.csse.kubiak.demoweek5.ui.theme.DemoWeek5Theme
 
 @Composable
-fun PieDetailScreen(pie: Pie, modifier: Modifier = Modifier, onUpClick: () -> Unit  = {}) {
-  Scaffold(
-    topBar = { PieAppBar(
-      title =  pie.name,
-      onUpClick = onUpClick
-    )}
-  ){ innerPadding ->
-    Column(
+fun PieDetailScreen(
+  pie: Pie,
+  modifier: Modifier = Modifier
+) {
+  Column(
+    modifier = modifier.fillMaxWidth(),
+    horizontalAlignment = Alignment.CenterHorizontally,
+    verticalArrangement = Arrangement.SpaceBetween
+  ) {
+    Image(
       modifier = Modifier
         .fillMaxWidth()
-        .padding(innerPadding),
-      horizontalAlignment = Alignment.CenterHorizontally,
-      verticalArrangement = Arrangement.SpaceBetween
-    ) {
-      Image(
-        modifier = Modifier.fillMaxWidth().aspectRatio(1f).padding(20.dp),
-        painter = painterResource(pie.resourceId),
-        contentDescription = pie.name
-      )
-      Card(modifier = Modifier.weight(1f).padding(20.dp)) {
-        Column(modifier = Modifier.padding(8.dp)) {
-          Row {
-            Text("Filling", modifier = Modifier.width(60.dp))
-            Text(pie.filling, modifier = Modifier.weight(1f))
-          }
-          Row {
-            Text("Crust", modifier = Modifier.width(60.dp))
-            Text(pie.crust, modifier = Modifier.weight(1f))
-          }
+        .aspectRatio(1f)
+        .padding(20.dp),
+      painter = painterResource(pie.resourceId),
+      contentDescription = pie.name
+    )
+    Card(modifier = Modifier
+      .weight(1f)
+      .padding(20.dp)) {
+      Column(modifier = Modifier.padding(8.dp)) {
+        Row {
+          Text("Filling", modifier = Modifier.width(60.dp))
+          Text(pie.filling, modifier = Modifier.weight(1f))
+        }
+        Row {
+          Text("Crust", modifier = Modifier.width(60.dp))
+          Text(pie.crust, modifier = Modifier.weight(1f))
         }
       }
     }
   }
 }
+
 
 @Preview
 @Composable

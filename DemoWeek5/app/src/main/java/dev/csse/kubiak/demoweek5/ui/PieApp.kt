@@ -15,6 +15,7 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.toRoute
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -26,7 +27,7 @@ sealed class Routes {
   data object List
 
   @Serializable
-  data object Detail
+  data class Detail(val pieId: Int )
 }
 
 @Composable
@@ -35,14 +36,13 @@ fun PieApp(
 ) {
   val navController = rememberNavController()
 
-
   NavHost(
     navController = navController, startDestination = Routes.List
   ) {
     composable<Routes.List> {
       val pieViewModel = viewModel<PieGridViewModel>()
 
-      if (pieViewModel.getPies().isEmpty())
+      if (!pieViewModel.hasPies())
         pieViewModel.createSampleData()
 
       val pies = pieViewModel.getPies()
@@ -55,21 +55,23 @@ fun PieApp(
         PieGridScreen(
           pies = pies,
           onSelect = { pie ->
-            //pieViewModel.setCurrent(pie)
-            navController.navigate(Routes.Detail)
+            navController.navigate(Routes.Detail(pie.id))
           },
           modifier = Modifier.padding(innerPadding)
         )
       }
     }
 
-    composable<Routes.Detail> {
+    composable<Routes.Detail> { backStackEntry ->
       val pieViewModel = viewModel<PieDetailViewModel>()
+      val detail: Routes.Detail = backStackEntry.toRoute()
+      pieViewModel.loadById (detail.pieId)
+
       val pie = pieViewModel.getCurrent()
 
       Scaffold(
         topBar = {
-          PieAppBar(pie?.name ?: "No Pie",
+          PieAppBar(pie.name,
             canNavigateBack = true,
             onUpClick = { navController.navigateUp() })
         }
