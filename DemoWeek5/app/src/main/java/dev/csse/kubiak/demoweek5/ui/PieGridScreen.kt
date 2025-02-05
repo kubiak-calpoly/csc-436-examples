@@ -35,38 +35,11 @@ fun PieGridScreen(
 ) {
   val config = LocalConfiguration.current
 
-  if (config.orientation == Configuration.ORIENTATION_PORTRAIT) {
-    Column(
-      modifier = modifier,
-      verticalArrangement = Arrangement.spacedBy(12.dp)
-    ) {
-      PieGrid(
-        pies, modifier = Modifier.weight(1f),
-        onSelect = onPieSelection
-      )
-      if (selectedPie != null) {
-        PieCard(
-          pie = selectedPie,
-          modifier = Modifier.weight(1f)
-        )
-      }
-    }
-  } else {
-      Row {
-        PieGrid(
-          pies, modifier = Modifier.weight(1f),
-          onSelect = onPieSelection
-        )
-        if (selectedPie != null) {
-          PieCard(
-            pie = selectedPie,
-            modifier = Modifier.weight(1f)
-          )
-        }
-      }
-    }
-  }
-
+  PieGrid(
+    pies, modifier = Modifier.fillMaxHeight(),
+    onSelect = onPieSelection
+  )
+}
 
 
 @Composable
@@ -111,29 +84,7 @@ fun PieChip(
   }
 }
 
-@Composable
-fun PieCard(pie: Pie, modifier: Modifier = Modifier) {
-  Card(modifier = modifier) {
-    Column(
-      modifier = Modifier
-        .fillMaxWidth()
-        .padding(12.dp),
-      horizontalAlignment = Alignment.CenterHorizontally,
-      verticalArrangement = Arrangement.SpaceBetween
-    ) {
-      Text(
 
-        text = pie.name,
-        style = MaterialTheme.typography.titleLarge
-      )
-      Image(
-        painter = painterResource(pie.resourceId),
-        contentDescription = pie.name
-      )
-
-    }
-  }
-}
 
 @Preview
 @Composable
