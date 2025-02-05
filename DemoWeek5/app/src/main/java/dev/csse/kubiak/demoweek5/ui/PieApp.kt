@@ -42,7 +42,11 @@ fun PieApp(
     startDestination = Routes.List
   ) {
     composable<Routes.List> {
-      Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
+      Scaffold(modifier = Modifier.fillMaxSize(),
+        topBar = {
+          PieAppBar("π-terest")
+        }
+      ) { innerPadding ->
         PieGridScreen(
           pies = pieViewModel.getPies(),
           selectedPie = pieViewModel.getCurrent(),
@@ -56,7 +60,13 @@ fun PieApp(
     }
 
     composable<Routes.Detail> {
-      Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
+      val pie = pieViewModel.getCurrent() ?: Pie()
+
+      Scaffold(modifier = Modifier.fillMaxSize(),
+        topBar = {
+          PieAppBar(pie.name)
+        }
+      ) { innerPadding ->
         PieDetailScreen(
           pie = pieViewModel.getCurrent() ?: Pie(),
           modifier = Modifier.padding(innerPadding)
