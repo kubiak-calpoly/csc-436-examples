@@ -4,6 +4,7 @@ import android.content.res.Configuration
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -37,6 +38,7 @@ fun PieGridScreen(
     rows = StaggeredGridCells.Adaptive(100.dp),
     verticalArrangement = Arrangement.spacedBy(8.dp),
     horizontalItemSpacing = 4.dp,
+    contentPadding = PaddingValues(12.dp)
   ) {
     items(
       items = pies,
@@ -73,9 +75,9 @@ fun PieChip(
 @Preview
 @Composable
 fun PieScreenDemo() {
-  val pieViewModel = viewModel<PieViewModel>()
+  val pieViewModel = viewModel<PieGridViewModel>()
 
-  if (pieViewModel.pieList.isEmpty())
+  if (pieViewModel.getPies().isEmpty())
     pieViewModel.createSampleData()
 
   DemoWeek5Theme {

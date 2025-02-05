@@ -31,17 +31,20 @@ sealed class Routes {
 
 @Composable
 fun PieApp(
-  modifier: Modifier = Modifier,
-  pieViewModel: PieViewModel = viewModel()
+  modifier: Modifier = Modifier
 ) {
   val navController = rememberNavController()
 
-  if (pieViewModel.pieList.isEmpty()) pieViewModel.createSampleData()
 
   NavHost(
     navController = navController, startDestination = Routes.List
   ) {
     composable<Routes.List> {
+      val pieViewModel = viewModel<PieGridViewModel>()
+
+      if (pieViewModel.getPies().isEmpty())
+        pieViewModel.createSampleData()
+
       val pies = pieViewModel.getPies()
 
       Scaffold(
@@ -52,7 +55,7 @@ fun PieApp(
         PieGridScreen(
           pies = pies,
           onSelect = { pie ->
-            pieViewModel.setCurrent(pie)
+            //pieViewModel.setCurrent(pie)
             navController.navigate(Routes.Detail)
           },
           modifier = Modifier.padding(innerPadding)
@@ -61,6 +64,7 @@ fun PieApp(
     }
 
     composable<Routes.Detail> {
+      val pieViewModel = viewModel<PieDetailViewModel>()
       val pie = pieViewModel.getCurrent()
 
       Scaffold(

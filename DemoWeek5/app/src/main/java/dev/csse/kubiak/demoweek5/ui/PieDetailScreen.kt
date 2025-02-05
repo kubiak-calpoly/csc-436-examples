@@ -62,12 +62,7 @@ fun PieDetailScreen(pie: Pie, modifier: Modifier = Modifier, onUpClick: () -> Un
 @Preview
 @Composable
 fun PieDetailScreenDemo() {
-  val pieViewModel = viewModel<PieViewModel>()
-
-  if (pieViewModel.pieList.isEmpty())
-    pieViewModel.createSampleData()
-
-  val pie = pieViewModel.getPies()[0]
+  val pie = arrayOfPies()[0]
 
   DemoWeek5Theme {
     PieDetailScreen(

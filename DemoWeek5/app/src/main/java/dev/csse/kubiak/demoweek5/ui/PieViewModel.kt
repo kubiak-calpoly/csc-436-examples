@@ -11,14 +11,22 @@ import androidx.lifecycle.ViewModel
 import dev.csse.kubiak.demoweek5.Pie
 import dev.csse.kubiak.demoweek5.R
 
-class PieViewModel : ViewModel() {
-  val pieList = mutableStateListOf<Pie>()
-  var currentPie: Pie? by mutableStateOf<Pie?>(null)
 
+class PieGridViewModel : ViewModel() {
+  private val pieList = mutableStateListOf<Pie>()
 
   fun getPies() : List<Pie> {
     return pieList
   }
+
+  fun createSampleData() {
+    for (pie in arrayOfPies())
+      pieList.add(pie)
+  }
+}
+
+class PieDetailViewModel: ViewModel() {
+  private var currentPie: Pie by mutableStateOf<Pie>(Pie())
 
   fun getCurrent() : Pie {
     return currentPie ?: Pie()
@@ -26,11 +34,6 @@ class PieViewModel : ViewModel() {
 
   fun setCurrent(pie : Pie) {
     currentPie = pie
-  }
-
-  fun createSampleData() {
-    for (pie in arrayOfPies())
-      pieList.add(pie)
   }
 }
 
