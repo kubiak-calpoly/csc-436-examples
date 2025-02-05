@@ -3,8 +3,11 @@ package dev.csse.kubiak.demoweek5.ui
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -21,34 +24,44 @@ import dev.csse.kubiak.demoweek5.ui.theme.DemoWeek5Theme
 @Composable
 fun PieDetailScreen(pie: Pie, modifier: Modifier = Modifier) {
   Column(
-    modifier = Modifier
-      .fillMaxWidth()
-      .padding(12.dp),
+    modifier = modifier.fillMaxWidth(),
     horizontalAlignment = Alignment.CenterHorizontally,
     verticalArrangement = Arrangement.SpaceBetween
   ) {
-    Text(
-
-      text = pie.name,
-      style = MaterialTheme.typography.titleLarge
-    )
     Image(
+      modifier = Modifier
+        .fillMaxWidth()
+        .aspectRatio(1f)
+        .padding(20.dp),
+
       painter = painterResource(pie.resourceId),
       contentDescription = pie.name
     )
-
+    Card(
+      modifier = Modifier
+        .weight(1f)
+        .padding(20.dp)
+    ) {
+      Column(modifier = Modifier.padding(8.dp)) {
+        Row {
+          Text("Filling", modifier = Modifier.width(60.dp))
+          Text(pie.filling, modifier = Modifier.weight(1f))
+        }
+        Row {
+          Text("Crust", modifier = Modifier.width(60.dp))
+          Text(pie.crust, modifier = Modifier.weight(1f))
+        }
+      }
+    }
   }
 }
 
 @Preview
 @Composable
 fun PieDetailScreenDemo() {
-  val pieViewModel = viewModel<PieViewModel>()
+  val pieViewModel = viewModel<PieDetailViewModel>()
 
-  if (pieViewModel.pieList.isEmpty())
-    pieViewModel.createSampleData()
-
-  val pie = pieViewModel.getPies()[0]
+  val pie = pieViewModel.getCurrent() ?: Pie(name = "Mystery Pie")
 
   DemoWeek5Theme {
     PieDetailScreen(
