@@ -15,7 +15,17 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import dev.csse.kubiak.demoweek5.Pie
 import kotlinx.serialization.Serializable
+
+sealed class Routes {
+  @Serializable
+  data object List
+
+  @Serializable
+  data object Detail
+}
+
 
 @Composable
 fun PieApp(
@@ -25,16 +35,34 @@ fun PieApp(
 
   Log.d("PieApp", "${pieViewModel.getPies().size} pies in viewmodel")
 
-  Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
+  val navController = rememberNavController()
 
-    PieGridScreen(
-      pies = pieViewModel.getPies(),
-      selectedPie = pieViewModel.getCurrent(),
-      onPieSelection = { pie ->
-        pieViewModel.setCurrent(pie)
-      },
-      modifier = Modifier.padding(innerPadding)
-    )
+  NavHost(
+    navController = navController,
+    startDestination = Routes.List
+  ) {
+    composable<Routes.List> {
+      Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
+        PieGridScreen(
+          pies = pieViewModel.getPies(),
+          selectedPie = pieViewModel.getCurrent(),
+          onPieSelection = { pie ->
+            pieViewModel.setCurrent(pie)
+            navController.navigate(route = Routes.Detail)
+          },
+          modifier = Modifier.padding(innerPadding)
+        )
+      }
+    }
+
+    composable<Routes.Detail> {
+      Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
+        PieDetailScreen(
+          pie = pieViewModel.getCurrent() ?: Pie(),
+          modifier = Modifier.padding(innerPadding)
+        )
+      }
+    }
   }
 }
 
