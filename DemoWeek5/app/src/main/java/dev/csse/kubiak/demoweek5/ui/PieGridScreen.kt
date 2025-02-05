@@ -1,6 +1,7 @@
 package dev.csse.kubiak.demoweek5.ui
 
 import android.content.res.Configuration
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -36,7 +37,7 @@ fun PieGridScreen(
   val config = LocalConfiguration.current
 
   PieGrid(
-    pies, modifier = Modifier.fillMaxHeight(),
+    pies, modifier = modifier,
     onSelect = onPieSelection
   )
 }
@@ -47,6 +48,9 @@ fun PieGrid(
   pies: List<Pie>, modifier: Modifier = Modifier,
   onSelect: (Pie) -> Unit
 ) {
+
+  Log.d("PieGrid", "Number of Pies: ${pies.size}")
+
   LazyHorizontalStaggeredGrid(
     modifier = modifier,
     rows = StaggeredGridCells.Adaptive(100.dp),
@@ -89,13 +93,15 @@ fun PieChip(
 @Preview
 @Composable
 fun PieScreenDemo() {
-  val pieViewModel = viewModel<PieViewModel>()
+  val pieViewModel = viewModel<PieListViewModel>()
 
-  if (pieViewModel.pieList.isEmpty())
+  if (!pieViewModel.hasPies())
     pieViewModel.createSampleData()
 
+  val pies = pieViewModel.getPies()
+
   DemoWeek5Theme {
-    PieGridScreen(pieViewModel.getPies(),
+    PieGridScreen(pies,
       onPieSelection = {},
       modifier = Modifier.padding(4.dp, 8.dp)
     )

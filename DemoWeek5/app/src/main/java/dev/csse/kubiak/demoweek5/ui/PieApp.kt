@@ -19,6 +19,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.toRoute
 import dev.csse.kubiak.demoweek5.Pie
 import kotlinx.serialization.Serializable
 
@@ -27,17 +28,12 @@ sealed class Routes {
   data object List
 
   @Serializable
-  data object Detail
+  data class Detail(val pieId: Int)
 }
 
 
 @Composable
-fun PieApp(
-  pieViewModel: PieViewModel = viewModel()
-) {
-  if (pieViewModel.pieList.isEmpty()) pieViewModel.createSampleData()
-
-  Log.d("PieApp", "${pieViewModel.getPies().size} pies in viewmodel")
+fun PieApp() {
 
   val navController = rememberNavController()
 
@@ -46,24 +42,33 @@ fun PieApp(
     startDestination = Routes.List
   ) {
     composable<Routes.List> {
+      val pieViewModel: PieListViewModel = viewModel()
+      if (!pieViewModel.hasPies()) pieViewModel.createSampleData()
+      val pies = pieViewModel.getPies()
+
+      Log.d("PieApp", "Number of Pies: ${pies.size}")
+
       Scaffold(modifier = Modifier.fillMaxSize(),
         topBar = {
           PieAppBar("π-terest")
         }
       ) { innerPadding ->
         PieGridScreen(
-          pies = pieViewModel.getPies(),
-          selectedPie = pieViewModel.getCurrent(),
+          pies = pies,
           onPieSelection = { pie ->
-            pieViewModel.setCurrent(pie)
-            navController.navigate(route = Routes.Detail)
+            // pieViewModel.setCurrent(pie)
+            navController.navigate(route = Routes.Detail(pie.id))
           },
           modifier = Modifier.padding(innerPadding)
         )
       }
     }
 
-    composable<Routes.Detail> {
+    composable<Routes.Detail> { backStackEntry ->
+      val pieViewModel : PieDetailViewModel = viewModel()
+      val detail: Routes.Detail = backStackEntry.toRoute()
+      pieViewModel.loadById (detail.pieId)
+
       val pie = pieViewModel.getCurrent() ?: Pie()
 
       Scaffold(modifier = Modifier.fillMaxSize(),

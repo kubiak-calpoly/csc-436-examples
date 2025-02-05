@@ -8,26 +8,36 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import dev.csse.kubiak.demoweek5.Pie
 import dev.csse.kubiak.demoweek5.R
+import java.util.Locale
 
-class PieViewModel : ViewModel() {
-  val pieList = mutableStateListOf<Pie>()
-  var currentPie: Pie? by mutableStateOf<Pie?>(null)
+private val samplePies = arrayOfPies()
 
-
-  fun getPies() : List<Pie> {
-    return pieList
-  }
+class PieDetailViewModel : ViewModel() {
+  private var currentPie: Pie? by mutableStateOf<Pie?>(null)
 
   fun getCurrent() : Pie? {
     return currentPie
   }
 
-  fun setCurrent(pie : Pie) {
-    currentPie = pie
+  fun loadById(id: Int) {
+    val found = samplePies.find { pie -> pie.id == id }
+    currentPie = found ?: Pie()
+  }
+}
+
+class PieListViewModel : ViewModel() {
+  private val pieList = mutableStateListOf<Pie>()
+
+  fun getPies() : List<Pie> {
+    return pieList
+  }
+
+  fun hasPies() : Boolean {
+    return !pieList.isEmpty()
   }
 
   fun createSampleData() {
-    for (pie in arrayOfPies())
+    for (pie in samplePies)
       pieList.add(pie)
   }
 }
@@ -149,7 +159,15 @@ fun arrayOfPies() : List<Pie> {
     "Wild Blueberry Pie",
     "Winterberry Pie",
     "Yam Pie"
-  ).map { s ->
-    Pie(name = s)
+  ).mapIndexed { i, s ->
+    val words = s.split(" ")
+
+    Pie(
+      id = i,
+      name = s,
+      resourceId = R.drawable.apple_pie,
+      crust = "shortcrust",
+      filling = words[words.size - 2].toLowerCase()
+    )
   }
 }
