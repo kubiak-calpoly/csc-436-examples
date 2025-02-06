@@ -55,7 +55,6 @@ fun PieDetailScreen(
     )
     Card(
       modifier = Modifier
-        .weight(1f)
         .padding(20.dp)
     ) {
       Column(modifier = Modifier.padding(8.dp)) {
@@ -72,42 +71,32 @@ fun PieDetailScreen(
             textAlign = TextAlign.End
           )
         }
-        Row {
-          Text("Website", modifier = Modifier.width(80.dp))
-          Box(
-            modifier = Modifier
-              .weight(1f)
-              .clickable(enabled = true,
-                onClick = {
-                  val url = Uri.parse(pie.website)
-                  val intent = Intent(Intent.ACTION_VIEW, url)
-                  context.startActivity(intent)
-                })
-              .background(color = Color(0x40ffffff))
-          ) {
-            Text(pie.name,
-              textAlign = TextAlign.End,
-              modifier = Modifier.align(Alignment.TopEnd)
-            )
-          }
-        }
-        Row {
-          Text("Get π now", modifier = Modifier.width(80.dp))
-          Box(
-            modifier = Modifier
-              .weight(1f)
-              .clickable(enabled = true,
-                onClick = {
-                  val url = Uri.parse(pie.location)
-                  val intent = Intent(Intent.ACTION_VIEW, url)
-                  context.startActivity(intent)
-                })
-              .background(color = Color(0x40ffffff))
-          ) {
-            Text(pie.pieShop,
-              textAlign = TextAlign.End,
-              modifier = Modifier.align(Alignment.TopEnd)
-            )
+      }
+    }
+
+    pie.pieShops.forEach() { pieShop ->
+      Card(
+        modifier = Modifier
+          .padding(20.dp)
+          .fillMaxWidth()
+          .clickable(enabled = true,
+            onClick = {
+              val url = Uri.parse(pieShop.website)
+              val intent = Intent(Intent.ACTION_VIEW, url)
+              context.startActivity(intent)
+            })
+      ) {
+        Column(
+          modifier = Modifier.padding(8.dp).fillMaxWidth(),
+          horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+          Text(pieShop.name)
+          Button(onClick = {
+            val url = Uri.parse(pieShop.location)
+            val intent = Intent(Intent.ACTION_VIEW, url)
+            context.startActivity(intent)
+          }) {
+            Text("Go get the pie!")
           }
         }
       }
