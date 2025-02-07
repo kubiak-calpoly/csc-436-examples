@@ -85,7 +85,19 @@ fun PieDetailScreen(
               context.startActivity(intent)
             })
       ) {
-        Text(pieShop.name)
+        Column(
+          modifier = Modifier.padding(8.dp).fillMaxWidth(),
+          horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+          Text(pieShop.name)
+          Button(onClick = {
+            val url = Uri.parse(pieShop.location)
+            val intent = Intent(Intent.ACTION_VIEW, url)
+            context.startActivity(intent)
+          }) {
+            Text("Go get the pie!")
+          }
+        }
       }
     }
   }
