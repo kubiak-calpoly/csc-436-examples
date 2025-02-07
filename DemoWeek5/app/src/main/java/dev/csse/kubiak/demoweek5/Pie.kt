@@ -6,7 +6,11 @@ data class Pie(
   val resourceId: Int = R.drawable.apple_pie,
   val crust: String = "shortcrust",
   val filling: String = "mystery",
-  val website: String = "https://en.wikipedia.org/wiki/Apple_pie",
-  val pieShop: String = "Bramble Pie Company",
+  val pieShops: List<PieShop> = listOf()
+)
+
+data class PieShop(
+  val name: String = "Bramble Pie Company",
+  val website: String = "https://bramblepiecompany.com",
   val location: String = "geo:35.489596,-120.668665?q=Bramble%20Pie%20Company"
 )

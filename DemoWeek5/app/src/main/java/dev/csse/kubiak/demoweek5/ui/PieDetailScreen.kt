@@ -1,6 +1,5 @@
 package dev.csse.kubiak.demoweek5.ui
 
-import android.R
 import android.content.Intent
 import android.net.Uri
 import androidx.compose.foundation.Image
@@ -10,6 +9,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -55,7 +55,6 @@ fun PieDetailScreen(
     )
     Card(
       modifier = Modifier
-        .weight(1f)
         .padding(20.dp)
     ) {
       Column(modifier = Modifier.padding(8.dp)) {
@@ -71,44 +70,6 @@ fun PieDetailScreen(
             pie.crust, modifier = Modifier.weight(1f),
             textAlign = TextAlign.End
           )
-        }
-        Row {
-          Text("Website", modifier = Modifier.width(80.dp))
-          Box(
-            modifier = Modifier
-              .weight(1f)
-              .clickable(enabled = true,
-                onClick = {
-                  val url = Uri.parse(pie.website)
-                  val intent = Intent(Intent.ACTION_VIEW, url)
-                  context.startActivity(intent)
-                })
-              .background(color = Color(0x40ffffff))
-          ) {
-            Text(pie.name,
-              textAlign = TextAlign.End,
-              modifier = Modifier.align(Alignment.TopEnd)
-            )
-          }
-        }
-        Row {
-          Text("Get π now", modifier = Modifier.width(80.dp))
-          Box(
-            modifier = Modifier
-              .weight(1f)
-              .clickable(enabled = true,
-                onClick = {
-                  val url = Uri.parse(pie.location)
-                  val intent = Intent(Intent.ACTION_VIEW, url)
-                  context.startActivity(intent)
-                })
-              .background(color = Color(0x40ffffff))
-          ) {
-            Text(pie.pieShop,
-              textAlign = TextAlign.End,
-              modifier = Modifier.align(Alignment.TopEnd)
-            )
-          }
         }
       }
     }

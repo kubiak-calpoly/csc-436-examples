@@ -9,7 +9,9 @@ import androidx.compose.ui.text.intl.Locale
 import androidx.compose.ui.text.toLowerCase
 import androidx.lifecycle.ViewModel
 import dev.csse.kubiak.demoweek5.Pie
+import dev.csse.kubiak.demoweek5.PieShop
 import dev.csse.kubiak.demoweek5.R
+import kotlin.String
 
 private val samplePies = arrayOfPies()
 
@@ -167,7 +169,14 @@ fun arrayOfPies() : List<Pie> {
       name = s,
       resourceId = R.drawable.apple_pie,
       crust = "shortcrust",
-      filling = words[words.size - 2].toLowerCase(Locale.current)
+      filling = words[words.size - 2].toLowerCase(Locale.current),
+      pieShops = listOf(
+        PieShop(
+          name = "Bramble Pie Company",
+          website = "https://bramblepiecompany.com",
+          location = "geo:35.489596,-120.668665?q=Bramble%20Pie%20Company"
+        )
+      )
     )
   }
 }
