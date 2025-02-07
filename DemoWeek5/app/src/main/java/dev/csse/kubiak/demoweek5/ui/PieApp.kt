@@ -79,7 +79,14 @@ fun PieApp(
         topBar = {
           PieAppBar(pie.name,
             canNavigateBack = true,
-            onUpClick = { navController.navigateUp() }
+            onUpClick = { navController.navigateUp() },
+            actions = {
+              IconButton(onClick = {
+                sharePie(context = context, pie = pie)
+              }) {
+                Icon(Icons.Filled.Share, "Shared")
+              }
+            }
           )
         }
       ) { innerPadding ->
@@ -118,4 +125,16 @@ fun PieAppBar(
     }
   )
 
+}
+
+fun sharePie(pie: Pie, context: Context) {
+  val intent = Intent(Intent.ACTION_SEND).apply {
+    type = "text/plain"
+    putExtra(Intent.EXTRA_SUBJECT, "Want to share some pie?")
+    putExtra(Intent.EXTRA_TEXT, "Let's eat ${pie.name}!")
+  }
+
+  context.startActivity(
+    Intent.createChooser(intent, "Share your Pie")
+  )
 }
