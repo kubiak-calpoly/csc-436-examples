@@ -73,6 +73,21 @@ fun PieDetailScreen(
         }
       }
     }
+    pie.pieShops.forEach() { pieShop ->
+      Card(
+        modifier = Modifier
+          .padding(20.dp)
+          .fillMaxWidth()
+          .clickable(enabled = true,
+            onClick = {
+              val url = Uri.parse(pieShop.website)
+              val intent = Intent(Intent.ACTION_VIEW, url)
+              context.startActivity(intent)
+            })
+      ) {
+        Text(pieShop.name)
+      }
+    }
   }
 }
 
