@@ -1,9 +1,13 @@
 package dev.csse.kubiak.demoweek5.ui
 
+import android.content.Context
+import android.content.Intent
 import android.util.Log
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -14,6 +18,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.toRoute
 import androidx.navigation.compose.NavHost
@@ -27,7 +32,7 @@ sealed class Routes {
   data object List
 
   @Serializable
-  data class Detail(val pieId: Int )
+  data class Detail(val pieId: Int)
 }
 
 @Composable
@@ -35,6 +40,7 @@ fun PieApp(
   modifier: Modifier = Modifier
 ) {
   val navController = rememberNavController()
+  val context = LocalContext.current
 
   NavHost(
     navController = navController, startDestination = Routes.List
@@ -65,7 +71,7 @@ fun PieApp(
     composable<Routes.Detail> { backStackEntry ->
       val pieViewModel = viewModel<PieDetailViewModel>()
       val detail: Routes.Detail = backStackEntry.toRoute()
-      pieViewModel.loadById (detail.pieId)
+      pieViewModel.loadById(detail.pieId)
 
       val pie = pieViewModel.getCurrent()
 
@@ -73,7 +79,14 @@ fun PieApp(
         topBar = {
           PieAppBar(pie.name,
             canNavigateBack = true,
-            onUpClick = { navController.navigateUp() })
+            onUpClick = { navController.navigateUp() },
+          actions = {
+            IconButton(onClick = {
+              sharePie(context = context, pie = pie)
+            }) {
+              Icon(Icons.Filled.Share, "Shared")
+            }
+          })
         }
       ) { innerPadding ->
         PieDetailScreen(
@@ -93,12 +106,14 @@ fun PieAppBar(
   modifier: Modifier = Modifier,
   canNavigateBack: Boolean = false,
   onUpClick: () -> Unit = { },
+  actions: @Composable (RowScope.() -> Unit) = {}
 ) {
   TopAppBar(
     title = { Text(title) },
     colors = TopAppBarDefaults.topAppBarColors(
       containerColor = MaterialTheme.colorScheme.primaryContainer
     ),
+    actions = actions,
     modifier = modifier,
     navigationIcon = {
       if (canNavigateBack) {
@@ -107,5 +122,17 @@ fun PieAppBar(
         }
       }
     }
+  )
+}
+
+fun sharePie(pie: Pie, context: Context) {
+  val intent = Intent(Intent.ACTION_SEND).apply {
+    type = "text/plain"
+    putExtra(Intent.EXTRA_SUBJECT, "Want to share some pie?")
+    putExtra(Intent.EXTRA_TEXT, "Let's eat ${pie.name}!")
+  }
+
+  context.startActivity(
+    Intent.createChooser(intent, "Share your Pie")
   )
 }

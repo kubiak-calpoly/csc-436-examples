@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -87,7 +88,9 @@ fun PieDetailScreen(
             })
       ) {
         Column(
-          modifier = Modifier.padding(8.dp).fillMaxWidth(),
+          modifier = Modifier
+            .padding(8.dp)
+            .fillMaxWidth(),
           horizontalAlignment = Alignment.CenterHorizontally
         ) {
           Text(pieShop.name)
@@ -96,7 +99,7 @@ fun PieDetailScreen(
             val intent = Intent(Intent.ACTION_VIEW, url)
             context.startActivity(intent)
           }) {
-            Text("Go get the pie!")
+            Text("Go get the pie")
           }
         }
       }
