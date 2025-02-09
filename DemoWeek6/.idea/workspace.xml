@@ -9,17 +9,7 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="32488bc2-c36d-49bb-988e-cc97b5787737" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/app/src/main/java/dev/csse/kubiak/demoweek6/Loop.kt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/java/dev/csse/kubiak/demoweek6/ui/ConfigScreen.kt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/java/dev/csse/kubiak/demoweek6/ui/LooperApp.kt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/java/dev/csse/kubiak/demoweek6/ui/LooperViewModel.kt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/java/dev/csse/kubiak/demoweek6/ui/PlayScreen.kt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/res/drawable/baseline_square_24.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/res/drawable/outline_square_24.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../DemoWeek5/app/src/main/java/dev/csse/kubiak/demoweek5/ui/PieApp.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../DemoWeek5/app/src/main/java/dev/csse/kubiak/demoweek5/ui/PieApp.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../DemoWeek5/app/src/main/java/dev/csse/kubiak/demoweek5/ui/PieDetailScreen.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../DemoWeek5/app/src/main/java/dev/csse/kubiak/demoweek5/ui/PieDetailScreen.kt" afterDir="false" />
-    </list>
+    <list default="true" id="32488bc2-c36d-49bb-988e-cc97b5787737" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -28,7 +18,7 @@
   <component name="ClangdSettings">
     <option name="formatViaClangd" value="false" />
   </component>
-  <component name="ExecutionTargetManager" SELECTED_TARGET="device_and_snapshot_combo_box_target[DeviceId(pluginId=PhysicalDevice, isTemplate=false, identifier=serial=95JX20TX6)]" />
+  <component name="ExecutionTargetManager" SELECTED_TARGET="device_and_snapshot_combo_box_target[DeviceId(pluginId=LocalEmulator, isTemplate=false, identifier=path=/Users/kenkubiak/.android/avd/Medium_Phone.avd)]" />
   <component name="ExternalProjectsData">
     <projectState path="$PROJECT_DIR$">
       <ProjectState />
@@ -45,9 +35,9 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
   </component>
-  <component name="ProjectColorInfo"><![CDATA[{
-  "associatedIndex": 6
-}]]></component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 6
+}</component>
   <component name="ProjectId" id="2soDUcOWqLQmKF0oMBMwlWcE7Ju" />
   <component name="ProjectLevelVcsManager">
     <ConfirmationsSetting value="2" id="Add" />
@@ -65,7 +55,7 @@
     "RunOnceActivity.readMode.enableVisualFormatting": "true",
     "cf.first.check.clang-format": "false",
     "cidr.known.project.marker": "true",
-    "git-widget-placeholder": "7ca3c0d2",
+    "git-widget-placeholder": "main",
     "last_directory_selection": "/Users/kenkubiak/Projects/csc-436-examples/DemoWeek6/app/src/main/java/dev/csse/kubiak/demoweek6/ui"
   }
 }]]></component>
