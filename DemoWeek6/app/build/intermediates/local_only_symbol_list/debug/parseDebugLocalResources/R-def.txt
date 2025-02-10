@@ -7,7 +7,11 @@ color purple_700
 color teal_200
 color teal_700
 color white
+drawable baseline_fast_rewind_24
+drawable baseline_pause_circle_24
+drawable baseline_play_circle_24
 drawable baseline_square_24
+drawable baseline_stop_circle_24
 drawable ic_launcher_background
 drawable ic_launcher_foreground
 drawable outline_square_24
