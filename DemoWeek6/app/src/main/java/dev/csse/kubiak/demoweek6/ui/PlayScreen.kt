@@ -46,6 +46,8 @@ fun PlayScreen(
   modifier: Modifier = Modifier,
   playerViewModel: PlayerViewModel = viewModel()
 ) {
+  val position = playerViewModel.getPosition(loop)
+
   Column(modifier = modifier.fillMaxWidth()) {
     Row(modifier = Modifier.fillMaxWidth()) {
       NumberField(
@@ -74,7 +76,14 @@ fun PlayScreen(
       verticalAlignment = Alignment.CenterVertically
     ) {
       loop.beats.forEach {
-        Beat(it)
+        Beat(it,
+          hasBeenPlayed = it.beat < position.beat ||
+                  it.beat == position.beat &&
+                  it.subdivision < position.subdivision,
+          isPlaying =  playerViewModel.isRunning &&
+                  it.beat == position.beat &&
+                  it.subdivision == position.subdivision
+          )
       }
     }
     Row(
@@ -82,6 +91,13 @@ fun PlayScreen(
       verticalAlignment = Alignment.CenterVertically,
       horizontalArrangement = Arrangement.Center
     ) {
+      Column (modifier = Modifier.weight(1f),
+        horizontalAlignment =  Alignment.CenterHorizontally ) {
+        Text("LOOP",
+          style = MaterialTheme.typography.labelSmall)
+        Text(position.iteration.toString(),
+          style = MaterialTheme.typography.displayLarge )
+      }
       IconButton(
         onClick = { }
       ) {
@@ -93,7 +109,7 @@ fun PlayScreen(
       }
       Spacer(modifier = Modifier.width(20.dp))
       IconButton(
-        onClick = { }
+        onClick = {playerViewModel.startPlayer(loop) }
       ) {
         Icon(
           painterResource(R.drawable.baseline_play_circle_24),
@@ -111,6 +127,13 @@ fun PlayScreen(
           contentDescription = "Pause",
           modifier = Modifier.scale(2.5f)
         )
+      }
+      Column (modifier = Modifier.weight(1f),
+        horizontalAlignment =  Alignment.CenterHorizontally ) {
+        Text("BAR",
+          style = MaterialTheme.typography.labelSmall)
+        Text(position.bar.toString(),
+          style = MaterialTheme.typography.displayLarge )
       }
     }
 
@@ -139,10 +162,10 @@ fun Shape(
 fun Beat(
   beat: Division,
   hasBeenPlayed: Boolean = false,
-  isPlaying: Boolean = false
+  isPlaying: Boolean = false,
 ) {
   val bg = if (hasBeenPlayed)
-    MaterialTheme.colorScheme.primary
+    MaterialTheme.colorScheme.surfaceDim
   else MaterialTheme.colorScheme.surface
 
   Box(
