@@ -1,5 +1,6 @@
 package dev.csse.kubiak.demoweek6.ui
 
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableLongStateOf
@@ -8,6 +9,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.viewmodel.InitializerViewModelFactoryBuilder
 import dev.csse.kubiak.demoweek6.Loop
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -25,6 +27,8 @@ class PlayerViewModel : ViewModel() {
   var isRunning by mutableStateOf(false)
     private set
 
+  private var tickingJob: Job? = null
+
   fun startPlayer(loop: Loop) {
     val millisPerTick = getMillisPerTick(loop)
     val totalMillis = iterations *
@@ -33,25 +37,34 @@ class PlayerViewModel : ViewModel() {
     if (loop.ticksPerIteration > 0) {
       isRunning = true
 
-      viewModelScope.launch {
-        while (isRunning && millisCount < totalMillis) {
+      tickingJob = viewModelScope.launch {
+        while (millisCount < totalMillis) {
           delay(millisPerTick)
           millisCount += millisPerTick
         }
-        if ( isRunning ) {
-          isRunning = false
-          millisCount = 0
-        }
+        isRunning = false
+        millisCount = 0
       }
     }
   }
 
   fun getMillisPerTick(loop: Loop): Long {
-    return 60000L / bpm / loop.subdivisions
+    return 60000L / (if(bpm == 0) 60 else bpm) /
+      loop.subdivisions
   }
 
   fun getPosition(loop: Loop): Loop.Position {
     val tickCount = millisCount / getMillisPerTick(loop)
     return loop.getPosition(tickCount.toInt())
+  }
+
+  fun pausePlayer() {
+    Log.d("PlayerViewModel", "Player Paused")
+    tickingJob?.cancel()
+    isRunning = false
+  }
+
+  fun resetPlayer() {
+    millisCount = 0
   }
 }

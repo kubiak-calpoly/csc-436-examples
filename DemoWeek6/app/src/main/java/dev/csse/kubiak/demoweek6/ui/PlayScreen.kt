@@ -99,7 +99,7 @@ fun PlayScreen(
           style = MaterialTheme.typography.displayLarge )
       }
       IconButton(
-        onClick = { }
+        onClick = { playerViewModel.resetPlayer() }
       ) {
         Icon(
           painterResource(R.drawable.baseline_skip_previous_24),
@@ -109,6 +109,7 @@ fun PlayScreen(
       }
       Spacer(modifier = Modifier.width(20.dp))
       IconButton(
+        enabled = !playerViewModel.isRunning,
         onClick = {playerViewModel.startPlayer(loop) }
       ) {
         Icon(
@@ -119,8 +120,8 @@ fun PlayScreen(
       }
       Spacer(modifier = Modifier.width(20.dp))
       IconButton(
-        enabled = false,
-        onClick = { }
+        enabled = playerViewModel.isRunning,
+        onClick = {playerViewModel.pausePlayer()}
       ) {
         Icon(
           painterResource(R.drawable.baseline_pause_circle_24),
