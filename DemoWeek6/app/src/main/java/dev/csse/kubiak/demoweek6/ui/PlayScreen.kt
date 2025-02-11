@@ -1,6 +1,7 @@
 package dev.csse.kubiak.demoweek6.ui
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -32,6 +33,7 @@ import androidx.compose.ui.draw.scale
 import androidx.compose.ui.modifier.modifierLocalOf
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -76,66 +78,31 @@ fun PlayScreen(
       verticalAlignment = Alignment.CenterVertically
     ) {
       loop.beats.forEach {
-        Beat(it,
+        Beat(
+          it,
           hasBeenPlayed = it.beat < position.beat ||
                   it.beat == position.beat &&
                   it.subdivision < position.subdivision,
-          isPlaying =  playerViewModel.isRunning &&
+          isPlaying = playerViewModel.isRunning &&
                   it.beat == position.beat &&
-                  it.subdivision == position.subdivision
-          )
+                  it.subdivision == position.subdivision,
+          modifier = Modifier.weight(1f)
+        )
       }
     }
     Row(
-      modifier = Modifier.fillMaxWidth(),
-      verticalAlignment = Alignment.CenterVertically,
-      horizontalArrangement = Arrangement.Center
+      modifier = Modifier
+        .fillMaxWidth()
+        .padding(12.dp),
+      verticalAlignment = Alignment.CenterVertically
     ) {
-      Column (modifier = Modifier.weight(1f),
-        horizontalAlignment =  Alignment.CenterHorizontally ) {
-        Text("LOOP",
-          style = MaterialTheme.typography.labelSmall)
-        Text(position.iteration.toString(),
-          style = MaterialTheme.typography.displayLarge )
-      }
-      IconButton(
-        onClick = { playerViewModel.resetPlayer() }
-      ) {
-        Icon(
-          painterResource(R.drawable.baseline_skip_previous_24),
-          contentDescription = "Restart",
-          modifier = Modifier.scale(2.5f)
-        )
-      }
-      Spacer(modifier = Modifier.width(20.dp))
-      IconButton(
-        enabled = !playerViewModel.isRunning,
-        onClick = {playerViewModel.startPlayer(loop) }
-      ) {
-        Icon(
-          painterResource(R.drawable.baseline_play_circle_24),
-          contentDescription = "Play",
-          modifier = Modifier.scale(2.5f)
-        )
-      }
-      Spacer(modifier = Modifier.width(20.dp))
-      IconButton(
-        enabled = playerViewModel.isRunning,
-        onClick = {playerViewModel.pausePlayer()}
-      ) {
-        Icon(
-          painterResource(R.drawable.baseline_pause_circle_24),
-          contentDescription = "Pause",
-          modifier = Modifier.scale(2.5f)
-        )
-      }
-      Column (modifier = Modifier.weight(1f),
-        horizontalAlignment =  Alignment.CenterHorizontally ) {
-        Text("BAR",
-          style = MaterialTheme.typography.labelSmall)
-        Text(position.bar.toString(),
-          style = MaterialTheme.typography.displayLarge )
-      }
+      PlayerPosition(position, modifier = Modifier.weight(1f))
+      PlayerControls(
+        isRunning = playerViewModel.isRunning,
+        onPlay =  { playerViewModel.startPlayer(loop) },
+        onPause =  { playerViewModel.pausePlayer() },
+        onReset = { playerViewModel.resetPlayer() },
+        modifier = Modifier.weight(1f))
     }
 
   }
@@ -164,22 +131,86 @@ fun Beat(
   beat: Division,
   hasBeenPlayed: Boolean = false,
   isPlaying: Boolean = false,
+  modifier: Modifier = Modifier
 ) {
   val bg = if (hasBeenPlayed)
     MaterialTheme.colorScheme.surfaceDim
   else MaterialTheme.colorScheme.surface
 
   Box(
-    modifier = Modifier
+    modifier = modifier
       .background(bg)
       .fillMaxHeight()
   ) {
     Shape(
       lit = isPlaying,
       modifier = Modifier.align(Alignment.BottomCenter)
+        .padding(0.dp, 8.dp)
     )
   }
 
+}
+
+@Composable
+fun PlayerPosition(
+  position: Loop.Position,
+  modifier: Modifier = Modifier
+) {
+  Text(
+    "${position.iteration}:" +
+            "${position.bar}.${position.beat}.${position.subdivision}",
+    style = MaterialTheme.typography.displayMedium,
+    textAlign = TextAlign.Center,
+    modifier = modifier.border(
+      width = 2.dp,
+      color = MaterialTheme.colorScheme.primary
+    )
+  )
+}
+
+@Composable
+fun PlayerControls(
+  isRunning: Boolean = false,
+  onPlay: () -> Unit = {},
+  onPause: () -> Unit = {},
+  onReset: () -> Unit = {},
+  modifier: Modifier = Modifier
+) {
+  Row(
+    modifier = modifier,
+    horizontalArrangement = Arrangement.SpaceEvenly,
+    verticalAlignment = Alignment.CenterVertically
+  ) {
+    IconButton(
+      onClick = onReset
+    ) {
+      Icon(
+        painterResource(R.drawable.baseline_skip_previous_24),
+        contentDescription = "Restart",
+        modifier = Modifier.scale(2.5f)
+      )
+    }
+    IconButton(
+      enabled = !isRunning,
+      onClick = onPlay
+    ) {
+      Icon(
+        painterResource(R.drawable.baseline_play_circle_24),
+        contentDescription = "Play",
+        modifier = Modifier.scale(2.5f)
+      )
+    }
+    IconButton(
+      enabled = isRunning,
+      onClick = onPause
+    ) {
+      Icon(
+        painterResource(R.drawable.baseline_pause_circle_24),
+        contentDescription = "Pause",
+        modifier = Modifier.scale(2.5f)
+      )
+    }
+  }
 }
 
 @Composable
