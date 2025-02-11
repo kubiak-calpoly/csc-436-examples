@@ -1,11 +1,15 @@
 package dev.csse.kubiak.demoweek6
 
+import android.content.pm.PackageManager
+import android.Manifest
 import android.content.res.Configuration
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
@@ -13,6 +17,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.core.app.ActivityCompat
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
@@ -36,6 +41,17 @@ class MainActivity : ComponentActivity() {
         LooperApp(playerViewModel = playerViewModel!!)
       }
     }
+    // Only need permision to post notifications on Tiramisu and above
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
+      ActivityCompat.checkSelfPermission(
+        this,
+        Manifest.permission.POST_NOTIFICATIONS
+      ) == PackageManager.PERMISSION_DENIED
+    ) {
+      permissionRequestLauncher.launch(
+        Manifest.permission.POST_NOTIFICATIONS
+      )
+    }
   }
 
   override fun onStop() {
@@ -48,7 +64,15 @@ class MainActivity : ComponentActivity() {
     )
 
     if (isRunning) {
-      startWorker(playerViewModel!!)
+      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU ||
+        ActivityCompat.checkSelfPermission(
+          this,
+          Manifest.permission.POST_NOTIFICATIONS
+        ) ==
+        PackageManager.PERMISSION_GRANTED
+      ) {
+        startWorker(playerViewModel!!)
+      }
     }
   }
 
@@ -67,4 +91,14 @@ class MainActivity : ComponentActivity() {
       .enqueue(looperWorkRequest)
   }
 
+  private val permissionRequestLauncher =
+    registerForActivityResult(
+      ActivityResultContracts.RequestPermission()
+    ) { isGranted ->
+      val message =
+        if (isGranted) "Permission granted"
+        else "Permission NOT granted"
+
+      Log.i("Looper", message)
+    }
 }
