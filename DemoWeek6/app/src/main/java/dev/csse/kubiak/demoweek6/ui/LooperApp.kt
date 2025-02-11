@@ -24,7 +24,8 @@ sealed class Routes {
 @Composable
 fun LooperApp(
   modifier: Modifier = Modifier,
-  looperViewModel: LooperViewModel = viewModel()
+  looperViewModel: LooperViewModel = viewModel(),
+  playerViewModel: PlayerViewModel = viewModel(),
 ) {
   val navController = rememberNavController()
 
@@ -40,7 +41,11 @@ fun LooperApp(
       }
 
       composable<Routes.Play> {
-        PlayScreen(looperViewModel.loop, modifier = modPadding)
+        PlayScreen(
+          looperViewModel.loop,
+          modifier = modPadding,
+          playerViewModel = playerViewModel
+        )
       }
     }
 
