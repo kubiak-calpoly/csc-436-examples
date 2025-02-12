@@ -64,7 +64,7 @@ class MainActivity : ComponentActivity() {
     )
 
     if (isRunning) {
-      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU ||
+      if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU ||
         ActivityCompat.checkSelfPermission(
           this,
           Manifest.permission.POST_NOTIFICATIONS
