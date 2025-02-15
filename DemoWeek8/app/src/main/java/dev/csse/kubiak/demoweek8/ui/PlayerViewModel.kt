@@ -91,6 +91,10 @@ class PlayerViewModel : ViewModel() {
 
   private fun playSoundAtPosition(position: Loop.Position, sound: MediaPlayer ) {
     if ( position.subdivision == 1 ) {
+      if (sound.isPlaying) {
+        sound.stop()
+        sound.prepare()
+      }
       sound.start()
     }
   }
