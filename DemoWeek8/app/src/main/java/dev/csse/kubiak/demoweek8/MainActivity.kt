@@ -1,92 +1,98 @@
 package dev.csse.kubiak.demoweek8
 
+import android.content.pm.PackageManager
+import android.Manifest
 import android.media.MediaPlayer
+import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.modifier.modifierLocalOf
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.app.ActivityCompat
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.media3.common.Player
+import androidx.media3.exoplayer.ExoPlayer
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.WorkManager
+import androidx.work.WorkRequest
+import androidx.work.workDataOf
+import dev.csse.kubiak.demoweek8.ui.LooperApp
+import dev.csse.kubiak.demoweek8.ui.PlayerViewModel
 import dev.csse.kubiak.demoweek8.ui.theme.DemoWeek8Theme
 
 class MainActivity : ComponentActivity() {
+  private var playerViewModel: PlayerViewModel? = null
+
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     enableEdgeToEdge()
     setContent {
+      playerViewModel = viewModel()
       DemoWeek8Theme {
-        Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-          AudioApp(modifier = Modifier.padding(innerPadding))
-        }
+        LooperApp(playerViewModel = playerViewModel!!)
       }
     }
+
+    // Only need permision to post notifications on Tiramisu and above
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
+      ActivityCompat.checkSelfPermission(
+        this,
+        Manifest.permission.POST_NOTIFICATIONS
+      ) == PackageManager.PERMISSION_DENIED
+    ) {
+      permissionRequestLauncher.launch(
+        Manifest.permission.POST_NOTIFICATIONS
+      )
+    }
   }
-}
 
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun AudioApp(modifier: Modifier = Modifier) {
+  override fun onStop() {
+    super.onStop()
+    val isRunning = playerViewModel?.isRunning ?: false
 
-  // Fetching the local context
-  val mContext = LocalContext.current
+    Log.d(
+      "Looper",
+      "App has stopped, player is ${if (!isRunning) "NOT " else ""} running"
+    )
 
-  // Declaring and Initializing
-  // the MediaPlayer to play a WAV file
-  val mMediaPlayer = MediaPlayer.create(mContext, R.raw.rd_t_ft_1)
-
-  Column(
-    modifier = Modifier.fillMaxSize(),
-    verticalArrangement = Arrangement.Center,
-    horizontalAlignment = Alignment.CenterHorizontally
-  ) {
-
-    Row {
-      // IconButton for Start Action
-      IconButton(onClick = { mMediaPlayer.start() }) {
-        Icon(
-          painter = painterResource(id = R.drawable.baseline_play_circle_outline_24),
-          contentDescription = "",
-          Modifier.size(100.dp)
-        )
-      }
-
-      // IconButton for Pause Action
-      IconButton(onClick = { mMediaPlayer.pause() }) {
-        Icon(
-          painter = painterResource(id = R.drawable.baseline_pause_circle_outline_24),
-          contentDescription = "",
-          Modifier.size(100.dp)
-        )
+    if (isRunning) {
+      if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU ||
+        ActivityCompat.checkSelfPermission(
+          this,
+          Manifest.permission.POST_NOTIFICATIONS
+        ) ==
+        PackageManager.PERMISSION_GRANTED
+      ) {
+        startWorker(playerViewModel!!)
       }
     }
   }
 
+  private fun startWorker(playerViewModel: PlayerViewModel) {
+    val looperWorkRequest: WorkRequest =
+      OneTimeWorkRequestBuilder<LooperWorker>()
+        .setInputData(
+          workDataOf(
+            // KEY_MILLIS_COUNT to playerViewModel.millisCount,
+            KEY_TOTAL_MILLIS to playerViewModel.totalMillis,
+            // KEY_ITERATION_MILLIS to playerViewModel.millisPerIteration
+          )
+        ).build()
 
-}
+    WorkManager.getInstance(applicationContext)
+      .enqueue(looperWorkRequest)
+  }
 
-// For displaying preview in
-// the Android Studio IDE emulator
-@Preview(showBackground = true)
-@Composable
-fun DefaultPreview() {
-  AudioApp()
+  private val permissionRequestLauncher =
+    registerForActivityResult(
+      ActivityResultContracts.RequestPermission()
+    ) { isGranted ->
+      val message =
+        if (isGranted) "Permission granted"
+        else "Permission NOT granted"
+
+      Log.i("Looper", message)
+    }
 }
