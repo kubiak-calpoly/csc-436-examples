@@ -4,14 +4,10 @@ import android.content.Context
 import android.media.SoundPool
 
 class Track {
-  val sounds: SoundPool = SoundPool.Builder()
-    .setMaxStreams(16)
-    .build()
+
   val hits: MutableList<Hit> = mutableListOf()
 
-  fun addSound(context: Context, resId: Int, priority: Int = 1): Int {
-    return sounds.load(context, resId, priority)
-  }
+
 
   fun addHit(position: Position, soundId: Int) {
     hits.add(Hit(position, soundId))
@@ -45,7 +41,7 @@ class Track {
     val rightVolume: Float = 1.0f
   ) {
     fun play() {
-      sounds.play(soundId, leftVolume, rightVolume, 1, 0, 0f)
+      // sounds.play(soundId, leftVolume, rightVolume, 1, 0, 0f)
     }
   }
 }
