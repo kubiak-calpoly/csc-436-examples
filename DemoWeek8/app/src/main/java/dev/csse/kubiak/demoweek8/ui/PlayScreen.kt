@@ -40,7 +40,6 @@ fun PlayScreen(
   modifier: Modifier = Modifier,
   playerViewModel: PlayerViewModel = viewModel()
 ) {
-  val context = LocalContext.current
   val position: Loop.Position  by playerViewModel
     .positionState.collectAsStateWithLifecycle()
 
@@ -84,20 +83,7 @@ fun PlayScreen(
         )
       }
     }
-    Row(
-      modifier = Modifier
-        .fillMaxWidth()
-        .padding(12.dp),
-      verticalAlignment = Alignment.CenterVertically
-    ) {
-      PlayerPosition(position, modifier = Modifier.weight(1f))
-      PlayerControls(
-        isRunning = playerViewModel.isRunning,
-        onPlay =  { playerViewModel.startPlayer(context, loop) },
-        onPause =  { playerViewModel.pausePlayer() },
-        onReset = { playerViewModel.resetPlayer() },
-        modifier = Modifier.weight(1f))
-    }
+
 
   }
 
@@ -145,67 +131,7 @@ fun Beat(
 
 }
 
-@Composable
-fun PlayerPosition(
-  position: Loop.Position,
-  modifier: Modifier = Modifier
-) {
-  Text(
-    "${position.iteration}:" +
-            "${position.bar}.${position.beat}.${position.subdivision}",
-    style = MaterialTheme.typography.displayMedium,
-    textAlign = TextAlign.Center,
-    modifier = modifier.border(
-      width = 2.dp,
-      color = MaterialTheme.colorScheme.primary
-    )
-  )
-}
 
-@Composable
-fun PlayerControls(
-  isRunning: Boolean = false,
-  onPlay: () -> Unit = {},
-  onPause: () -> Unit = {},
-  onReset: () -> Unit = {},
-  modifier: Modifier = Modifier
-) {
-  Row(
-    modifier = modifier,
-    horizontalArrangement = Arrangement.SpaceEvenly,
-    verticalAlignment = Alignment.CenterVertically
-  ) {
-    IconButton(
-      onClick = onReset
-    ) {
-      Icon(
-        painterResource(R.drawable.baseline_skip_previous_24),
-        contentDescription = "Restart",
-        modifier = Modifier.scale(2.5f)
-      )
-    }
-    IconButton(
-      enabled = !isRunning,
-      onClick = onPlay
-    ) {
-      Icon(
-        painterResource(R.drawable.baseline_play_circle_24),
-        contentDescription = "Play",
-        modifier = Modifier.scale(2.5f)
-      )
-    }
-    IconButton(
-      enabled = isRunning,
-      onClick = onPause
-    ) {
-      Icon(
-        painterResource(R.drawable.baseline_pause_circle_24),
-        contentDescription = "Pause",
-        modifier = Modifier.scale(2.5f)
-      )
-    }
-  }
-}
 
 @Composable
 fun NumberField(

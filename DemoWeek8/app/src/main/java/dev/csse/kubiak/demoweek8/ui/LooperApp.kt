@@ -9,6 +9,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
+import dev.csse.kubiak.demoweek8.AudioEngine
 import dev.csse.kubiak.demoweek8.ui.ConfigScreen
 import dev.csse.kubiak.demoweek8.ui.PlayScreen
 import dev.csse.kubiak.demoweek8.Loop
@@ -26,12 +27,21 @@ sealed class Routes {
 @Composable
 fun LooperApp(
   modifier: Modifier = Modifier,
+  engine: AudioEngine,
   looperViewModel: LooperViewModel = viewModel(),
   playerViewModel: PlayerViewModel = viewModel(),
 ) {
   val navController = rememberNavController()
 
-  Scaffold() { innerPadding ->
+  Scaffold(
+    bottomBar = {
+      AudioPlayer(
+        looperViewModel.loop,
+        engine = engine,
+        playerViewModel = playerViewModel
+      )
+    }
+  ) { innerPadding ->
     val modPadding = Modifier.padding(innerPadding)
 
     NavHost(

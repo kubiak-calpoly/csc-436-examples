@@ -32,13 +32,15 @@ class PlayerViewModel : ViewModel() {
   var iterations: Int by mutableIntStateOf(4)
   var bpm: Int by mutableIntStateOf(120)
 
-  var runningLoop: Loop? = null
+  var runningLoop: Loop? by mutableStateOf(null)
   var isRunning: Boolean = false
-    get() { return runningLoop != null }
+    get() {
+      return runningLoop != null
+    }
 
   val millisPerTick: Long
     get() {
-      return if ( runningLoop != null ) getMillisPerTick(runningLoop!!)
+      return if (runningLoop != null) getMillisPerTick(runningLoop!!)
       else 0L
     }
 
@@ -58,23 +60,25 @@ class PlayerViewModel : ViewModel() {
   val positionFlow: Flow<Loop.Position> = flow {
     if (runningLoop != null) {
       var millisCount = 0L
+      isRunning = true
       Log.d("PlayerViewModel", "starting flow at $millisCount")
-      while( millisCount <= totalMillis) {
+      while (millisCount < totalMillis) {
         Log.d("PlayerViewModel", "emitting position at ${millisCount}ms")
         emit(getPosition(runningLoop!!, millisCount))
         delay(millisPerTick)
         millisCount += millisPerTick
       }
-      runningLoop = null
       emit(Loop.Position())
+      runningLoop = null
+      isRunning = false
     }
   }
 
-  fun startPlayer(context: Context, loop: Loop) {
-    val audioPlayer = MediaPlayer.create(
-      context,
-      R.raw.rd_t_ft_1
-    )
+  fun startPlayer(
+    context: Context,
+    loop: Loop,
+    lambda: (Loop.Position) -> Unit = {}
+  ) {
     runningLoop = loop
     Log.d(
       "PlayerViewModel",
@@ -83,25 +87,16 @@ class PlayerViewModel : ViewModel() {
 
     tickerJob = viewModelScope.launch(Dispatchers.Default) {
       positionFlow.collect {
-        playSoundAtPosition(it, audioPlayer)
         _positionState.value = it
+        lambda(it)
       }
     }
   }
 
-  private fun playSoundAtPosition(position: Loop.Position, sound: MediaPlayer ) {
-    if ( position.subdivision == 1 ) {
-      if (sound.isPlaying) {
-        sound.stop()
-        sound.prepare()
-      }
-      sound.start()
-    }
-  }
 
   fun getMillisPerTick(loop: Loop): Long {
-    return 60000L / (if(bpm == 0) 60 else bpm) /
-      loop.subdivisions
+    return 60000L / (if (bpm == 0) 60 else bpm) /
+            loop.subdivisions
   }
 
   fun getPosition(loop: Loop, millisCount: Long): Loop.Position {
@@ -112,9 +107,10 @@ class PlayerViewModel : ViewModel() {
   fun pausePlayer() {
     Log.d("PlayerViewModel", "Player Paused")
     tickerJob?.cancel()
+    isRunning = false
   }
 
   fun resetPlayer() {
-    //millisCount = 0
+    _positionState.value = Loop.Position()
   }
 }

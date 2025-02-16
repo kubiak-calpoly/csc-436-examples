@@ -24,75 +24,24 @@ import dev.csse.kubiak.demoweek8.ui.theme.DemoWeek8Theme
 
 class MainActivity : ComponentActivity() {
   private var playerViewModel: PlayerViewModel? = null
+  private var audioEngine: AudioEngine? = null
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
-    enableEdgeToEdge()
+    audioEngine = AudioEngine(applicationContext)
     setContent {
       playerViewModel = viewModel()
       DemoWeek8Theme {
-        LooperApp(playerViewModel = playerViewModel!!)
+        LooperApp(
+          engine = audioEngine!!,
+          playerViewModel = playerViewModel!!)
       }
-    }
-
-    // Only need permision to post notifications on Tiramisu and above
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
-      ActivityCompat.checkSelfPermission(
-        this,
-        Manifest.permission.POST_NOTIFICATIONS
-      ) == PackageManager.PERMISSION_DENIED
-    ) {
-      permissionRequestLauncher.launch(
-        Manifest.permission.POST_NOTIFICATIONS
-      )
     }
   }
 
   override fun onStop() {
     super.onStop()
-    val isRunning = playerViewModel?.isRunning ?: false
 
-    Log.d(
-      "Looper",
-      "App has stopped, player is ${if (!isRunning) "NOT " else ""} running"
-    )
-
-    if (isRunning) {
-      if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU ||
-        ActivityCompat.checkSelfPermission(
-          this,
-          Manifest.permission.POST_NOTIFICATIONS
-        ) ==
-        PackageManager.PERMISSION_GRANTED
-      ) {
-        startWorker(playerViewModel!!)
-      }
-    }
   }
 
-  private fun startWorker(playerViewModel: PlayerViewModel) {
-    val looperWorkRequest: WorkRequest =
-      OneTimeWorkRequestBuilder<LooperWorker>()
-        .setInputData(
-          workDataOf(
-            // KEY_MILLIS_COUNT to playerViewModel.millisCount,
-            KEY_TOTAL_MILLIS to playerViewModel.totalMillis,
-            // KEY_ITERATION_MILLIS to playerViewModel.millisPerIteration
-          )
-        ).build()
-
-    WorkManager.getInstance(applicationContext)
-      .enqueue(looperWorkRequest)
-  }
-
-  private val permissionRequestLauncher =
-    registerForActivityResult(
-      ActivityResultContracts.RequestPermission()
-    ) { isGranted ->
-      val message =
-        if (isGranted) "Permission granted"
-        else "Permission NOT granted"
-
-      Log.i("Looper", message)
-    }
 }
