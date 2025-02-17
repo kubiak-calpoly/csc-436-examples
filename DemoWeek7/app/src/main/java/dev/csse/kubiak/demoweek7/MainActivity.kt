@@ -21,7 +21,6 @@ import dev.csse.kubiak.demoweek7.ui.theme.DemoWeek7Theme
 
 class MainActivity : ComponentActivity() {
 
-  // private val playerViewModel = PlayerViewModel()
   private var playerViewModel: PlayerViewModel? = null
 
   override fun onCreate(savedInstanceState: Bundle?) {

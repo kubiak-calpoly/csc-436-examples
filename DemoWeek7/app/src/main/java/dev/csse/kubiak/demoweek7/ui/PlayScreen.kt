@@ -15,6 +15,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
+import androidx.compose.material3.rememberBottomAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -27,7 +28,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
-import dev.csse.kubiak.demoweek7.Division
 import dev.csse.kubiak.demoweek7.Loop
 import dev.csse.kubiak.demoweek7.R
 
@@ -68,15 +68,14 @@ fun PlayScreen(
       horizontalArrangement = Arrangement.SpaceEvenly,
       verticalAlignment = Alignment.CenterVertically
     ) {
-      loop.beats.forEach {
+      loop.forEachTick { bar, beat, subdivision ->
         Beat(
-          it,
-          hasBeenPlayed = it.beat < position.beat ||
-                  it.beat == position.beat &&
-                  it.subdivision < position.subdivision,
+          hasBeenPlayed = beat < position.beat ||
+                  beat == position.beat &&
+                  subdivision < position.subdivision,
           isPlaying = playerViewModel.isRunning &&
-                  it.beat == position.beat &&
-                  it.subdivision == position.subdivision,
+                  beat == position.beat &&
+                  subdivision == position.subdivision,
           modifier = Modifier.weight(1f)
         )
       }
@@ -118,8 +117,13 @@ fun Shape(
 }
 
 @Composable
+fun BeatForTick(bar: Int, beat: Int, subdivision: Int) {
+
+}
+
+
+@Composable
 fun Beat(
-  beat: Division,
   hasBeenPlayed: Boolean = false,
   isPlaying: Boolean = false,
   modifier: Modifier = Modifier
@@ -204,25 +208,7 @@ fun PlayerControls(
   }
 }
 
-@Composable
-fun NumberField(
-  labelText: String,
-  value: Int?,
-  onValueChange: (Int?) -> Unit,
-  modifier: Modifier = Modifier
-) {
-  TextField(
-    value = (value ?: "").toString(),
-    onValueChange = { v -> onValueChange(v.toIntOrNull()) },
-    label = { Text(labelText) },
-    singleLine = true,
-    keyboardOptions = KeyboardOptions(
-      keyboardType = KeyboardType.Number
-    ),
-    modifier = modifier,
-    textStyle = MaterialTheme.typography.displayLarge
-  )
-}
+
 
 @Preview
 @Composable
