@@ -33,10 +33,7 @@ class PlayerViewModel : ViewModel() {
   var bpm: Int by mutableIntStateOf(120)
 
   var runningLoop: Loop? by mutableStateOf(null)
-  var isRunning: Boolean = false
-    get() {
-      return runningLoop != null
-    }
+  var isRunning: Boolean by mutableStateOf(false)
 
   val millisPerTick: Long
     get() {
@@ -53,7 +50,7 @@ class PlayerViewModel : ViewModel() {
 
   val _positionState = MutableStateFlow(Loop.Position())
   var positionState: StateFlow<Loop.Position> =
-    _positionState //.asStateFlow()
+    _positionState.asStateFlow()
 
   var tickerJob: Job? = null
 

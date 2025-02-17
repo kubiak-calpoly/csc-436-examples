@@ -34,7 +34,8 @@ class MainActivity : ComponentActivity() {
       DemoWeek8Theme {
         LooperApp(
           engine = audioEngine!!,
-          playerViewModel = playerViewModel!!)
+          playerViewModel = playerViewModel!!
+        )
       }
     }
   }

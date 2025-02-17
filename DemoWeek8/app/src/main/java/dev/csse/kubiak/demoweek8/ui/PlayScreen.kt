@@ -133,25 +133,7 @@ fun Beat(
 
 
 
-@Composable
-fun NumberField(
-  labelText: String,
-  value: Int?,
-  onValueChange: (Int?) -> Unit,
-  modifier: Modifier = Modifier
-) {
-  TextField(
-    value = (value ?: "").toString(),
-    onValueChange = { v -> onValueChange(v.toIntOrNull()) },
-    label = { Text(labelText) },
-    singleLine = true,
-    keyboardOptions = KeyboardOptions(
-      keyboardType = KeyboardType.Number
-    ),
-    modifier = modifier,
-    textStyle = MaterialTheme.typography.displayLarge
-  )
-}
+
 
 @Preview
 @Composable

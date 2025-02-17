@@ -7,17 +7,13 @@ class Loop {
   val beats: MutableList<Division> = mutableListOf()
 
   init {
-    for(bar in (1)..barsToLoop) {
-      for(beat in (1)..beatsPerBar) {
-        for(div in (1)..subdivisions) {
-          beats.add(
-            Division(
-              beat = beat,
-              subdivision = div
-            )
-          )
-        }
-      }
+    forEachTick { bar, beat, div ->
+      beats.add(
+        Division(
+          beat = beat,
+          subdivision = div
+        )
+      )
     }
   }
 
@@ -33,6 +29,18 @@ class Loop {
       return beatsPerBar * subdivisions * barsToLoop
     }
 
+  fun forEachTick(
+    doTick: (bar: Int, beat: Int, subdivision: Int) -> Unit
+  ) {
+    for (bar in (1)..barsToLoop) {
+      for (beat in (1)..beatsPerBar) {
+        for (div in (1)..subdivisions) {
+          doTick(bar, beat, div)
+        }
+      }
+    }
+  }
+
   fun getPosition(tickCount: Int): Position {
     val iterationNumber = tickCount / ticksPerIteration
     val ticksThisIteration = tickCount -
@@ -44,7 +52,8 @@ class Loop {
     val beatNumber = ticksThisBar / subdivisions
     val subdivisionNumber = ticksThisBar -
             (subdivisions * beatNumber)
-    return Position(iterationNumber + 1,
+    return Position(
+      iterationNumber + 1,
       barNumber + 1,
       beatNumber + 1,
       subdivisionNumber + 1

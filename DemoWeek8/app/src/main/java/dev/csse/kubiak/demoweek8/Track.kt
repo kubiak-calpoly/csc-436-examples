@@ -2,47 +2,70 @@ package dev.csse.kubiak.demoweek8
 
 import android.content.Context
 import android.media.SoundPool
+import androidx.compose.runtime.key
 
-class Track {
+class Track(
+  val name: String = "Unnamed Track"
+) {
 
-  val hits: MutableList<Hit> = mutableListOf()
+  var hits: MutableMap<Position, Hit> = mutableMapOf()
+  var sound: String? = null
+  var soundId: Int? = null
 
-
-
-  fun addHit(position: Position, soundId: Int) {
-    hits.add(Hit(position, soundId))
-  }
-
-  fun removeHits(position: Position, soundId: Int? = null) {
-    hits.removeIf {
-      it.position == position &&
-              (soundId == null || soundId == it.soundId)
-    }
-  }
-
-  fun playHits(position: Position) {
-    hits.filter {
-      it.position == position
-    }.forEach {
-      it.play()
-    }
-  }
-
-  data class Position (
+  data class Position(
     val bar: Int = 1,
     val beat: Int = 1,
     val subdivision: Int = 1
   )
 
-  inner class Hit(
-    val position: Position,
-    val soundId: Int,
-    val leftVolume: Float = 1.0f,
-    val rightVolume: Float = 1.0f
-  ) {
-    fun play() {
-      // sounds.play(soundId, leftVolume, rightVolume, 1, 0, 0f)
+  data class Hit(
+    val volume: Float = 1.0f
+  )
+
+  fun copy(
+    name: String? = null,
+    sound: String? = null,
+    hits: Map<Position, Hit>? = null
+  ): Track {
+    val track = Track(if(name == null) this.name else name)
+    if(sound != null) {
+      track.sound = sound
+      track.soundId = null
     }
+    if(hits != null) track.hits = hits.toMutableMap()
+    return track
+  }
+
+  fun addHit(
+    position: Position,
+    volume: Float = 1.0f
+  ) : Track {
+    hits.set(key = position, value = Hit(volume))
+    return this
+  }
+
+  fun addHit(
+    beat: Int,
+    subdivision: Int = 1,
+    bar: Int = 1,
+    volume: Float = 1.0f
+  ): Track {
+    val position = Position(bar, beat, subdivision)
+    addHit(position, volume)
+    return this
+  }
+
+  fun removeHit(position: Position) {
+    hits.remove(key = position)
+  }
+
+  fun getHit(position: Position): Hit? {
+    return hits[position]
+  }
+
+  fun setSound(sound: String): Track {
+    this.sound = sound
+    return this
   }
 }
 
