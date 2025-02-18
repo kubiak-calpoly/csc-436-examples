@@ -30,18 +30,20 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import dev.csse.kubiak.demoweek7.AppPreferences
 import dev.csse.kubiak.demoweek7.AppStorage
+import dev.csse.kubiak.demoweek7.Track
 import kotlinx.coroutines.launch
 
 @Composable
 fun ConfigScreen(
   modifier: Modifier = Modifier,
-  //looperViewModel: LooperViewModel = viewModel()
+  looperViewModel: LooperViewModel = viewModel(
+    factory = LooperViewModel.Factory
+  )
 ) {
   val store = AppStorage(LocalContext.current)
   val appPrefs = store.appPreferencesFlow
     .collectAsStateWithLifecycle(initialValue = AppPreferences())
   val coroutineScope = rememberCoroutineScope()
-  //val loop = looperViewModel.loop
 
   Column(modifier = modifier) {
     Row {
@@ -80,5 +82,70 @@ fun ConfigScreen(
       )
     }
 
+    Row(
+      modifier = Modifier.fillMaxWidth(),
+      verticalAlignment = Alignment.CenterVertically,
+      horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+      Text(
+        "Tracks (${looperViewModel.tracks.size})",
+        style = MaterialTheme.typography.displaySmall
+      )
+      IconButton(
+        onClick = { looperViewModel.addTrack() }
+      ) {
+        Icon(
+          Icons.Outlined.AddCircle,
+          contentDescription = "Add track",
+          modifier = Modifier.scale(1.5f)
+
+        )
+      }
+    }
+
+    TrackList(
+      looperViewModel.tracks,
+      onUpdate = { i, t ->
+        looperViewModel.updateTrack(i) {t}
+      },
+      modifier = Modifier.weight(1f)
+    )
+
+
+
+  }
+}
+
+
+@Composable
+fun TrackList(
+  tracks: List<Track>,
+  onUpdate: (Int, Track) -> Unit,
+  modifier: Modifier = Modifier
+) {
+  Column(modifier = modifier) {
+    tracks.forEachIndexed { i, track ->
+      TrackView(track)
+    }
+  }
+}
+
+@Composable
+fun TrackView(
+  track: Track,
+) {
+  Card(
+    modifier = Modifier
+      .fillMaxWidth()
+      .padding(4.dp)
+  ) {
+    Column(modifier = Modifier.padding(12.dp)) {
+      Row(modifier = Modifier.fillMaxWidth()) {
+        Text(
+          track.name,
+          style = MaterialTheme.typography.displaySmall
+        )
+      }
+    }
   }
 }

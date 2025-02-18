@@ -3,6 +3,7 @@ package dev.csse.kubiak.demoweek7.ui
 import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -19,6 +20,9 @@ class LooperViewModel(
   prefStorage: AppStorage
 ) : ViewModel() {
   var loop: Loop by mutableStateOf(Loop())
+  val tracks = mutableStateListOf<Track>()
+
+
 
   init {
     viewModelScope.launch {
@@ -45,5 +49,21 @@ class LooperViewModel(
       }
     }
   }
+
+  fun addTrack(name: String = "Track"): Track {
+    val newTrack = Track(name)
+    tracks.add(0, newTrack)
+    return newTrack
+  }
+
+  fun updateTrack(
+    index: Int,
+    doUpdate: (Track) -> Track = { it }
+  ) {
+    val original = tracks[index]
+    val replacement = doUpdate(original)
+    tracks[index] = replacement
+  }
+
 }
 

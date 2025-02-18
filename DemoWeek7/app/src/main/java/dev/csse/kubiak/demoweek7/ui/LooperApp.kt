@@ -41,34 +41,30 @@ fun LooperApp(
 
   Scaffold(topBar = {
     TopAppBar(
-      title = {
-        Text(
-          "L∞per",
-          style = MaterialTheme.typography.displayMedium
-        )
-      },
+      title = { Text("L∞per",
+        style = MaterialTheme.typography.displayMedium) },
       actions = {
         TextButton(
-          onClick = { navController.navigate(Routes.Config) }
+          onClick = {navController.navigate(Routes.Config)}
         ) {
           Icon(
-            painterResource(R.drawable.outline_settings_24),
+            painterResource(R.drawable.outline_settings_24 ),
             contentDescription = "Config",
             modifier = Modifier.scale(2.0f)
           )
         }
         TextButton(
-          onClick = { navController.navigate(Routes.Play) },
+          onClick = {navController.navigate(Routes.Play)},
         ) {
           Icon(
-            painterResource(R.drawable.outline_dataset_24),
+            painterResource(R.drawable.outline_dataset_24 ),
             contentDescription = "Grid",
             modifier = Modifier.scale(2.0f)
           )
         }
       })
   }
-  ) { innerPadding ->
+    ) { innerPadding ->
     val modPadding = Modifier.padding(innerPadding)
 
     NavHost(
@@ -77,13 +73,14 @@ fun LooperApp(
     ) {
       composable<Routes.Config> {
         ConfigScreen(modifier = modPadding,
-          // looperViewModel = looperViewModel
+          looperViewModel = looperViewModel
         )
       }
 
       composable<Routes.Play> {
         PlayScreen(
           looperViewModel.loop,
+          looperViewModel.tracks,
           modifier = modPadding,
           playerViewModel = playerViewModel
         )
