@@ -10,11 +10,13 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.AddCircle
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -40,10 +42,13 @@ fun ConfigScreen(
     factory = LooperViewModel.Factory
   )
 ) {
-  val store = AppStorage(LocalContext.current)
+  val context = LocalContext.current
+  val store = AppStorage(context)
   val appPrefs = store.appPreferencesFlow
     .collectAsStateWithLifecycle(initialValue = AppPreferences())
   val coroutineScope = rememberCoroutineScope()
+  var filename by remember { mutableStateOf("") }
+
 
   Column(modifier = modifier) {
     Row {
@@ -111,7 +116,24 @@ fun ConfigScreen(
       modifier = Modifier.weight(1f)
     )
 
-
+    Card(modifier = Modifier.padding(24.dp)) {
+      Column(modifier = Modifier.fillMaxWidth(),
+        horizontalAlignment =  Alignment.CenterHorizontally ) {
+        TextField(
+          modifier = Modifier.fillMaxWidth(),
+          label = { Text("Tracks Filename") },
+          value = filename,
+          onValueChange = { name: String ->
+            filename = name
+          }
+        )
+        Button(
+          onClick = {
+            looperViewModel.loadTracksFromFile(context, filename)
+          }
+        ) { Text("Load Tracks") }
+      }
+    }
 
   }
 }
