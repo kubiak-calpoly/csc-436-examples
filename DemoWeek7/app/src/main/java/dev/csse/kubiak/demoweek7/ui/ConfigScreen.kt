@@ -35,34 +35,47 @@ import kotlinx.coroutines.launch
 @Composable
 fun ConfigScreen(
   modifier: Modifier = Modifier,
-  looperViewModel: LooperViewModel = viewModel()
+  //looperViewModel: LooperViewModel = viewModel()
 ) {
-  val loop = looperViewModel.loop
+  val store = AppStorage(LocalContext.current)
+  val appPrefs = store.appPreferencesFlow
+    .collectAsStateWithLifecycle(initialValue = AppPreferences())
+  val coroutineScope = rememberCoroutineScope()
+  //val loop = looperViewModel.loop
 
   Column(modifier = modifier) {
     Row {
       NumberField(
         modifier = Modifier.weight(1f),
         labelText = "Number of Bars",
-        value = loop.barsToLoop,
+        value = appPrefs.value.loopBars,
         onValueChange = { value ->
-          looperViewModel.loop = loop.copy(barsToLoop = value)
+          coroutineScope.launch() {
+            store.saveLoopBars(value)
+          }
+          // looperViewModel.loop = loop.copy(barsToLoop = value)
         }
       )
       NumberField(
         modifier = Modifier.weight(1f),
         labelText = "Beats per Bar",
-        value = loop.beatsPerBar ,
+        value = appPrefs.value.loopBeats ,
         onValueChange = { value ->
-          looperViewModel.loop = loop.copy(beatsPerBar = value)
+          coroutineScope.launch() {
+            store.saveLoopBeats(value)
+          }
+          //looperViewModel.loop = loop.copy(beatsPerBar = value)
         }
       )
       NumberField(
         modifier = Modifier.weight(1f),
         labelText = "Subdivisions",
-        value = loop.subdivisions,
+        value = appPrefs.value.loopDivisions,
         onValueChange = { value ->
-          looperViewModel.loop = loop.copy(subdivisions = value)
+          coroutineScope.launch() {
+            store.saveSubdivisions(value)
+          }
+          //looperViewModel.loop = loop.copy(subdivisions = value)
         }
       )
     }

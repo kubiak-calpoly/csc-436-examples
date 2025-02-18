@@ -76,7 +76,7 @@ fun PlayScreen(
                           beat == position.beat &&
                           subdivision < position.subdivision),
           isPlaying = playerViewModel.isRunning &&
-                  bar == position.bar && 
+                  bar == position.bar &&
                   beat == position.beat &&
                   subdivision == position.subdivision,
           modifier = Modifier.weight(1f)
