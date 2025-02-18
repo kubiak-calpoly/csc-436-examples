@@ -37,7 +37,7 @@ fun PlayScreen(
   modifier: Modifier = Modifier,
   playerViewModel: PlayerViewModel = viewModel()
 ) {
-  val position: Loop.Position  by playerViewModel
+  val position: Loop.Position by playerViewModel
     .positionState.collectAsStateWithLifecycle()
 
 
@@ -70,10 +70,13 @@ fun PlayScreen(
     ) {
       loop.forEachTick { bar, beat, subdivision ->
         Beat(
-          hasBeenPlayed = beat < position.beat ||
-                  beat == position.beat &&
-                  subdivision < position.subdivision,
+          hasBeenPlayed = bar < position.bar ||
+                  bar == position.bar &&
+                  (beat < position.beat ||
+                          beat == position.beat &&
+                          subdivision < position.subdivision),
           isPlaying = playerViewModel.isRunning &&
+                  bar == position.bar && 
                   beat == position.beat &&
                   subdivision == position.subdivision,
           modifier = Modifier.weight(1f)
@@ -89,10 +92,11 @@ fun PlayScreen(
       PlayerPosition(position, modifier = Modifier.weight(1f))
       PlayerControls(
         isRunning = playerViewModel.isRunning,
-        onPlay =  { playerViewModel.startPlayer(loop) },
-        onPause =  { playerViewModel.pausePlayer() },
+        onPlay = { playerViewModel.startPlayer(loop) },
+        onPause = { playerViewModel.pausePlayer() },
         onReset = { playerViewModel.resetPlayer() },
-        modifier = Modifier.weight(1f))
+        modifier = Modifier.weight(1f)
+      )
     }
 
   }
@@ -139,7 +143,8 @@ fun Beat(
   ) {
     Shape(
       lit = isPlaying,
-      modifier = Modifier.align(Alignment.BottomCenter)
+      modifier = Modifier
+        .align(Alignment.BottomCenter)
         .padding(0.dp, 8.dp)
     )
   }
@@ -207,7 +212,6 @@ fun PlayerControls(
     }
   }
 }
-
 
 
 @Preview

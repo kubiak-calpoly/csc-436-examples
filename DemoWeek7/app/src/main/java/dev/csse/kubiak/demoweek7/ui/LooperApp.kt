@@ -32,39 +32,41 @@ sealed class Routes {
 @Composable
 fun LooperApp(
   modifier: Modifier = Modifier,
-  looperViewModel: LooperViewModel = viewModel(
-    factory = LooperViewModel.Factory
-  ),
+  looperViewModel: LooperViewModel = viewModel(),
   playerViewModel: PlayerViewModel = viewModel(),
 ) {
   val navController = rememberNavController()
 
   Scaffold(topBar = {
     TopAppBar(
-      title = { Text("L∞per",
-        style = MaterialTheme.typography.displayMedium) },
+      title = {
+        Text(
+          "L∞per",
+          style = MaterialTheme.typography.displayMedium
+        )
+      },
       actions = {
         TextButton(
-          onClick = {navController.navigate(Routes.Config)}
+          onClick = { navController.navigate(Routes.Config) }
         ) {
           Icon(
-            painterResource(R.drawable.outline_settings_24 ),
+            painterResource(R.drawable.outline_settings_24),
             contentDescription = "Config",
             modifier = Modifier.scale(2.0f)
           )
         }
         TextButton(
-          onClick = {navController.navigate(Routes.Play)},
+          onClick = { navController.navigate(Routes.Play) },
         ) {
           Icon(
-            painterResource(R.drawable.outline_dataset_24 ),
+            painterResource(R.drawable.outline_dataset_24),
             contentDescription = "Grid",
             modifier = Modifier.scale(2.0f)
           )
         }
       })
   }
-    ) { innerPadding ->
+  ) { innerPadding ->
     val modPadding = Modifier.padding(innerPadding)
 
     NavHost(
@@ -72,7 +74,9 @@ fun LooperApp(
       startDestination = Routes.Config
     ) {
       composable<Routes.Config> {
-        ConfigScreen(modifier = modPadding)
+        ConfigScreen(modifier = modPadding,
+          looperViewModel = looperViewModel
+        )
       }
 
       composable<Routes.Play> {
