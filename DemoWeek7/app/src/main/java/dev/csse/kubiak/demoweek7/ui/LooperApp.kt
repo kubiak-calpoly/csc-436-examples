@@ -72,12 +72,15 @@ fun LooperApp(
       startDestination = Routes.Config
     ) {
       composable<Routes.Config> {
-        ConfigScreen(modifier = modPadding)
+        ConfigScreen(modifier = modPadding,
+          looperViewModel = looperViewModel
+        )
       }
 
       composable<Routes.Play> {
         PlayScreen(
           looperViewModel.loop,
+          looperViewModel.tracks,
           modifier = modPadding,
           playerViewModel = playerViewModel
         )

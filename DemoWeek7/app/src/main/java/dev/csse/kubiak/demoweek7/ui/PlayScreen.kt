@@ -1,5 +1,6 @@
 package dev.csse.kubiak.demoweek7.ui
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -8,6 +9,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.mandatorySystemGesturesPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Icon
@@ -18,6 +20,7 @@ import androidx.compose.material3.TextField
 import androidx.compose.material3.rememberBottomAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.internal.composableLambdaInstance
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
@@ -30,10 +33,12 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import dev.csse.kubiak.demoweek7.Loop
 import dev.csse.kubiak.demoweek7.R
+import dev.csse.kubiak.demoweek7.Track
 
 @Composable
 fun PlayScreen(
   loop: Loop,
+  tracks: List<Track> = listOf<Track>(),
   modifier: Modifier = Modifier,
   playerViewModel: PlayerViewModel = viewModel()
 ) {
@@ -70,13 +75,22 @@ fun PlayScreen(
     ) {
       loop.forEachTick { bar, beat, subdivision ->
         Beat(
-          hasBeenPlayed = beat < position.beat ||
+          hasBeenPlayed = bar < position.bar ||
+                  bar == position.bar && (
+                  beat < position.beat ||
                   beat == position.beat &&
-                  subdivision < position.subdivision,
+                  subdivision < position.subdivision),
           isPlaying = playerViewModel.isRunning &&
+                  bar == position.bar &&
                   beat == position.beat &&
                   subdivision == position.subdivision,
-          modifier = Modifier.weight(1f)
+          modifier = Modifier.weight(1f),
+          trackData = tracks.map { track: Track ->
+            val pos = Track.Position(
+              bar = bar, beat = beat, subdivision = subdivision
+            )
+            track.getHit(pos)?.volume
+          }
         )
       }
     }
@@ -117,15 +131,10 @@ fun Shape(
 }
 
 @Composable
-fun BeatForTick(bar: Int, beat: Int, subdivision: Int) {
-
-}
-
-
-@Composable
 fun Beat(
   hasBeenPlayed: Boolean = false,
   isPlaying: Boolean = false,
+  trackData: List<Float?> = listOf(),
   modifier: Modifier = Modifier
 ) {
   val bg = if (hasBeenPlayed)
@@ -142,6 +151,15 @@ fun Beat(
       modifier = Modifier.align(Alignment.BottomCenter)
         .padding(0.dp, 8.dp)
     )
+    trackData.forEachIndexed { i, hit ->
+      if (hit != null) {
+        Shape(
+          lit = isPlaying || hasBeenPlayed,
+          modifier = Modifier.align(Alignment.BottomCenter)
+            .padding(bottom = (32 + 16*i).dp)
+        )
+      }
+    }
   }
 
 }
