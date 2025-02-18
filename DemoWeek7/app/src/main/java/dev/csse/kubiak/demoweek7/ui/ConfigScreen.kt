@@ -19,6 +19,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -29,43 +30,47 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import dev.csse.kubiak.demoweek7.AppPreferences
 import dev.csse.kubiak.demoweek7.AppStorage
-import dev.csse.kubiak.demoweek7.Track
+import kotlinx.coroutines.launch
 
 @Composable
 fun ConfigScreen(
   modifier: Modifier = Modifier,
-  looperViewModel: LooperViewModel = viewModel()
 ) {
-  var loop = looperViewModel.loop
-
   val store = AppStorage(LocalContext.current)
   val appPrefs = store.appPreferencesFlow
-    .collectAsStateWithLifecycle(AppPreferences())
+    .collectAsStateWithLifecycle(initialValue = AppPreferences())
+  val coroutineScope = rememberCoroutineScope()
 
   Column(modifier = modifier) {
     Row {
       NumberField(
         modifier = Modifier.weight(1f),
         labelText = "Number of Bars",
-        value = loop.barsToLoop,
+        value = appPrefs.value.loopBars,
         onValueChange = { value ->
-          looperViewModel.loop = loop.copy(barsToLoop = value ?: 1)
+          coroutineScope.launch {
+            store.saveLoopBars(value)
+          }
         }
       )
       NumberField(
         modifier = Modifier.weight(1f),
         labelText = "Beats per Bar",
-        value = loop.beatsPerBar,
+        value = appPrefs.value.loopBeats,
         onValueChange = { value ->
-          looperViewModel.loop = loop.copy(beatsPerBar = value ?: 4)
+          coroutineScope.launch {
+            store.saveLoopBeats(value)
+          }
         }
       )
       NumberField(
         modifier = Modifier.weight(1f),
         labelText = "Subdivisions",
-        value = loop.subdivisions,
+        value = appPrefs.value.loopDivisions,
         onValueChange = { value ->
-          looperViewModel.loop = loop.copy(subdivisions = value ?: 2)
+          coroutineScope.launch {
+            store.saveSubdivisions(value)
+          }
         }
       )
     }

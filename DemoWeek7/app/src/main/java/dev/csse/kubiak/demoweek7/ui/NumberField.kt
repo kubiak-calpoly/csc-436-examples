@@ -20,14 +20,19 @@ fun NumberField(
   onValueChange: (Int) -> Unit,
   modifier: Modifier = Modifier
 ) {
-  var stringValue by remember { mutableStateOf(value.toString()) }
+  var isNull by remember { mutableStateOf(false) }
+  var stringValue = if ( !isNull ) value.toString() else ""
 
   TextField(
     value = stringValue,
     onValueChange = { v ->
-      stringValue = v
       val intValue = v.toIntOrNull()
-      if (intValue != null) onValueChange(intValue)
+      if (intValue == null) {
+        isNull = true
+      } else {
+        onValueChange(intValue)
+        isNull = false
+      }
     },
     label = { Text(labelText) },
     singleLine = true,

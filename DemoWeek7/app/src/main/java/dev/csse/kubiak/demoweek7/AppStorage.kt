@@ -1,6 +1,7 @@
 package dev.csse.kubiak.demoweek7
 
 import android.content.Context
+import android.util.Log
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
@@ -17,8 +18,7 @@ data class AppPreferences(
 
 class AppStorage(private val context: Context) {
   companion object {
-    private val Context.dataStore by
-    preferencesDataStore("app_storage")
+    private val Context.dataStore by preferencesDataStore("app_storage")
 
     private object PreferenceKeys {
       val LOOP_BARS = intPreferencesKey("loopBars")
@@ -27,13 +27,27 @@ class AppStorage(private val context: Context) {
       val PLAY_ITERATIONS = intPreferencesKey("playIterations")
       val PLAY_SPEED = intPreferencesKey("playSpeed")
     }
+
+    init {
+      Log.d("AppStorage","Initializing Companion object")
+    }
   }
 
-  suspend fun saveLoopConfig(loop: Loop) {
+  suspend fun saveLoopBars(barsToLoop: Int) {
     context.dataStore.edit { prefs ->
-      prefs[PreferenceKeys.LOOP_BARS] = loop.barsToLoop
-      prefs[PreferenceKeys.LOOP_BEATS] = loop.beatsPerBar
-      prefs[PreferenceKeys.LOOP_DIVISIONS] = loop.subdivisions
+      prefs[PreferenceKeys.LOOP_BARS] = barsToLoop
+    }
+  }
+
+  suspend fun saveLoopBeats(beatsPerBar: Int) {
+    context.dataStore.edit { prefs ->
+      prefs[PreferenceKeys.LOOP_BEATS] = beatsPerBar
+    }
+  }
+
+  suspend fun saveSubdivisions(subdivisions: Int) {
+    context.dataStore.edit { prefs ->
+      prefs[PreferenceKeys.LOOP_DIVISIONS] = subdivisions
     }
   }
 
@@ -46,12 +60,15 @@ class AppStorage(private val context: Context) {
 
   val appPreferencesFlow =
     context.dataStore.data.map { prefs ->
-      AppPreferences(
+      Log.d("AppStorage","Mapping Preferences: $prefs")
+      val out = AppPreferences(
         loopBars = prefs[PreferenceKeys.LOOP_BARS] ?: 1,
         loopBeats = prefs[PreferenceKeys.LOOP_BEATS] ?: 4,
         loopDivisions = prefs[PreferenceKeys.LOOP_DIVISIONS] ?: 2,
         playIterations = prefs[PreferenceKeys.PLAY_ITERATIONS] ?: 8,
-        playSpeed = prefs[PreferenceKeys.PLAY_SPEED] ?: 120,
+        playSpeed = prefs[PreferenceKeys.PLAY_SPEED] ?: 120
       )
+      Log.d("AppStorage","Prefs: ${out}")
+      out
     }
 }

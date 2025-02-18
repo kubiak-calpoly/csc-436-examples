@@ -32,7 +32,9 @@ sealed class Routes {
 @Composable
 fun LooperApp(
   modifier: Modifier = Modifier,
-  looperViewModel: LooperViewModel = viewModel<LooperViewModel>(),
+  looperViewModel: LooperViewModel = viewModel(
+    factory = LooperViewModel.Factory
+  ),
   playerViewModel: PlayerViewModel = viewModel(),
 ) {
   val navController = rememberNavController()
@@ -70,9 +72,7 @@ fun LooperApp(
       startDestination = Routes.Config
     ) {
       composable<Routes.Config> {
-        ConfigScreen(modifier = modPadding,
-          looperViewModel = looperViewModel
-        )
+        ConfigScreen(modifier = modPadding)
       }
 
       composable<Routes.Play> {
