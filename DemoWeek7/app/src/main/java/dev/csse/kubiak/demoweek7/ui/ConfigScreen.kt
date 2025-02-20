@@ -30,8 +30,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
-import dev.csse.kubiak.demoweek7.AppPreferences
-import dev.csse.kubiak.demoweek7.AppStorage
+import dev.csse.kubiak.demoweek7.data.AppPreferences
+import dev.csse.kubiak.demoweek7.data.AppStorage
 import dev.csse.kubiak.demoweek7.Track
 import kotlinx.coroutines.launch
 

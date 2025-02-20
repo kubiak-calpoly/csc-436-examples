@@ -1,4 +1,4 @@
-package dev.csse.kubiak.demoweek7
+package dev.csse.kubiak.demoweek7.data
 
 import android.content.Context
 import android.util.Log
@@ -6,7 +6,6 @@ import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import kotlinx.coroutines.flow.map
-import kotlin.Int
 
 data class AppPreferences(
   val loopBars: Int = 1,

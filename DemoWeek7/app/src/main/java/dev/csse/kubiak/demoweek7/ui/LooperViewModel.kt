@@ -11,7 +11,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
-import dev.csse.kubiak.demoweek7.AppStorage
+import dev.csse.kubiak.demoweek7.data.AppStorage
 import dev.csse.kubiak.demoweek7.Loop
 import dev.csse.kubiak.demoweek7.LooperApplication
 import dev.csse.kubiak.demoweek7.Track
