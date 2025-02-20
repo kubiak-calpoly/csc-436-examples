@@ -5,18 +5,18 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface LoopDao {
-  @Query("SELECT * FROM Loop WHERE id = :id")
-  fun getLoop(id: Long): Flow<Loop?>
+  @Query("SELECT * FROM LoopEntity WHERE id = :id")
+  fun getLoop(id: Long): Flow<LoopEntity?>
 
-  @Query("SELECT * FROM Loop ORDER BY title COLLATE NOCASE")
-  fun getLoops(): Flow<List<Loop>>
+  @Query("SELECT * FROM LoopEntity ORDER BY title COLLATE NOCASE")
+  fun getLoops(): Flow<List<LoopEntity>>
 
   @Insert(onConflict = OnConflictStrategy.REPLACE)
-  fun addLoop(entity: Loop): Long
+  fun addLoop(entity: LoopEntity): Long
 
   @Update
-  fun updateLoop(entity: Loop)
+  fun updateLoop(entity: LoopEntity)
 
   @Delete
-  fun deleteLoop(entity: Loop)
+  fun deleteLoop(entity: LoopEntity)
 }
