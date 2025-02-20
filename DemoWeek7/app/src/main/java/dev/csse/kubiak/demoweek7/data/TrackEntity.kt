@@ -6,12 +6,12 @@ import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
 
 @Entity(foreignKeys = [
-  ForeignKey(entity = Loop::class,
+  ForeignKey(entity = LoopEntity::class,
     parentColumns = ["id"],
     childColumns = ["loop_id"],
     onDelete = ForeignKey.CASCADE)
 ])
-data class Track(
+data class TrackEntity(
   @PrimaryKey(autoGenerate = true)
   var id: Long = 0,
 
