@@ -19,6 +19,7 @@ data class TrackEntity(
   var loopId: Long = 0L,
 
   var trackNum: Int = 0,
+  var name: String = "",
   var size: Int = 1,
   var data: String = ""
 

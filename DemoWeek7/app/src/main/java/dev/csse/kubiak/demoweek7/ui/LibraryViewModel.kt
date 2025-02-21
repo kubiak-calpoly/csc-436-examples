@@ -11,6 +11,7 @@ import dev.csse.kubiak.demoweek7.Track
 import dev.csse.kubiak.demoweek7.Loop
 import dev.csse.kubiak.demoweek7.data.LoopEntity
 import dev.csse.kubiak.demoweek7.data.LooperRepository
+import dev.csse.kubiak.demoweek7.data.TrackEntity
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
@@ -45,13 +46,21 @@ class LibraryViewModel(private val looperRepo: LooperRepository) : ViewModel() {
     beatsPerBar: Int,
     subdivisions: Int,
     tracks: List<Track>,
-  ) {
-    looperRepo.addLoop(
+  ): Long {
+    return looperRepo.addLoop(
       LoopEntity(title = title,
         barsToLoop = barsToLoop,
         beatsPerBar =  beatsPerBar,
         subdivisions = subdivisions
-      )
+      ),
+      tracks.mapIndexed { i, track ->
+        TrackEntity(
+          name = track.name,
+          trackNum = i,
+          size = track.getSize(),
+          data = track.getString()
+        )
+      }
     )
   }
 }
