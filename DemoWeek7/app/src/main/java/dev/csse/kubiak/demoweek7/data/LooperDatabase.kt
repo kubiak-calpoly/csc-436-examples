@@ -9,9 +9,7 @@ import androidx.room.RoomDatabase
     LoopEntity::class,
     TrackEntity::class
   ],
-  version = 1,
-  autoMigrations = [
-  ]
+  version = 1
 )
 abstract class LooperDatabase : RoomDatabase() {
   abstract fun trackDao(): TrackDao

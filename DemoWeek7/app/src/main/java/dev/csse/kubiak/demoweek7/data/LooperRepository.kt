@@ -18,7 +18,7 @@ class LooperRepository(context: Context) {
   private val database: LooperDatabase = Room.databaseBuilder(
     context,
     LooperDatabase::class.java,
-    "study.db"
+    "looper.db"
   )
     .addCallback(databaseCallback)
     .build()
@@ -28,11 +28,20 @@ class LooperRepository(context: Context) {
 
   fun getLoops() = loopDao.getLoops()
 
-  fun addLoop(loop: LoopEntity) {
+  fun addLoop(
+    loop: LoopEntity,
+    tracks: List<TrackEntity>
+  ): Long {
     if (loop.title.trim() != "") {
       CoroutineScope(Dispatchers.IO).launch {
         loop.id = loopDao.addLoop(loop)
+        tracks.forEach { track ->
+          track.loopId = loop.id
+          trackDao.addTrack(track)
+        }
       }
     }
+    return loop.id
   }
+
 }
