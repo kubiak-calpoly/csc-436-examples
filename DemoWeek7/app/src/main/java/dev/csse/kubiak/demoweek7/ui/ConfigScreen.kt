@@ -1,6 +1,7 @@
 package dev.csse.kubiak.demoweek7.ui
 
 
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.LocalActivity
 import androidx.compose.foundation.layout.Arrangement
@@ -30,8 +31,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
-import dev.csse.kubiak.demoweek7.AppPreferences
-import dev.csse.kubiak.demoweek7.AppStorage
+import dev.csse.kubiak.demoweek7.data.AppPreferences
+import dev.csse.kubiak.demoweek7.data.AppStorage
 import dev.csse.kubiak.demoweek7.Track
 import kotlinx.coroutines.launch
 
@@ -49,26 +50,31 @@ fun ConfigScreen(
   val coroutineScope = rememberCoroutineScope()
   var filename by remember { mutableStateOf("") }
 
+  val loop = looperViewModel.loop
+  Log.d("ConfigScreen", "Loop is now: $loop" )
+
   Column(modifier = modifier) {
     Row {
       NumberField(
         modifier = Modifier.weight(1f),
-        labelText = "Number of Bars",
+        labelText = "Bars",
         value = appPrefs.value.loopBars,
         onValueChange = { value ->
-          coroutineScope.launch {
+          coroutineScope.launch() {
             store.saveLoopBars(value)
           }
+          // looperViewModel.loop = loop.copy(barsToLoop = value)
         }
       )
       NumberField(
         modifier = Modifier.weight(1f),
         labelText = "Beats per Bar",
-        value = appPrefs.value.loopBeats,
+        value = appPrefs.value.loopBeats ,
         onValueChange = { value ->
-          coroutineScope.launch {
+          coroutineScope.launch() {
             store.saveLoopBeats(value)
           }
+          //looperViewModel.loop = loop.copy(beatsPerBar = value)
         }
       )
       NumberField(
@@ -76,13 +82,13 @@ fun ConfigScreen(
         labelText = "Subdivisions",
         value = appPrefs.value.loopDivisions,
         onValueChange = { value ->
-          coroutineScope.launch {
+          coroutineScope.launch() {
             store.saveSubdivisions(value)
           }
+          //looperViewModel.loop = loop.copy(subdivisions = value)
         }
       )
     }
-
 
     Row(
       modifier = Modifier.fillMaxWidth(),
@@ -113,28 +119,28 @@ fun ConfigScreen(
       modifier = Modifier.weight(1f)
     )
 
-    if (looperViewModel.tracks.size == 0) {
-      Card(modifier = Modifier.padding(24.dp)) {
-        Column(modifier = Modifier.fillMaxWidth(),
-          horizontalAlignment =  Alignment.CenterHorizontally ) {
-          TextField(
-            modifier = Modifier.fillMaxWidth(),
-            label = { Text("Tracks Filename") },
-            value = filename,
-            onValueChange = { name: String ->
-              filename = name
-            }
-          )
-          Button(
-            onClick = {
-              looperViewModel.loadTracksFromFile(context, filename)
-            }
-          ) { Text("Load Tracks") }
-        }
+    Card(modifier = Modifier.padding(24.dp)) {
+      Column(modifier = Modifier.fillMaxWidth(),
+        horizontalAlignment =  Alignment.CenterHorizontally ) {
+        TextField(
+          modifier = Modifier.fillMaxWidth(),
+          label = { Text("Tracks Filename") },
+          value = filename,
+          onValueChange = { name: String ->
+            filename = name
+          }
+        )
+        Button(
+          onClick = {
+            looperViewModel.loadTracksFromFile(context, filename)
+          }
+        ) { Text("Load Tracks") }
       }
     }
+
   }
 }
+
 
 @Composable
 fun TrackList(

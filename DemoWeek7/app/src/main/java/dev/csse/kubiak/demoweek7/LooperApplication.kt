@@ -3,18 +3,16 @@ package dev.csse.kubiak.demoweek7
 import android.app.Application
 import android.content.Context
 import android.util.Log
+import dev.csse.kubiak.demoweek7.data.LooperRepository
 
-class LooperApplication: Application() {
-  // Application context is needed to create the ViewModels with the
-  // ViewModelProvider.Factory
+class LooperApplication : Application() {
   lateinit var appContext: Context
+  lateinit var looperRepo: LooperRepository
 
-  // For onCreate() to run, android:name=".ToDoListApplication" must
-  // be added to <application> in AndroidManifest.xml
   override fun onCreate() {
     super.onCreate()
     Log.d("LooperApplication", "onCreate called")
     appContext = this.applicationContext
+    looperRepo = LooperRepository(appContext)
   }
 }
-

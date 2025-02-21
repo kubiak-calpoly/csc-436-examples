@@ -1,4 +1,4 @@
-package dev.csse.kubiak.demoweek7
+package dev.csse.kubiak.demoweek7.data
 
 import android.content.Context
 import android.util.Log
@@ -6,7 +6,6 @@ import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import kotlinx.coroutines.flow.map
-import kotlin.Int
 
 data class AppPreferences(
   val loopBars: Int = 1,
@@ -60,15 +59,12 @@ class AppStorage(private val context: Context) {
 
   val appPreferencesFlow =
     context.dataStore.data.map { prefs ->
-      Log.d("AppStorage","Mapping Preferences: $prefs")
-      val out = AppPreferences(
+      AppPreferences(
         loopBars = prefs[PreferenceKeys.LOOP_BARS] ?: 1,
         loopBeats = prefs[PreferenceKeys.LOOP_BEATS] ?: 4,
         loopDivisions = prefs[PreferenceKeys.LOOP_DIVISIONS] ?: 2,
         playIterations = prefs[PreferenceKeys.PLAY_ITERATIONS] ?: 8,
         playSpeed = prefs[PreferenceKeys.PLAY_SPEED] ?: 120
       )
-      Log.d("AppStorage","Prefs: ${out}")
-      out
     }
 }

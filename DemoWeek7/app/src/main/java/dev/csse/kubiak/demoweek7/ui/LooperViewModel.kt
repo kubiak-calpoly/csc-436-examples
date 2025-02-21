@@ -6,19 +6,19 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.setValue
+import androidx.datastore.preferences.preferencesDataStore
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
-import dev.csse.kubiak.demoweek7.AppStorage
+import dev.csse.kubiak.demoweek7.data.AppStorage
 import dev.csse.kubiak.demoweek7.Loop
 import dev.csse.kubiak.demoweek7.LooperApplication
 import dev.csse.kubiak.demoweek7.Track
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.io.BufferedReader
-import kotlin.coroutines.CoroutineContext
 
 class LooperViewModel(
   prefStorage: AppStorage
@@ -27,7 +27,6 @@ class LooperViewModel(
   val tracks = mutableStateListOf<Track>()
 
   init {
-    // Get app settings
     viewModelScope.launch {
       prefStorage.appPreferencesFlow.collect {
         loop = Loop(
@@ -35,6 +34,7 @@ class LooperViewModel(
           beatsPerBar = it.loopBeats,
           subdivisions = it.loopDivisions
         )
+        Log.d("LooperViewModel", "setloop from preferences: $loop")
       }
     }
   }
@@ -59,6 +59,7 @@ class LooperViewModel(
         val inputStream = context.openFileInput(filename)
         val reader = inputStream.bufferedReader()
         parseTracksInput(reader)
+        inputStream.close()
       } catch(e: Exception) {
         // TODO: Raise an alert
         Log.e("LooperViewModel", "Error reading tracks file '$filename': $e")
@@ -79,7 +80,6 @@ class LooperViewModel(
       if (matchResult != null) {
         val name = matchResult.groups[1]?.value
         if (name != null) {
-          Log.i("LooperViewModel", "Reading track $name")
           val track = addTrack(name)
           val bars = matchResult.groups[2]?.value?.drop(1)?.dropLast(1)
           val beats = bars?.split("|")?.map { bar ->
