@@ -6,6 +6,7 @@ import androidx.room.RoomDatabase
 import androidx.sqlite.db.SupportSQLiteDatabase
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 
 class LooperRepository(context: Context) {
@@ -27,11 +28,13 @@ class LooperRepository(context: Context) {
   private val loopDao = database.loopDao()
 
   fun getLoops() = loopDao.getLoops()
+  fun getTracks(loop: LoopEntity) =
+    trackDao.getTracks(loop.id)
 
   fun addLoop(
     loop: LoopEntity,
     tracks: List<TrackEntity>
-  ): Long {
+  ) {
     if (loop.title.trim() != "") {
       CoroutineScope(Dispatchers.IO).launch {
         loop.id = loopDao.addLoop(loop)
@@ -41,7 +44,6 @@ class LooperRepository(context: Context) {
         }
       }
     }
-    return loop.id
   }
 
 }

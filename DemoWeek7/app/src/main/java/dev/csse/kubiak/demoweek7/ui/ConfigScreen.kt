@@ -1,6 +1,7 @@
 package dev.csse.kubiak.demoweek7.ui
 
 
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.LocalActivity
 import androidx.compose.foundation.layout.Arrangement
@@ -48,6 +49,7 @@ fun ConfigScreen(
     .collectAsStateWithLifecycle(initialValue = AppPreferences())
   val coroutineScope = rememberCoroutineScope()
   var filename by remember { mutableStateOf("") }
+
 
   Column(modifier = modifier) {
     Row {
