@@ -6,6 +6,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.setValue
+import androidx.datastore.preferences.preferencesDataStore
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
@@ -25,8 +26,6 @@ class LooperViewModel(
   var loop: Loop by mutableStateOf(Loop())
   val tracks = mutableStateListOf<Track>()
 
-
-
   init {
     viewModelScope.launch {
       prefStorage.appPreferencesFlow.collect {
@@ -35,6 +34,7 @@ class LooperViewModel(
           beatsPerBar = it.loopBeats,
           subdivisions = it.loopDivisions
         )
+        Log.d("LooperViewModel", "setloop from preferences: $loop")
       }
     }
   }

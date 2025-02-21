@@ -12,19 +12,50 @@ import dev.csse.kubiak.demoweek7.Loop
 import dev.csse.kubiak.demoweek7.data.LoopEntity
 import dev.csse.kubiak.demoweek7.data.LooperRepository
 import dev.csse.kubiak.demoweek7.data.TrackEntity
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.emptyFlow
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 
-class LibraryViewModel(private val looperRepo: LooperRepository) : ViewModel() {
-  val uiState: StateFlow<LibraryScreenUiState> =
+class LibraryViewModel(
+  private val looperRepo: LooperRepository
+) : ViewModel() {
+
+  val selectedLoopFlow =
+    MutableStateFlow<LoopEntity?>(null)
+  val loopsFlow =
     looperRepo.getLoops()
-      .map {
+
+  @OptIn(ExperimentalCoroutinesApi::class)
+  val combinedFlow =
+    selectedLoopFlow.flatMapLatest { loop: LoopEntity? ->
+      val tracksFlow =
+        if (loop != null)
+          looperRepo.getTracks(loop)
+        else
+          flowOf(emptyList())
+      combine(
+        selectedLoopFlow,
+        loopsFlow,
+        tracksFlow
+      ) { selectedLoop, loops, tracks ->
         LibraryScreenUiState(
-          loopList = it
+          loopList = loops,
+          selectedLoopId = selectedLoop?.id,
+          trackList = tracks
         )
       }
+    }
+
+  val uiState: StateFlow<LibraryScreenUiState> =
+    combinedFlow
       .stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5000L),
@@ -46,11 +77,12 @@ class LibraryViewModel(private val looperRepo: LooperRepository) : ViewModel() {
     beatsPerBar: Int,
     subdivisions: Int,
     tracks: List<Track>,
-  ): Long {
-    return looperRepo.addLoop(
-      LoopEntity(title = title,
+  ) {
+    looperRepo.addLoop(
+      LoopEntity(
+        title = title,
         barsToLoop = barsToLoop,
-        beatsPerBar =  beatsPerBar,
+        beatsPerBar = beatsPerBar,
         subdivisions = subdivisions
       ),
       tracks.mapIndexed { i, track ->
@@ -63,9 +95,20 @@ class LibraryViewModel(private val looperRepo: LooperRepository) : ViewModel() {
       }
     )
   }
+
+  fun selectLoop(loop: LoopEntity) {
+    selectedLoopFlow.value = loop
+  }
+
+  fun deselectLoop() {
+    selectedLoopFlow.value = null
+  }
 }
+
 
 data class LibraryScreenUiState(
   val loopList: List<LoopEntity> = emptyList(),
+  val selectedLoopId: Long? = null,
+  val trackList: List<TrackEntity> = emptyList()
 )
 

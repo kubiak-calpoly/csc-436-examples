@@ -1,6 +1,7 @@
 package dev.csse.kubiak.demoweek7.ui
 
 
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.LocalActivity
 import androidx.compose.foundation.layout.Arrangement
@@ -49,12 +50,14 @@ fun ConfigScreen(
   val coroutineScope = rememberCoroutineScope()
   var filename by remember { mutableStateOf("") }
 
+  val loop = looperViewModel.loop
+  Log.d("ConfigScreen", "Loop is now: $loop" )
 
   Column(modifier = modifier) {
     Row {
       NumberField(
         modifier = Modifier.weight(1f),
-        labelText = "Number of Bars",
+        labelText = "Bars",
         value = appPrefs.value.loopBars,
         onValueChange = { value ->
           coroutineScope.launch() {
