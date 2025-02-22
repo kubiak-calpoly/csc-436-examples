@@ -26,9 +26,23 @@ class MainActivity : ComponentActivity() {
   private var playerViewModel: PlayerViewModel? = null
   private var audioEngine: AudioEngine? = null
 
+  private val permissionRequestLauncher =
+    registerForActivityResult(
+      ActivityResultContracts.RequestPermission()
+    ) { isGranted ->
+      val message = if (isGranted) "Permission granted" else "Permission NOT granted"
+      Log.i("MainActivity", message)
+    }
+
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     audioEngine = AudioEngine(applicationContext)
+    if (ActivityCompat.checkSelfPermission(this,
+        Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_DENIED) {
+      permissionRequestLauncher.launch(
+        Manifest.permission.RECORD_AUDIO
+      )
+    }
     setContent {
       playerViewModel = viewModel()
       DemoWeek8Theme {

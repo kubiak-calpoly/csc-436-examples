@@ -3,8 +3,6 @@ package dev.csse.kubiak.demoweek8.ui
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
@@ -12,12 +10,10 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.rememberBottomAppBarState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.scale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -28,11 +24,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
 import dev.csse.kubiak.demoweek8.data.AppStorage
-import dev.csse.kubiak.demoweek8.ui.BottomNavBar
 import dev.csse.kubiak.demoweek8.AudioEngine
-import dev.csse.kubiak.demoweek8.ui.ConfigScreen
-import dev.csse.kubiak.demoweek8.ui.PlayScreen
-import dev.csse.kubiak.demoweek8.Loop
 import dev.csse.kubiak.demoweek8.R
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -50,6 +42,9 @@ sealed class Routes {
   data class Library(
     val shouldSave: Boolean = false
   )
+
+  @Serializable
+  data object Sample
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -109,11 +104,17 @@ fun LooperApp(
           modifier = modPadding,
           playerViewModel = playerViewModel,
           bottomBar = {
-            AudioPlayer(engine,
+            LoopPlayer(engine,
               playerViewModel = playerViewModel,
               looperViewModel = looperViewModel
             )
           }
+        )
+      }
+
+      composable<Routes.Sample> {
+        SamplerScreen(
+          modifier = modPadding
         )
       }
 
@@ -143,6 +144,7 @@ fun LooperApp(
 enum class AppScreen(val route: Any, val title: String, val icon: Int) {
   LIBRARY(Routes.Library(), "Library", R.drawable.outline_view_list_24),
   GRID(Routes.Play, "Grid", R.drawable.outline_dataset_24),
+  SAMPLE(Routes.Sample, "Sampler", R.drawable.outline_mic_none_24 ),
   CONFIG(Routes.Config, "Config", R.drawable.outline_settings_24)
 }
 
