@@ -96,6 +96,8 @@ fun PlayScreen(
       }
     }
 
+    bottomBar()
+
   }
 
 }

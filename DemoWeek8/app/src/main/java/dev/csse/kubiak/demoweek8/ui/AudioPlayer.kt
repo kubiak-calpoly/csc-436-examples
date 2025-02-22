@@ -36,11 +36,13 @@ import kotlinx.coroutines.launch
 fun AudioPlayer(
   engine: AudioEngine,
   playerViewModel: PlayerViewModel = viewModel(),
-  looperViewModel: LooperViewModel = viewModel()
+  looperViewModel: LooperViewModel = viewModel(
+    factory = LooperViewModel.Factory
+  )
 ) {
   val context = LocalContext.current
   val position: Loop.Position by
-     playerViewModel.positionState.collectAsStateWithLifecycle()
+  playerViewModel.positionState.collectAsStateWithLifecycle()
 
   Row(
     modifier = Modifier
@@ -52,11 +54,12 @@ fun AudioPlayer(
     PlayerControls(
       isRunning = playerViewModel.isRunning,
       onPlay = {
-        engine.prepare(looperViewModel.tracks) {
-          tracks -> playerViewModel
+        engine.prepare(looperViewModel.tracks) { tracks ->
+          Log.i("AudioPlayer", "Playing ${tracks.size} prepared tracks")
+          playerViewModel
             .startPlayer(context, looperViewModel.loop) {
               engine.playAtPosition(it, tracks)
-          }
+            }
         }
       },
       onPause = { playerViewModel.pausePlayer() },

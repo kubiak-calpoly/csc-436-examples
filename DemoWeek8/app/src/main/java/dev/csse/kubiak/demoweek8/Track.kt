@@ -2,7 +2,9 @@ package dev.csse.kubiak.demoweek8
 
 import android.content.Context
 import android.media.SoundPool
+import android.util.Log
 import androidx.compose.runtime.key
+import androidx.compose.ui.platform.LocalGraphicsContext
 
 class Track(
   val name: String = "Unnamed Track"
@@ -92,6 +94,29 @@ class Track(
         } .joinToString("")
       } .joinToString(":")
     } .joinToString("|", "|", "|")
+  }
+
+  fun parseString(line: String) {
+    Log.d("Track", "Parsing String ${line}")
+    val pattern = "([|](([.*]*)(:[.*]*)*[|])+)".toRegex()
+    val matchResult = pattern.find(line)
+    if (matchResult != null) {
+      val bars = matchResult.groups[1]?.value?.drop(1)?.dropLast(1)
+      val beats = bars?.split("|")?.map { bar ->
+        bar.split(":").map { m ->
+          m.map { c -> if (c == '.') 0 else 1 }
+        }
+      }
+      beats?.forEachIndexed { i, bar ->
+        bar.forEachIndexed { j, beat ->
+          beat.forEachIndexed { k, hit ->
+            if (hit > 0) {
+              addHit(bar = i + 1, beat = j + 1, subdivision = k + 1)
+            }
+          }
+        }
+      }
+    }
   }
 }
 

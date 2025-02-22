@@ -66,10 +66,10 @@ class LooperViewModel(
     val original = tracks[index]
     val replacement = doUpdate(original)
     tracks[index] = replacement
-//    Log.d("LooperViewModel", "Replaced Track $index")
-//    Log.d("LooperViewModel", "Replaced with $newTrack / ${newTrack.sound}")
-//    val sounds = tracks.map { t -> t.sound }
-//    Log.d("LooperViewModel", "Sounds now: $sounds")
+    Log.d("LooperViewModel", "Replaced Track $index")
+    Log.d("LooperViewModel", "Replaced with $replacement / ${replacement.sound}")
+    val sounds = tracks.map { t -> t.sound }
+    Log.d("LooperViewModel", "Sounds now: $sounds")
   }
 
   fun loadTracksFromFile(context: Context, filename: String) {
@@ -100,21 +100,8 @@ class LooperViewModel(
         val name = matchResult.groups[1]?.value
         if (name != null) {
           val track = addTrack(name)
-          val bars = matchResult.groups[2]?.value?.drop(1)?.dropLast(1)
-          val beats = bars?.split("|")?.map { bar ->
-            bar.split(":").map { m ->
-              m.map { c -> if (c == '.') 0 else 1 }
-            }
-          }
-          beats?.forEachIndexed { i, bar ->
-            bar.forEachIndexed { j, beat ->
-              beat.forEachIndexed { k, hit ->
-                if (hit > 0) {
-                  track.addHit(bar = i + 1, beat = j + 1, subdivision = k + 1)
-                }
-              }
-            }
-          }
+          val bars = matchResult.groups[2]?.value
+          if (bars != null) track.parseString(bars)
         }
       }
     }

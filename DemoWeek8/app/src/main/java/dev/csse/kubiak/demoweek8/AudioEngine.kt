@@ -61,7 +61,7 @@ class AudioEngine(val context: Context) {
     whenPrepared: (List<PreparedTrack>) -> Unit = {}
   ) {
     val activeTracks = tracks.filter    {
-      track -> track.sound != null
+      track -> track.sound != null && track.sound != ""
     }
     val preparedTracks = activeTracks.map {
       track -> PreparedTrack(track, -1)
@@ -107,6 +107,8 @@ class AudioEngine(val context: Context) {
     tracks.forEach { prepared ->
       val hit: Track.Hit? = prepared.track.getHit(tpos)
       if (hit != null) {
+        Log.i("AudioEngine", "Playing sound ${prepared.soundId} volume ${hit.volume}")
+
         playSound(prepared.soundId, hit.volume)
       }
     }

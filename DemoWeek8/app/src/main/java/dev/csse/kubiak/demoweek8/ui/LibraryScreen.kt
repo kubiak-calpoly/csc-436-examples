@@ -108,6 +108,7 @@ fun LibraryScreen(
           val tracks = trackList.map { entity ->
             Track(name = entity.name).apply {
               setSound(entity.soundFile)
+              parseString(entity.data)
             }
           }
 

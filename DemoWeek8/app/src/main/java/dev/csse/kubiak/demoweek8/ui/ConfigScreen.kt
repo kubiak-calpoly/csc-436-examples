@@ -190,7 +190,7 @@ fun TrackView(
         track.sound,
         engine.listAudioAssets(),
         onSelect = { sound ->
-          track.sound = sound
+          track.setSound(sound)
           onUpdate(track)
         }
       )
