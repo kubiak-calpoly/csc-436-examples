@@ -67,5 +67,31 @@ class Track(
     this.sound = sound
     return this
   }
+
+  fun getSize(): Int {
+    return hits.keys
+      .map { pos -> pos.bar }
+      .max()
+  }
+
+  fun getString(): String {
+    val barCount = getSize()
+    val maxBeatCount = hits.keys
+      .map { pos -> pos.beat }
+      .max()
+    val maxSubdivisionCount = hits.keys
+      .map { pos -> pos.subdivision }
+      .max()
+
+    return (1..barCount).map { bar ->
+      (1..maxBeatCount).map { beat ->
+        (1..maxSubdivisionCount).map { subdivision ->
+          val pos = Position(bar, beat, subdivision)
+          val hit = getHit(pos)
+          if (hit == null) "." else "*"
+        } .joinToString("")
+      } .joinToString(":")
+    } .joinToString("|", "|", "|")
+  }
 }
 

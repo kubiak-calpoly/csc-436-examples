@@ -33,12 +33,15 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import dev.csse.kubiak.demoweek8.Division
 import dev.csse.kubiak.demoweek8.Loop
 import dev.csse.kubiak.demoweek8.R
+import dev.csse.kubiak.demoweek8.Track
 
 @Composable
 fun PlayScreen(
   loop: Loop,
+  tracks: List<Track> = listOf<Track>(),
   modifier: Modifier = Modifier,
-  playerViewModel: PlayerViewModel = viewModel()
+  playerViewModel: PlayerViewModel = viewModel(),
+  bottomBar: @Composable () -> Unit = {}
 ) {
   val position: Loop.Position  by playerViewModel
     .positionState.collectAsStateWithLifecycle()
@@ -70,20 +73,28 @@ fun PlayScreen(
       horizontalArrangement = Arrangement.SpaceEvenly,
       verticalAlignment = Alignment.CenterVertically
     ) {
-      loop.beats.forEach {
+
+      loop.forEachTick { bar, beat, subdivision ->
         Beat(
-          it,
-          hasBeenPlayed = it.beat < position.beat ||
-                  it.beat == position.beat &&
-                  it.subdivision < position.subdivision,
+          hasBeenPlayed = bar < position.bar ||
+                  bar == position.bar && (
+                  beat < position.beat ||
+                          beat == position.beat &&
+                          subdivision < position.subdivision),
           isPlaying = playerViewModel.isRunning &&
-                  it.beat == position.beat &&
-                  it.subdivision == position.subdivision,
-          modifier = Modifier.weight(1f)
+                  bar == position.bar &&
+                  beat == position.beat &&
+                  subdivision == position.subdivision,
+          modifier = Modifier.weight(1f),
+          trackData = tracks.map { track: Track ->
+            val pos = Track.Position(
+              bar = bar, beat = beat, subdivision = subdivision
+            )
+            track.getHit(pos)?.volume
+          }
         )
       }
     }
-
 
   }
 
@@ -108,9 +119,9 @@ fun Shape(
 
 @Composable
 fun Beat(
-  beat: Division,
   hasBeenPlayed: Boolean = false,
   isPlaying: Boolean = false,
+  trackData: List<Float?> = listOf(),
   modifier: Modifier = Modifier
 ) {
   val bg = if (hasBeenPlayed)
@@ -127,6 +138,15 @@ fun Beat(
       modifier = Modifier.align(Alignment.BottomCenter)
         .padding(0.dp, 8.dp)
     )
+    trackData.forEachIndexed { i, hit ->
+      if (hit != null) {
+        Shape(
+          lit = isPlaying || hasBeenPlayed,
+          modifier = Modifier.align(Alignment.BottomCenter)
+            .padding(bottom = (32 + 16*i).dp)
+        )
+      }
+    }
   }
 
 }

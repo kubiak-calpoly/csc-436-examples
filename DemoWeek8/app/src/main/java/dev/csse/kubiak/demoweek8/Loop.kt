@@ -1,21 +1,12 @@
 package dev.csse.kubiak.demoweek8
 
-class Loop {
-  var barsToLoop: Int = 1
-  var beatsPerBar: Int = 4
-  var subdivisions: Int = 2
-  val beats: MutableList<Division> = mutableListOf()
+import androidx.compose.runtime.Composable
 
-  init {
-    forEachTick { bar, beat, div ->
-      beats.add(
-        Division(
-          beat = beat,
-          subdivision = div
-        )
-      )
-    }
-  }
+data class Loop(
+  var barsToLoop: Int = 1,
+  var beatsPerBar: Int = 4,
+  var subdivisions: Int = 2,
+) {
 
   data class Position(
     val iteration: Int = 1,
@@ -29,8 +20,9 @@ class Loop {
       return beatsPerBar * subdivisions * barsToLoop
     }
 
+  @Composable
   fun forEachTick(
-    doTick: (bar: Int, beat: Int, subdivision: Int) -> Unit
+    doTick: @Composable (bar: Int, beat: Int, subdivision: Int) -> Unit
   ) {
     for (bar in (1)..barsToLoop) {
       for (beat in (1)..beatsPerBar) {

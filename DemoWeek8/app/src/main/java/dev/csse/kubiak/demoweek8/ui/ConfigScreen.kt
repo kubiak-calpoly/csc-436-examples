@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.AddCircle
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -27,14 +28,20 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import dev.csse.kubiak.demoweek8.AudioEngine
 import dev.csse.kubiak.demoweek8.Track
+import dev.csse.kubiak.demoweek8.data.AppPreferences
+import dev.csse.kubiak.demoweek8.data.AppStorage
+import kotlinx.coroutines.launch
 
 @Composable
 fun ConfigScreen(
@@ -42,32 +49,45 @@ fun ConfigScreen(
   modifier: Modifier = Modifier,
   looperViewModel: LooperViewModel = viewModel()
 ) {
-  val loop = looperViewModel.loop
+  val context = LocalContext.current
+  val store = AppStorage(context)
+  val appPrefs = store.appPreferencesFlow
+    .collectAsStateWithLifecycle(initialValue = AppPreferences())
+  val coroutineScope = rememberCoroutineScope()
+  var filename by remember { mutableStateOf("") }
 
+  val loop = looperViewModel.loop
+  Log.d("ConfigScreen", "Loop is now: $loop" )
   Column(modifier = modifier) {
     Row {
       NumberField(
         modifier = Modifier.weight(1f),
-        labelText = "Number of Bars",
-        value = loop.barsToLoop,
+        labelText = "Bars in Loop",
+        value = appPrefs.value.loopBars,
         onValueChange = { value ->
-          loop.barsToLoop = value ?: 4
+          coroutineScope.launch() {
+            store.saveLoopBars(value)
+          }
         }
       )
       NumberField(
         modifier = Modifier.weight(1f),
         labelText = "Beats per Bar",
-        value = loop.beatsPerBar,
+        value = appPrefs.value.loopBeats ,
         onValueChange = { value ->
-          loop.beatsPerBar = value ?: 4
+          coroutineScope.launch() {
+            store.saveLoopBeats(value)
+          }
         }
       )
       NumberField(
         modifier = Modifier.weight(1f),
         labelText = "Subdivisions",
-        value = loop.barsToLoop,
+        value = appPrefs.value.loopDivisions,
         onValueChange = { value ->
-          loop.barsToLoop = value ?: 4
+          coroutineScope.launch() {
+            store.saveSubdivisions(value)
+          }
         }
       )
     }
@@ -98,6 +118,24 @@ fun ConfigScreen(
         looperViewModel.updateTrack(i) {t}
       },
     )
+    Card(modifier = Modifier.padding(24.dp)) {
+      Column(modifier = Modifier.fillMaxWidth(),
+        horizontalAlignment =  Alignment.CenterHorizontally ) {
+        TextField(
+          modifier = Modifier.fillMaxWidth(),
+          label = { Text("Tracks Filename") },
+          value = filename,
+          onValueChange = { name: String ->
+            filename = name
+          }
+        )
+        Button(
+          onClick = {
+            looperViewModel.loadTracksFromFile(context, filename)
+          }
+        ) { Text("Load Tracks") }
+      }
+    }
   }
 }
 

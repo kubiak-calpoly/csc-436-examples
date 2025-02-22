@@ -81,6 +81,10 @@ class AudioEngine(val context: Context) {
     whenPrepared(preparedTracks)
   }
 
+  fun playSound(sound: Int, volume: Float = 1f) {
+    sounds.play(sound, volume, volume, 1, 0, 1.0f)
+  }
+
   fun playAtPosition(
     position: Loop.Position,
     tracks: List<PreparedTrack>
@@ -96,16 +100,14 @@ class AudioEngine(val context: Context) {
         if (position.beat == 1) 1.0f
         else 0.5f
 
-      sounds.play(sound, volume, volume, 1, 0, 1.0f)
+      playSound(sound, volume)
     }
 
     // all prepared tracks
     tracks.forEach { prepared ->
       val hit: Track.Hit? = prepared.track.getHit(tpos)
       if (hit != null) {
-        val volume = hit.volume
-        sounds.play(prepared.soundId, volume, volume, 1, 0, 1.0f)
-        Log.d("AudioEngine", "playing sound ${prepared.soundId} at position=${tpos}")
+        playSound(prepared.soundId, hit.volume)
       }
     }
   }
