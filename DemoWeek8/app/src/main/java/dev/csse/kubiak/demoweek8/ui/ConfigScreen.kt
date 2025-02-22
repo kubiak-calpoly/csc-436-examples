@@ -12,6 +12,8 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.AddCircle
 import androidx.compose.material3.Button
@@ -56,8 +58,9 @@ fun ConfigScreen(
   val coroutineScope = rememberCoroutineScope()
   var filename by remember { mutableStateOf("") }
 
+
   val loop = looperViewModel.loop
-  Log.d("ConfigScreen", "Loop is now: $loop" )
+  Log.d("ConfigScreen", "Loop is now: $loop")
   Column(modifier = modifier) {
     Row {
       NumberField(
@@ -73,7 +76,7 @@ fun ConfigScreen(
       NumberField(
         modifier = Modifier.weight(1f),
         labelText = "Beats per Bar",
-        value = appPrefs.value.loopBeats ,
+        value = appPrefs.value.loopBeats,
         onValueChange = { value ->
           coroutineScope.launch() {
             store.saveLoopBeats(value)
@@ -111,29 +114,37 @@ fun ConfigScreen(
         )
       }
     }
-    TrackList(
-      looperViewModel.tracks,
-      engine,
-      onUpdate = { i, t ->
-        looperViewModel.updateTrack(i) {t}
-      },
-    )
-    Card(modifier = Modifier.padding(24.dp)) {
-      Column(modifier = Modifier.fillMaxWidth(),
-        horizontalAlignment =  Alignment.CenterHorizontally ) {
-        TextField(
+    Column(
+      modifier =
+      Modifier.verticalScroll(rememberScrollState())
+
+    ) {
+      TrackList(
+        looperViewModel.tracks,
+        engine,
+        onUpdate = { i, t ->
+          looperViewModel.updateTrack(i) { t }
+        },
+      )
+      Card(modifier = Modifier.padding(24.dp)) {
+        Column(
           modifier = Modifier.fillMaxWidth(),
-          label = { Text("Tracks Filename") },
-          value = filename,
-          onValueChange = { name: String ->
-            filename = name
-          }
-        )
-        Button(
-          onClick = {
-            looperViewModel.loadTracksFromFile(context, filename)
-          }
-        ) { Text("Load Tracks") }
+          horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+          TextField(
+            modifier = Modifier.fillMaxWidth(),
+            label = { Text("Tracks Filename") },
+            value = filename,
+            onValueChange = { name: String ->
+              filename = name
+            }
+          )
+          Button(
+            onClick = {
+              looperViewModel.loadTracksFromFile(context, filename)
+            }
+          ) { Text("Load Tracks") }
+        }
       }
     }
   }

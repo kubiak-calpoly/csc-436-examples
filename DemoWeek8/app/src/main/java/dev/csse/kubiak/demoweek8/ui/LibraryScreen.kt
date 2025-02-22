@@ -1,5 +1,6 @@
 package dev.csse.kubiak.demoweek8.ui
 
+import android.R
 import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -105,7 +106,9 @@ fun LibraryScreen(
             "Loaded new Loop: $selected"
           )
           val tracks = trackList.map { entity ->
-            Track(name = entity.name)
+            Track(name = entity.name).apply {
+              setSound(entity.soundFile)
+            }
           }
 
           looperViewModel.tracks.clear()
@@ -187,7 +190,19 @@ fun LoopCard(
       }
       if (isSelected) {
         tracks.forEach { track ->
-          Text(track.name)
+          Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween
+          ) {
+            Text(
+              "${track.name}:",
+              style = MaterialTheme.typography.labelSmall
+            )
+            Text(
+              track.soundFile,
+              style = MaterialTheme.typography.bodySmall
+            )
+          }
         }
         Button(
           modifier = Modifier.Companion.fillMaxWidth(),

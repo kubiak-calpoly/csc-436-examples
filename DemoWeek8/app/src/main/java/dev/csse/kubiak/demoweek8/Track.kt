@@ -71,17 +71,17 @@ class Track(
   fun getSize(): Int {
     return hits.keys
       .map { pos -> pos.bar }
-      .max()
+      .maxOrNull() ?: 0
   }
 
   fun getString(): String {
     val barCount = getSize()
     val maxBeatCount = hits.keys
       .map { pos -> pos.beat }
-      .max()
+      .maxOrNull() ?: 0
     val maxSubdivisionCount = hits.keys
       .map { pos -> pos.subdivision }
-      .max()
+      .maxOrNull() ?: 0
 
     return (1..barCount).map { bar ->
       (1..maxBeatCount).map { beat ->

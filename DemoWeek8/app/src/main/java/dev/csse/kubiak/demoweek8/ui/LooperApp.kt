@@ -75,7 +75,7 @@ fun LooperApp(
           TextButton(
             onClick = {
               navController.navigate(
-                dev.csse.kubiak.demoweek8.ui.Routes.Library(shouldSave = true)
+                Routes.Library(shouldSave = true)
               )
             }
           ) {

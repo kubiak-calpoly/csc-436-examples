@@ -86,7 +86,8 @@ class LibraryViewModel(
           name = track.name,
           trackNum = i,
           size = track.getSize(),
-          data = track.getString()
+          data = track.getString(),
+          soundFile =  track.sound ?: ""
         )
       }
     )

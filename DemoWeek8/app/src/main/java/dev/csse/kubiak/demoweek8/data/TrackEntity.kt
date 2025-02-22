@@ -21,6 +21,6 @@ data class TrackEntity(
   var trackNum: Int = 0,
   var name: String = "",
   var size: Int = 1,
-  var data: String = ""
-
+  var data: String = "",
+  var soundFile: String = ""
 )
