@@ -1,9 +1,16 @@
 package dev.csse.kubiak.graphicsdemo.ui
 
+import androidx.compose.animation.core.EaseInOut
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.geometry.center
@@ -32,9 +39,21 @@ fun JellyfishScreen(
     viewportWidth = 530.46f,
     viewportHeight = 563.1f,
     autoMirror = true,
-  ) { _, _ ->
+  ) { viewPortWidth, viewPortHeight ->
+    val duration = 3000
+    val transition = rememberInfiniteTransition()
+    val translationY by transition.animateFloat(
+      initialValue = 0f,
+      targetValue = -30f,
+      animationSpec = infiniteRepeatable(
+        tween(duration, easing = EaseInOut),
+        repeatMode = RepeatMode.Reverse
+      )
+    )
+
     Group(
-      name = "jellyfish"
+      name = "jellyfish",
+      translationY = translationY
     ) {
       Group("tentacles") {
         val alphas = arrayOf(.49f, .66f, .44f, .6f)
