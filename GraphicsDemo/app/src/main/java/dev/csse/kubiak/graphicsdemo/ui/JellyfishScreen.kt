@@ -1,5 +1,9 @@
 package dev.csse.kubiak.graphicsdemo.ui
 
+import android.graphics.RuntimeShader
+import android.os.Build
+import androidx.annotation.RequiresApi
+import androidx.collection.emptyLongSet
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.EaseInOut
 import androidx.compose.animation.core.LinearEasing
@@ -8,12 +12,14 @@ import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.core.withInfiniteAnimationFrameMillis
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
@@ -24,10 +30,14 @@ import androidx.compose.ui.graphics.RadialGradientShader
 import androidx.compose.ui.graphics.Shader
 import androidx.compose.ui.graphics.ShaderBrush
 import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.graphics.asComposeRenderEffect
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.Group
 import androidx.compose.ui.graphics.vector.Path
+import androidx.compose.ui.graphics.vector.VectorPainter
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -35,13 +45,11 @@ import dev.csse.kubiak.graphicsdemo.ui.theme.GraphicsDemoTheme
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 
-
 @Composable
 fun JellyfishScreen(
   model: JellyfishViewModel = viewModel()
 ) {
-
-
+  val coroutineScope = rememberCoroutineScope()
   val vectorPainter = rememberVectorPainter(
     defaultWidth = 530.46f.dp,
     defaultHeight = 563.1f.dp,
@@ -167,15 +175,25 @@ fun JellyfishScreen(
     }
   }
 
-  Image(
-    vectorPainter,
-    contentDescription = "Jellyfish",
-    modifier = Modifier
-      .fillMaxSize()
-      .background(largeRadialGradient)
-  )
+  if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+    WobblyImage(
+      vectorPainter,
+      contentDescription = "Jellyfish",
+      modifier = Modifier.fillMaxSize()
+        .background(largeRadialGradient)
+      ,
+      shader = PERLIN_NOISE
+    )
+  }
+   else {
+    Image(
+      vectorPainter,
+      contentDescription = "Jellyfish",
+      modifier = Modifier.fillMaxSize()
+        .background(largeRadialGradient)
+    )
+  }
 
-  val coroutineScope = rememberCoroutineScope()
   Image(vectorPainterFace,
     contentDescription = "",
     modifier = Modifier
@@ -187,6 +205,7 @@ fun JellyfishScreen(
           }
         }
       })
+
 }
 
 @Preview
@@ -195,6 +214,48 @@ fun JellyfishPreview() {
   GraphicsDemoTheme {
     JellyfishScreen()
   }
+}
+
+@RequiresApi(Build.VERSION_CODES.TIRAMISU)
+@Composable
+fun WobblyImage(
+  painter: VectorPainter,
+  contentDescription: String?,
+  modifier: Modifier = Modifier,
+  shader: String = WOBBLE_SHADER
+) {
+  val time by produceState(0f) {
+    while (true) {
+      withInfiniteAnimationFrameMillis {
+        value = it / 1000f
+      }
+    }
+  }
+
+  val shader = RuntimeShader(shader)
+
+  Image(
+    painter,
+    contentDescription = "Jellyfish",
+    modifier = modifier
+
+      .onSizeChanged { size ->
+        shader.setFloatUniform(
+          "resolution",
+          size.width.toFloat(),
+          size.height.toFloat()
+        )
+      }
+      .graphicsLayer {
+        shader.setFloatUniform("time", time)
+        renderEffect = android.graphics.RenderEffect
+          .createRuntimeShaderEffect(
+            shader,
+            "contents"
+          )
+          .asComposeRenderEffect()
+      }
+  )
 }
 
 // create a custom gradient background that has a radius that is the size of the biggest dimension of the drawing area, this creates a better looking radial gradient in this case.
