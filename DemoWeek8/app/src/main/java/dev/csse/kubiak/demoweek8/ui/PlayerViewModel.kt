@@ -25,6 +25,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 
@@ -50,7 +51,7 @@ class PlayerViewModel : ViewModel() {
 
   val _positionState = MutableStateFlow(Loop.Position())
   var positionState: StateFlow<Loop.Position> =
-    _positionState.asStateFlow()
+    _positionState
 
   var tickerJob: Job? = null
 
@@ -84,7 +85,8 @@ class PlayerViewModel : ViewModel() {
 
     tickerJob = viewModelScope.launch(Dispatchers.Default) {
       positionFlow.collect {
-        _positionState.value = it
+        pos ->
+        _positionState.update { pos }
         lambda(it)
       }
     }

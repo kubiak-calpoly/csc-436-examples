@@ -35,7 +35,8 @@ fun LoopPlayer(
 ) {
   val context = LocalContext.current
   val position: Loop.Position by
-  playerViewModel.positionState.collectAsStateWithLifecycle()
+  playerViewModel.positionState
+    .collectAsStateWithLifecycle()
 
   Row(
     modifier = Modifier
