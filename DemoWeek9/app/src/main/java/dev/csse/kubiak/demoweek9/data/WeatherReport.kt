@@ -9,33 +9,35 @@ data class WeatherReport(
   val weather: Array<Weather>?,
   val main: Temperature?,
   val wind: Wind?
-)
+) {
 
-data class Location(
-  val lat: Float,
-  val lon: Float
-)
+  data class Location(
+    val lat: Float,
+    val lon: Float
+  )
 
-data class Weather (
-  val main: String,
-  val description: String,
-  val icon: String
-)
+  data class Weather(
+    val main: String,
+    val description: String,
+    val icon: String
+  )
 
-data class Temperature (
-  val temp: Float?,
+  data class Temperature(
+    val temp: Float?,
 
-  @SerializedName(value = "feels_like")
-  val feelsLike: Float?,
+    @SerializedName(value = "feels_like")
+    val feelsLike: Float?,
 
-  @SerializedName(value = "temp_max")
-  val dailyHigh: Float?,
+    @SerializedName(value = "temp_max")
+    val dailyHigh: Float?,
 
-  @SerializedName(value = "temp_min")
-  val dailyLow: Float?,
-)
+    @SerializedName(value = "temp_min")
+    val dailyLow: Float?,
+  )
 
-data class Wind (
-  val speed: Float?,
-  val deg: Float?
-)
+  data class Wind(
+    val speed: Float?,
+    val deg: Float?
+  )
+
+}

@@ -8,25 +8,34 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.RenderEffect
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import dev.csse.kubiak.demoweek9.data.WeatherReport
 
 @Composable
 fun WeatherScreen(
+  lat: Float,
+  lon: Float,
   modifier: Modifier = Modifier,
-  model: WeatherViewModel = viewModel()
+  model: WeatherViewModel = viewModel(
+    factory = WeatherViewModel.Factory
+  )
 ) {
   val uiState = model.uiState
+
+  LaunchedEffect(lat, lon) {
+    model.getWeather(lat, lon)
+  }
 
   when (uiState) {
     is WeatherUiState.Loading -> Text("Loading...")
     is WeatherUiState.Success -> WeatherView(
       uiState.report, modifier = modifier
     )
-
     is WeatherUiState.Error -> Text("Error: ${uiState.error}")
   }
 }
@@ -76,7 +85,7 @@ fun WeatherView(
       horizontalArrangement = Arrangement.SpaceBetween
     ) {
       Text("Current Temp")
-      Text(report.main?.temp?.toString() ?: "--" + "°F")
+      Text((report.main?.temp?.toString() ?: "--") + "°F")
     }
   }
 }

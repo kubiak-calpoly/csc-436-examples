@@ -17,7 +17,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 sealed class WeatherUiState {
-  data class Success(val report: WeatherReport ) : WeatherUiState()
+  data class Success(val report: WeatherReport) : WeatherUiState()
   data class Error(val error: String = "error") : WeatherUiState()
   data object Loading : WeatherUiState()
 }
@@ -27,6 +27,8 @@ class WeatherViewModel(
 ) : ViewModel() {
   var uiState: WeatherUiState by mutableStateOf(WeatherUiState.Loading)
     private set
+  var lat: Float? = null
+  var lon: Float? = null
 
   companion object {
     val Factory: ViewModelProvider.Factory = viewModelFactory {
@@ -37,15 +39,13 @@ class WeatherViewModel(
     }
   }
 
-  init {
-    getWeather()
-  }
-
-  fun getWeather() {
+  fun getWeather(lat: Float, lon: Float) {
+    this.lat = lat
+    this.lon = lon
     viewModelScope.launch(Dispatchers.IO) {
       uiState = try {
         WeatherUiState.Success(
-          weatherRepository.getWeather()
+          weatherRepository.getWeather(lat, lon)
         )
       } catch (e: Exception) {
         Log.e("WeatherViewModel", "Error: ${e}")
@@ -54,4 +54,13 @@ class WeatherViewModel(
     }
   }
 
+  fun getWeatherAgain() {
+    if ( isSomewhere() )
+      getWeather(this.lat!!, this.lon!!)
+  }
+
+  fun isSomewhere(): Boolean  {
+    return this.lat != null && this.lon != null
+  }
 }
+
