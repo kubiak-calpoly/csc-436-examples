@@ -106,12 +106,12 @@ enum class AppScreen(val route: Any, val title: String, val icon: Int) {
     "Work", R.drawable.outline_work_24
   ),
   BEACH(
-    Routes.Report(35.436331588f, -120.887663116f), "Beach",
+    Routes.Report(35.190349f, -120.731793f), "Beach",
     R.drawable.baseline_beach_access_24
   ),
-  FLOWERS(
-    Routes.Report(35.1913582f, -119.792908f), "Flowers",
-    R.drawable.outline_flower_24
+  PIE(
+    Routes.Report(35.489596f,-120.668665f), "Pie",
+    R.drawable.outline_pie_24
   )
 }
 
