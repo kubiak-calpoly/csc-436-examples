@@ -83,7 +83,6 @@ fun WeatherApp(
       composable<Routes.Report> { backStackEntry ->
         val route: Routes.Report =
           backStackEntry.toRoute()
-        Log.d("WeatherApp","Current route: $route")
         WeatherScreen(
           route.lat,
           route.lon,
