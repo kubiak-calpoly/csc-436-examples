@@ -39,6 +39,9 @@ android {
 }
 
 dependencies {
+  implementation(libs.maps.compose)
+  implementation(libs.play.services.location)
+  implementation(libs.kotlinx.coroutines.play.services)
   implementation(libs.androidx.lifecycle.viewmodel.compose)
   implementation(libs.androidx.navigation.compose)
   implementation(libs.kotlinx.serialization.json)

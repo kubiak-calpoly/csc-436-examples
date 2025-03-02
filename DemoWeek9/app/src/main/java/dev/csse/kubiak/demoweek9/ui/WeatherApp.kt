@@ -1,5 +1,7 @@
 package dev.csse.kubiak.demoweek9.ui
 
+import android.util.Log
+import androidx.compose.animation.core.animateDecay
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
@@ -39,6 +41,9 @@ sealed class Routes {
 
   @Serializable
   data object Somewhere
+
+  @Serializable
+  data object ReportLocal
 }
 
 fun composable(function: Any) {}
@@ -78,6 +83,7 @@ fun WeatherApp(
       composable<Routes.Report> { backStackEntry ->
         val route: Routes.Report =
           backStackEntry.toRoute()
+        Log.d("WeatherApp","Current route: $route")
         WeatherScreen(
           route.lat,
           route.lon,
@@ -89,6 +95,12 @@ fun WeatherApp(
         WeatherScreen(
           SLO_COORD_LAT,
           SLO_COORD_LON,
+          modifier = Modifier.padding(innerPadding)
+        )
+      }
+
+      composable<Routes.ReportLocal> {
+        LocalScreen(
           modifier = Modifier.padding(innerPadding)
         )
       }
@@ -112,17 +124,30 @@ enum class AppScreen(val route: Any, val title: String, val icon: Int) {
   PIE(
     Routes.Report(35.489596f,-120.668665f), "Pie",
     R.drawable.outline_pie_24
+  ),
+  LOCAL(
+    Routes.ReportLocal, "Local",
+    R.drawable.outline_pin_drop_24
   )
 }
 
 @Composable
-fun BottomNavBar(navController: NavController) {
-  val backStackEntry by navController.currentBackStackEntryAsState()
+fun BottomNavBar(
+  navController: NavController
+) {
+  val backStackEntry by navController
+    .currentBackStackEntryAsState()
   val currentRoute = backStackEntry?.destination?.route
+
 
   NavigationBar {
     AppScreen.entries.forEach { item ->
-      NavigationBarItem(selected = currentRoute?.endsWith(item.route.toString()) == true,
+      val selected = (item.route is Routes.Report &&
+        currentRoute?.endsWith("Routes.Report/{lat}/{lon}") == true &&
+        backStackEntry?.toRoute<Routes.Report>() == item.route )
+              || currentRoute?.endsWith(item.route.toString()) == true
+      NavigationBarItem(
+        selected = selected,
         onClick = {
           navController.navigate(item.route)
         },
