@@ -24,7 +24,6 @@ import androidx.compose.ui.unit.em
 import androidx.lifecycle.viewmodel.compose.viewModel
 import dev.csse.kubiak.demoweek9.data.WeatherReport
 import dev.csse.kubiak.demoweek9.R
-import org.w3c.dom.Text
 
 @Composable
 fun WeatherScreen(
@@ -46,7 +45,6 @@ fun WeatherScreen(
     is WeatherUiState.Success -> WeatherView(
       uiState.report, modifier = modifier
     )
-
     is WeatherUiState.Error -> Text("Error: ${uiState.error}")
   }
 }

@@ -25,7 +25,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 
-const val LOCATION_PERMISSION = Manifest.permission.ACCESS_FINE_LOCATION
 
 @Composable
 fun LocalScreen(
@@ -33,59 +32,31 @@ fun LocalScreen(
   model: LocationViewModel = viewModel()
 ) {
   val context = LocalContext.current
-  var hasPermission by remember { mutableStateOf(false) }
-  var currentPosition: LatLng? by remember {
-    mutableStateOf(null)
-  }
 
   val permissionLauncher = rememberLauncherForActivityResult(
     ActivityResultContracts.RequestPermission()
-  ) { isGranted -> hasPermission = isGranted }
+  ) { isGranted -> model.hasPermission = isGranted }
 
-  LaunchedEffect(Unit) {
-    if (ContextCompat.checkSelfPermission(
-        context, LOCATION_PERMISSION
-      ) == PackageManager.PERMISSION_GRANTED
-    ) {
-      hasPermission = true
+  LaunchedEffect(model.hasPermission) {
+    if ( model.hasPermission ) {
+      model.createClient(context)
+      model.acquireLocation()
     } else {
-      permissionLauncher.launch(LOCATION_PERMISSION)
+      model.requestPermission(context, permissionLauncher)
     }
   }
 
-  if (hasPermission) {
-    val locationClient = remember {
-      LocationServices.getFusedLocationProviderClient(context)
-    }
+  if(model.hasPermission) {
+    val coords = model.currentLocation
 
-    LaunchedEffect(Unit) {
-      withContext(Dispatchers.IO) {
-        val currentLocation = locationClient.getCurrentLocation(
-          Priority.PRIORITY_HIGH_ACCURACY,
-          CancellationTokenSource().token
-        ).await()
-        if (currentLocation != null) {
-          Log.i(
-            "LocalScreen", "Current location: " +
-                    "lat: ${currentLocation.latitude} " +
-                    "lon: ${currentLocation.longitude}"
-          )
-          currentLocation.let {
-            currentPosition =
-              LatLng(it.latitude, it.longitude)
-          }
-        }
-      }
-    }
-
-    if (currentPosition == null) {
+    if (coords == null) {
       Card(modifier = modifier) {
         Text("Acquiring location…")
       }
     } else {
       WeatherScreen(
-        currentPosition!!.latitude.toFloat(),
-        currentPosition!!.longitude.toFloat(),
+        coords.latitude.toFloat(),
+        coords.longitude.toFloat(),
         modifier = modifier
       )
     }
