@@ -11,56 +11,28 @@ import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.AP
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
+import com.google.android.gms.maps.model.LatLng
 import dev.csse.kubiak.demoweek9.WeatherApplication
 import dev.csse.kubiak.demoweek9.data.WeatherReport
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-sealed class WeatherUiState {
-  data class Success(val report: WeatherReport) : WeatherUiState()
-  data class Error(val error: String = "error") : WeatherUiState()
-  data object Loading : WeatherUiState()
-}
-
 class WeatherViewModel(
-  private val weatherRepository: WeatherRepository
+  // private val weatherRepository: WeatherRepository
 ) : ViewModel() {
-  var uiState: WeatherUiState by mutableStateOf(WeatherUiState.Loading)
-    private set
-  var lat: Float? = null
-  var lon: Float? = null
 
   companion object {
     val Factory: ViewModelProvider.Factory = viewModelFactory {
       initializer {
         val application = (this[APPLICATION_KEY] as WeatherApplication)
-        WeatherViewModel(application.weatherRepository)
+        WeatherViewModel(
+          //application.weatherRepository
+        )
       }
     }
   }
 
   fun getWeather(lat: Float, lon: Float) {
-    this.lat = lat
-    this.lon = lon
-    viewModelScope.launch(Dispatchers.IO) {
-      uiState = try {
-        WeatherUiState.Success(
-          weatherRepository.getWeather(lat, lon)
-        )
-      } catch (e: Exception) {
-        Log.e("WeatherViewModel", "Error: ${e}")
-        WeatherUiState.Error(e.toString())
-      }
-    }
-  }
-
-  fun getWeatherAgain() {
-    if ( isSomewhere() )
-      getWeather(this.lat!!, this.lon!!)
-  }
-
-  fun isSomewhere(): Boolean  {
-    return this.lat != null && this.lon != null
   }
 }
 
