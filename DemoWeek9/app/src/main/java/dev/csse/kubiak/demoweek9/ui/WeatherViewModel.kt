@@ -52,5 +52,17 @@ class WeatherViewModel(
       }
     }
   }
+
+  fun getWeatherAgain() {
+    if ( isSomewhere() ) {
+      val report = (uiState as WeatherUiState.Success).report
+      if( report.coord != null )
+        getWeather(report.coord.lat, report.coord.lon)
+    }
+  }
+
+  fun isSomewhere(): Boolean {
+    return uiState is WeatherUiState.Success
+  }
 }
 

@@ -56,7 +56,8 @@ fun WeatherApp(
   Scaffold(topBar = {
     TopAppBar(title = { Text("SLO Sky") }, actions = {
       IconButton(
-        onClick = { }
+        enabled = viewModel.isSomewhere(),
+        onClick = { viewModel.getWeatherAgain() }
       ) {
         Icon(
           Icons.Filled.Refresh,
@@ -80,7 +81,8 @@ fun WeatherApp(
         WeatherScreen(
           route.lat,
           route.lon,
-          modifier = Modifier.padding(innerPadding)
+          modifier = Modifier.padding(innerPadding),
+          model = viewModel
         )
       }
 
@@ -88,7 +90,8 @@ fun WeatherApp(
         WeatherScreen(
           SLO_COORD_LAT,
           SLO_COORD_LON,
-          modifier = Modifier.padding(innerPadding)
+          modifier = Modifier.padding(innerPadding),
+          model =  viewModel
         )
       }
     }
