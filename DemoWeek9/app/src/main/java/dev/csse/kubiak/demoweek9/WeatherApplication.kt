@@ -24,6 +24,6 @@ class WeatherApplication : Application() {
       applicationContext,
       weatherService
     )
-    
+
   }
 }

@@ -17,22 +17,40 @@ import dev.csse.kubiak.demoweek9.data.WeatherReport
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
+sealed class WeatherUiState {
+  data class Success(val report: WeatherReport) : WeatherUiState()
+  data class Error(val error: String = "error") : WeatherUiState()
+  data object Loading : WeatherUiState()
+}
+
 class WeatherViewModel(
-  // private val weatherRepository: WeatherRepository
+  private val weatherRepository: WeatherRepository
 ) : ViewModel() {
+  var uiState: WeatherUiState by
+    mutableStateOf(WeatherUiState.Loading)
+    private set
 
   companion object {
     val Factory: ViewModelProvider.Factory = viewModelFactory {
       initializer {
         val application = (this[APPLICATION_KEY] as WeatherApplication)
         WeatherViewModel(
-          //application.weatherRepository
+          application.weatherRepository
         )
       }
     }
   }
 
   fun getWeather(lat: Float, lon: Float) {
+    viewModelScope.launch(Dispatchers.IO) {
+      uiState = try {
+        WeatherUiState.Success(
+          weatherRepository.getWeather(lat, lon)
+        )
+      } catch (e: Exception) {
+        WeatherUiState.Error(e.toString())
+      }
+    }
   }
 }
 
