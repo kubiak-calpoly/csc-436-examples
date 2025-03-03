@@ -34,13 +34,19 @@ fun WeatherScreen(
     factory = WeatherViewModel.Factory
   )
 ) {
-  WeatherView(report =
-    WeatherReport(
-      WeatherReport.Location(lat, lon),
-      "Unknown Place",
-      null, null, null),
-    modifier = modifier
-  )
+  val uiState = model.uiState
+
+  LaunchedEffect(lat, lon) {
+    model.getWeather(lat, lon)
+  }
+
+  when (uiState) {
+    is WeatherUiState.Loading -> Text("Loading...")
+    is WeatherUiState.Success -> WeatherView(
+      uiState.report, modifier = modifier
+    )
+    is WeatherUiState.Error -> Text("Error: ${uiState.error}")
+  }
 }
 
 @Composable
