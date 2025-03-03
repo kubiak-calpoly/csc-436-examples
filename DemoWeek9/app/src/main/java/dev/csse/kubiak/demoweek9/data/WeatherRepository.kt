@@ -10,4 +10,9 @@ class WeatherRepository(
   val context: Context,
   val service: WeatherService
 ) {
+  val API_KEY = getString(context, R.string.com_openweatherapp_api_key);
+
+  suspend fun getWeather(lat: Float, lon: Float): WeatherReport {
+    return service.getWeather(lat, lon, apiKey = API_KEY)
+  }
 }
