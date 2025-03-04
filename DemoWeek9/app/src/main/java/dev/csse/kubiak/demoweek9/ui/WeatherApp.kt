@@ -44,6 +44,9 @@ sealed class Routes {
 
   @Serializable
   data object ReportLocal
+
+  @Serializable
+  data object Compass
 }
 
 fun composable(function: Any) {}
@@ -103,6 +106,10 @@ fun WeatherApp(
           modifier = Modifier.padding(innerPadding)
         )
       }
+
+      composable<Routes.Compass> {
+        CompassScreen()
+      }
     }
   }
 }
@@ -127,6 +134,10 @@ enum class AppScreen(val route: Any, val title: String, val icon: Int) {
   LOCAL(
     Routes.ReportLocal, "Local",
     R.drawable.outline_pin_drop_24
+  ),
+  COMPASS(
+    Routes.Compass, "Compass",
+    R.drawable.baseline_compass_24
   )
 }
 
