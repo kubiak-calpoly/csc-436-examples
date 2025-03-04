@@ -1,4 +1,4 @@
-package dev.csse.kubiak.demoweek9.ui
+package dev.csse.kubiak.sensorsdemo.ui
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
@@ -8,25 +8,22 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
-import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.geometry.center
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.RadialGradientShader
-import androidx.compose.ui.graphics.Shader
-import androidx.compose.ui.graphics.ShaderBrush
+import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.vector.Group
 import androidx.compose.ui.graphics.vector.Path
 import androidx.compose.ui.graphics.vector.PathNode
-import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
+import androidx.compose.ui.modifier.modifierLocalOf
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.lifecycle.viewmodel.compose.viewModel
 
 @Composable
 fun CompassScreen(
-  viewModel: CompassViewModel = viewModel(
-    factory = CompassViewModel.Factory
+  modifier: Modifier = Modifier,
+  viewModel: SensorViewModel = viewModel(
+    factory = SensorViewModel.Factory
   )
 ) {
 
@@ -64,7 +61,7 @@ fun CompassScreen(
         PathNode.LineTo(cx, cy),
         PathNode.LineTo(cx + tail, cy + tail),
         PathNode.Close
-        )
+      )
       Path(
         needlePathNodes,
         fill = SolidColor(Color.Black)
@@ -73,7 +70,7 @@ fun CompassScreen(
   }
 
   Box(
-    modifier = Modifier.fillMaxSize(),
+    modifier = modifier.fillMaxSize(),
     contentAlignment = Alignment.Center
   ) {
     Image(
@@ -94,4 +91,3 @@ fun CompassScreen(
   }
 
 }
-
