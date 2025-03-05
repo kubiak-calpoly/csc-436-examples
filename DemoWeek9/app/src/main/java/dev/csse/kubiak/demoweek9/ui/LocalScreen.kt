@@ -42,7 +42,7 @@ fun LocalScreen(
 
   LaunchedEffect(model.hasPermission) {
     if ( model.hasPermission ) {
-      // model.createClient(context)
+      model.createClient(context)
       // model.acquireLocation()
     } else {
       model.requestPermission(context, permissionLauncher)

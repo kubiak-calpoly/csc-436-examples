@@ -29,6 +29,8 @@ class LocationViewModel : ViewModel() {
   var hasPermission by mutableStateOf(false)
   var currentLocation: LatLng? by mutableStateOf(null)
     private set
+  private var locationClient: FusedLocationProviderClient? = null
+
 
   fun requestPermission(
     context: Context,
@@ -49,6 +51,9 @@ class LocationViewModel : ViewModel() {
   }
 
   fun createClient(context: Context) {
+    if (locationClient == null)
+      locationClient = LocationServices.getFusedLocationProviderClient(context)
+
   }
 
   fun acquireLocation() {
