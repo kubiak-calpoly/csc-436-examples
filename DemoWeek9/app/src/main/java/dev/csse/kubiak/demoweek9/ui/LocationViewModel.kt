@@ -35,6 +35,17 @@ class LocationViewModel : ViewModel() {
     permissionLauncher:
     ManagedActivityResultLauncher<String, Boolean>
   ) {
+    if (ActivityCompat.checkSelfPermission(
+        context, ACCESS_FINE_LOCATION
+      ) != PERMISSION_GRANTED &&
+      ActivityCompat.checkSelfPermission(
+        context, ACCESS_COARSE_LOCATION
+      ) != PERMISSION_GRANTED
+    ) {
+      permissionLauncher.launch(ACCESS_COARSE_LOCATION)
+    } else {
+      hasPermission = true
+    }
   }
 
   fun createClient(context: Context) {

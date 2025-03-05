@@ -40,6 +40,15 @@ fun LocalScreen(
     ActivityResultContracts.RequestPermission()
   ) { isGranted -> model.hasPermission = isGranted }
 
+  LaunchedEffect(model.hasPermission) {
+    if ( model.hasPermission ) {
+      // model.createClient(context)
+      // model.acquireLocation()
+    } else {
+      model.requestPermission(context, permissionLauncher)
+    }
+  }
+
   if(model.hasPermission) {
     val coords: LatLng? = null
 
