@@ -56,6 +56,25 @@ class LocationViewModel : ViewModel() {
 
   }
 
+  @SuppressLint("MissingPermission")
   fun acquireLocation() {
+    if (hasPermission) {
+      viewModelScope.launch(Dispatchers.IO) {
+        locationClient?.getCurrentLocation(
+          Priority.PRIORITY_LOW_POWER,
+          CancellationTokenSource().token
+        )?.addOnSuccessListener { location ->
+          if (location != null) {
+            Log.i(
+              "LocalScreen", "Current location: ${location}"
+            )
+            location.let {
+              currentLocation =
+                LatLng(it.latitude, it.longitude)
+            }
+          }
+        }
+      }
+    }
   }
 }

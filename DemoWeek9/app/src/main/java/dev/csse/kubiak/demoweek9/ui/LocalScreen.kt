@@ -43,14 +43,14 @@ fun LocalScreen(
   LaunchedEffect(model.hasPermission) {
     if ( model.hasPermission ) {
       model.createClient(context)
-      // model.acquireLocation()
+      model.acquireLocation()
     } else {
       model.requestPermission(context, permissionLauncher)
     }
   }
 
   if(model.hasPermission) {
-    val coords: LatLng? = null
+    val coords: LatLng? = model.currentLocation
 
     if (coords == null) {
       Card(modifier = modifier) {
