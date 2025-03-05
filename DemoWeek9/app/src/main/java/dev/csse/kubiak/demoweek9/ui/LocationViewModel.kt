@@ -29,51 +29,17 @@ class LocationViewModel : ViewModel() {
   var hasPermission by mutableStateOf(false)
   var currentLocation: LatLng? by mutableStateOf(null)
     private set
-  var locationClient: FusedLocationProviderClient? = null
-    private set
 
   fun requestPermission(
     context: Context,
     permissionLauncher:
     ManagedActivityResultLauncher<String, Boolean>
   ) {
-    if (ActivityCompat.checkSelfPermission(
-        context, ACCESS_FINE_LOCATION
-      ) != PERMISSION_GRANTED &&
-      ActivityCompat.checkSelfPermission(
-        context, ACCESS_COARSE_LOCATION
-      ) != PERMISSION_GRANTED
-    ) {
-      permissionLauncher.launch(ACCESS_FINE_LOCATION)
-    } else {
-      hasPermission = true
-    }
   }
 
   fun createClient(context: Context) {
-    if (locationClient == null)
-      locationClient = LocationServices.getFusedLocationProviderClient(context)
   }
 
-  @SuppressLint("MissingPermission")
   fun acquireLocation() {
-    viewModelScope.launch(Dispatchers.IO) {
-      locationClient?.getCurrentLocation(
-        Priority.PRIORITY_HIGH_ACCURACY,
-        CancellationTokenSource().token
-      )?.addOnSuccessListener { location ->
-        if (location != null) {
-          Log.i(
-            "LocalScreen", "Current location: " +
-                    "lat: ${location.latitude} " +
-                    "lon: ${location.longitude}"
-          )
-          location.let {
-            currentLocation =
-              LatLng(it.latitude, it.longitude)
-          }
-        }
-      }
-    }
   }
 }

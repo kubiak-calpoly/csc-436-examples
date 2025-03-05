@@ -40,7 +40,8 @@ sealed class Routes {
   @Serializable
   data object Somewhere
 
-
+  @Serializable
+  data object ReportLocal
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -94,6 +95,12 @@ fun WeatherApp(
           model =  viewModel
         )
       }
+
+      composable<Routes.ReportLocal> {
+        LocalScreen(
+          modifier = Modifier.padding(innerPadding)
+        )
+      }
     }
   }
 }
@@ -115,6 +122,10 @@ enum class AppScreen(val route: Any, val title: String, val icon: Int) {
     Routes.Report(35.489596f,-120.668665f), "Pie",
     R.drawable.outline_pie_24
   ),
+  LOCAL(
+    Routes.ReportLocal, "Local",
+    R.drawable.outline_pin_drop_24
+  )
 }
 
 @Composable
