@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -40,12 +41,17 @@ fun WeatherScreen(
     model.getWeather(lat, lon)
   }
 
+  Log.d("WeatherScreen", "uiState=${uiState}")
+
   when (uiState) {
-    is WeatherUiState.Loading -> Text("Loading...")
+    is WeatherUiState.Loading ->
+      Card(modifier = modifier) { Text("Loading...") }
     is WeatherUiState.Success -> WeatherView(
       uiState.report, modifier = modifier
     )
-    is WeatherUiState.Error -> Text("Error: ${uiState.error}")
+    is WeatherUiState.Error ->
+      Card(modifier = modifier){
+        Text("API Error: ${uiState.error}") }
   }
 }
 
