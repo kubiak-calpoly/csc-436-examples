@@ -14,6 +14,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.ReusableContentHost
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.modifier.modifierLocalOf
@@ -31,6 +32,9 @@ import dev.csse.kubiak.sensorsdemo.R
 
 
 sealed class Routes {
+  @Serializable
+  data object Inventory
+
   @Serializable
   data object Compass
 }
@@ -52,9 +56,7 @@ fun SensorApp(
     TopAppBar(title = { Text("Sensors Demo") }, actions = {
     })
   }, bottomBar = {
-    BottomNavBar(navController,
-      modifier = Modifier.height(80.dp)
-    )
+    BottomNavBar(navController)
   },
     modifier = modifier.fillMaxSize()
   ) { innerPadding ->
@@ -62,6 +64,9 @@ fun SensorApp(
       navController = navController,
       startDestination = Routes.Compass
     ) {
+      composable<Routes.Inventory> {
+        SensorInventoryScreen(modifier = Modifier.padding(innerPadding))
+      }
 
       composable<Routes.Compass> {
         CompassScreen(modifier = Modifier.padding(innerPadding))
@@ -71,10 +76,14 @@ fun SensorApp(
 }
 
 enum class AppScreen(val route: Any, val title: String, val icon: Int) {
+  INVENTORY(
+    Routes.Inventory, "List",
+    R.drawable.outline_view_list_24
+  ),
   COMPASS(
     Routes.Compass, "Compass",
-    R.drawable.compass
-  )
+    R.drawable.noun_compass_24
+  ),
 }
 
 @Composable

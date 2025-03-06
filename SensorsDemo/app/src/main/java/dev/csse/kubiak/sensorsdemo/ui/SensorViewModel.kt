@@ -1,5 +1,8 @@
 package dev.csse.kubiak.sensorsdemo.ui
 
+import android.app.Application
+import android.content.Context
+import android.hardware.Sensor
 import android.hardware.SensorManager
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.getValue
@@ -13,18 +16,33 @@ import dev.csse.kubiak.sensorsdemo.sensor.Accelerometer
 import dev.csse.kubiak.sensorsdemo.sensor.Magnetometer
 
 class SensorViewModel(
-  private val accelerometerSensor: Accelerometer,
-  private val magnetometerSensor: Magnetometer
+  val context: Context,
 ) : ViewModel() {
+
+  var sensorManager: SensorManager
+  var accelerometerSensor: Accelerometer
+  var magnetometerSensor: Magnetometer
+
+  init {
+    sensorManager =
+        context.getSystemService(Context.SENSOR_SERVICE)
+          as SensorManager
+
+    accelerometerSensor = Accelerometer(context)
+    magnetometerSensor = Magnetometer(context)
+  }
+
+  fun getSensorList(type: Int = Sensor.TYPE_ALL): List<Sensor> {
+    return sensorManager.getSensorList(type)
+  }
 
   companion object {
     val Factory: ViewModelProvider.Factory = viewModelFactory {
       initializer {
         val application =
-          (this[ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY] as SensorApplication)
+          (this[ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY] as Application)
         SensorViewModel(
-          accelerometerSensor = application.accelerometerSensor,
-          magnetometerSensor = application.magnetometerSensor
+          application.applicationContext
         )
       }
     }

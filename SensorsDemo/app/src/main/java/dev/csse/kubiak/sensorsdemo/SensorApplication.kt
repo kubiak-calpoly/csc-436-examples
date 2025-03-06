@@ -6,13 +6,11 @@ import dev.csse.kubiak.sensorsdemo.sensor.Magnetometer
 
 
 class SensorApplication : Application() {
-  lateinit var accelerometerSensor: Accelerometer
-  lateinit var magnetometerSensor: Magnetometer
+
 
   override fun onCreate() {
     super.onCreate()
 
-    accelerometerSensor = Accelerometer(this)
-    magnetometerSensor = Magnetometer(this)
+
   }
 }

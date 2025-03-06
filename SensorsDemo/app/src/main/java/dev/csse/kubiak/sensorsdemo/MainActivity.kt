@@ -21,9 +21,7 @@ class MainActivity : ComponentActivity() {
     enableEdgeToEdge()
     setContent {
       SensorsDemoTheme {
-        Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-          SensorApp(modifier = Modifier.padding(innerPadding))
-        }
+       SensorApp()
       }
     }
   }
