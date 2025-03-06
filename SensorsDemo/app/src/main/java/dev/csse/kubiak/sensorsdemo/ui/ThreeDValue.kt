@@ -28,7 +28,7 @@ import androidx.core.graphics.translationMatrix
 fun ThreeDValue(
   values: List<Float>,
   modifier: Modifier = Modifier,
-  labels: List<String> = listOf("X", "Y", "Z"),
+  labels: List<String> = listOf("X", "Y", "Z", "\uD835\uDF03"),
   name: String = "3D Value",
   scale: Float = 10f
 ) {
@@ -48,8 +48,8 @@ fun ThreeDValue(
     autoMirror = false
   ) { vw: Float, vh: Float ->
 
-    val x = values[0] * scale
-    val y = values[1] * scale
+    val x = values[0] * scale * vw / 180
+    val y = values[1] * scale * vh / 180
 
     val xAxis = listOf(
       PathNode.MoveTo(-vw / 2, 0f),
@@ -82,7 +82,7 @@ fun ThreeDValue(
     defaultHeight = 200.dp,
     autoMirror = false
   ) { vw: Float, vh: Float ->
-    val z = values[2] * scale
+    val z = values[2] * scale * vh/180
 
     val zAxis = listOf(
       PathNode.MoveTo(0f, -vh / 2),
@@ -122,7 +122,7 @@ fun ThreeDValue(
     values.forEachIndexed { index, value ->
       Row(modifier = Modifier.fillMaxWidth()) {
         Text(
-          labels[index],
+          labels.getOrElse(index) { "V$index"},
           modifier = Modifier.weight(1f),
           style = MaterialTheme.typography.displayLarge
         )

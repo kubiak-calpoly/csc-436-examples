@@ -1,5 +1,6 @@
 package dev.csse.kubiak.sensorsdemo.ui
 
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -41,6 +42,12 @@ sealed class Routes {
   data object Gyroscope
 
   @Serializable
+  data object Linear
+
+  @Serializable
+  data object Orientation
+
+  @Serializable
   data object Compass
 }
 
@@ -57,7 +64,8 @@ fun SensorApp(
   val context = LocalContext.current
   val navController = rememberNavController()
 
-  Scaffold(topBar = {
+  Scaffold(
+    topBar = {
     TopAppBar(title = { Text("Sensors Demo") }, actions = {
     })
   }, bottomBar = {
@@ -67,7 +75,7 @@ fun SensorApp(
   ) { innerPadding ->
     NavHost(
       navController = navController,
-      startDestination = Routes.Compass
+      startDestination = Routes.Inventory
     ) {
       composable<Routes.Inventory> {
         SensorInventoryScreen(modifier = Modifier.padding(innerPadding))
@@ -80,6 +88,12 @@ fun SensorApp(
       }
       composable<Routes.Gyroscope> {
         GyroscopeScreen(modifier = Modifier.padding(innerPadding))
+      }
+      composable<Routes.Linear> {
+        GyroscopeScreen(modifier = Modifier.padding(innerPadding))
+      }
+      composable<Routes.Orientation> {
+        OrientationScreen(modifier = Modifier.padding(innerPadding))
       }
     }
   }
@@ -98,8 +112,16 @@ enum class AppScreen(val route: Any, val title: String, val icon: Int) {
     Routes.Accelerometer, "Accel",
     R.drawable.noun_acceleration_24
   ),
+  LINEAR(
+    Routes.Linear, "Linear",
+    R.drawable.noun_3dlinear_24
+  ),
+  ORIENTATION(
+    Routes.Orientation, "Orient",
+    R.drawable.noun_3dorientation_24
+  ),
   COMPASS(
-    Routes.Compass, "Compass",
+    Routes.Compass, "Comp",
     R.drawable.noun_compass_24
   ),
 

@@ -16,7 +16,9 @@ import androidx.lifecycle.viewmodel.viewModelFactory
 import dev.csse.kubiak.sensorsdemo.SensorApplication
 import dev.csse.kubiak.sensorsdemo.sensor.Accelerometer
 import dev.csse.kubiak.sensorsdemo.sensor.Gyroscope
+import dev.csse.kubiak.sensorsdemo.sensor.LinearAccelerometer
 import dev.csse.kubiak.sensorsdemo.sensor.Magnetometer
+import dev.csse.kubiak.sensorsdemo.sensor.OrientationSensor
 
 class SensorViewModel(
   val context: Context,
@@ -25,10 +27,14 @@ class SensorViewModel(
   private var sensorManager: SensorManager
   private var gyroscope: Gyroscope
   private var accelerometer: Accelerometer
+  private var linearAccelerometer: LinearAccelerometer
+  private var orientation: OrientationSensor
   private var magnetometer: Magnetometer
 
   var gyroValues by mutableStateOf( listOf(0.0f, 0.0f, 0.0f))
   var accelValues by mutableStateOf( listOf(0.0f, 0.0f, 0.0f))
+  var linearValues by mutableStateOf( listOf(0.0f, 0.0f, 0.0f))
+  var orientationValues by mutableStateOf( listOf(0.0f, 0.0f, 0.0f))
   var magneticValues by mutableStateOf( listOf(0.0f, 0.0f, 0.0f))
   var compassRotation by mutableFloatStateOf(0.0f)
 
@@ -36,10 +42,11 @@ class SensorViewModel(
     sensorManager =
       context.getSystemService(Context.SENSOR_SERVICE)
               as SensorManager
-
     accelerometer = Accelerometer(context)
+    linearAccelerometer = LinearAccelerometer(context)
     magnetometer = Magnetometer(context)
     gyroscope = Gyroscope(context)
+    orientation = OrientationSensor(context)
   }
 
   fun getSensorList(type: Int = Sensor.TYPE_ALL): List<Sensor> {
@@ -78,6 +85,28 @@ class SensorViewModel(
 
   fun stopAccel() {
     accelerometer .stopListening()
+  }
+
+  fun startLinear() {
+    linearAccelerometer.startListening { values ->
+      linearValues = values.toMutableList()
+      Log.i("SensorViewModel", "Linear event ${linearValues}")
+    }
+  }
+
+  fun stopLinear() {
+    linearAccelerometer .stopListening()
+  }
+
+  fun stopOrientation() {
+    orientation .stopListening()
+  }
+
+  fun startOrientation() {
+    orientation.startListening { values ->
+      orientationValues = values.toMutableList()
+      Log.i("SensorViewModel", "Orientation event ${linearValues}")
+    }
   }
 
   fun startCompass() {

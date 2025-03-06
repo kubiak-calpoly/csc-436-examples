@@ -27,7 +27,7 @@ abstract class AndroidSensor(
       }
 
       sensor?.let {
-        sensorManager.registerListener(this, it, SensorManager.SENSOR_DELAY_NORMAL)
+        sensorManager.registerListener(this, it, SensorManager.SENSOR_DELAY_UI)
         onSensorValuesChanged = sensorCallback
       }
     }
