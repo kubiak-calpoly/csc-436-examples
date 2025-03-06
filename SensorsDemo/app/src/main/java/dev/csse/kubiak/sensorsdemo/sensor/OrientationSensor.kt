@@ -7,5 +7,5 @@ import android.hardware.Sensor
 class OrientationSensor(context: Context) : AndroidSensor(
   context = context,
   sensorFeature = PackageManager.FEATURE_SENSOR_ACCELEROMETER,
-  sensorType = Sensor.TYPE_ROTATION_VECTOR
+  sensorType = Sensor.TYPE_GAME_ROTATION_VECTOR
 )

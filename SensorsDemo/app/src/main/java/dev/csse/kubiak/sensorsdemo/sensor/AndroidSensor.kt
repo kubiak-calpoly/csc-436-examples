@@ -6,7 +6,7 @@ import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
 
-abstract class AndroidSensor(
+open class AndroidSensor(
   private val context: Context,
   private val sensorFeature: String,
   private val sensorType: Int
@@ -40,7 +40,7 @@ abstract class AndroidSensor(
   }
 
   override fun onSensorChanged(event: SensorEvent?) {
-    if (event?.sensor?.type == sensorType) {
+    if (event?.sensor?.type == (sensor?.type ?: 0)) {
       onSensorValuesChanged?.invoke(event.values.toList())
     }
   }
