@@ -14,7 +14,6 @@ import androidx.compose.ui.graphics.vector.Group
 import androidx.compose.ui.graphics.vector.Path
 import androidx.compose.ui.graphics.vector.PathNode
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
-import androidx.compose.ui.modifier.modifierLocalOf
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -22,12 +21,10 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 @Composable
 fun CompassScreen(
   modifier: Modifier = Modifier,
-  viewModel: SensorViewModel = viewModel(
+  model: SensorViewModel = viewModel(
     factory = SensorViewModel.Factory
   )
 ) {
-
-
   val vectorPainter = rememberVectorPainter(
     defaultWidth = 100.dp,
     defaultHeight = 100.dp,
@@ -78,15 +75,15 @@ fun CompassScreen(
       contentDescription = "Compass",
       modifier = Modifier
         .size(200.dp)
-        .rotate(viewModel.rotation)
+        .rotate(model.compassRotation)
     )
   }
 
   LifecycleResumeEffect(Unit) {
-    viewModel.startListening()
+    model.startCompass()
 
     onPauseOrDispose {
-      viewModel.stopListening()
+      model.stopCompass()
     }
   }
 

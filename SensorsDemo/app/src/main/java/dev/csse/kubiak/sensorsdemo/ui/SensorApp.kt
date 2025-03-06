@@ -30,10 +30,15 @@ import androidx.navigation.compose.rememberNavController
 import kotlinx.serialization.Serializable
 import dev.csse.kubiak.sensorsdemo.R
 
-
 sealed class Routes {
   @Serializable
   data object Inventory
+
+  @Serializable
+  data object Accelerometer
+
+  @Serializable
+  data object Gyroscope
 
   @Serializable
   data object Compass
@@ -67,9 +72,14 @@ fun SensorApp(
       composable<Routes.Inventory> {
         SensorInventoryScreen(modifier = Modifier.padding(innerPadding))
       }
-
       composable<Routes.Compass> {
         CompassScreen(modifier = Modifier.padding(innerPadding))
+      }
+      composable<Routes.Accelerometer> {
+        AccelerometerScreen(modifier = Modifier.padding(innerPadding))
+      }
+      composable<Routes.Gyroscope> {
+        GyroscopeScreen(modifier = Modifier.padding(innerPadding))
       }
     }
   }
@@ -80,10 +90,19 @@ enum class AppScreen(val route: Any, val title: String, val icon: Int) {
     Routes.Inventory, "List",
     R.drawable.outline_view_list_24
   ),
+  GYRO(
+    Routes.Gyroscope, "Gyro",
+    R.drawable.noun_gyroscope_24
+  ),
+  ACCEL(
+    Routes.Accelerometer, "Accel",
+    R.drawable.noun_acceleration_24
+  ),
   COMPASS(
     Routes.Compass, "Compass",
     R.drawable.noun_compass_24
   ),
+
 }
 
 @Composable
