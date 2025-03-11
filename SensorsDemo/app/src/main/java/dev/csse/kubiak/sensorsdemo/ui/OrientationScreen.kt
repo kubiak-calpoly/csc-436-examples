@@ -23,12 +23,24 @@ fun OrientationScreen(
   LifecycleResumeEffect(Unit) {
     model.startOrientation()
 
+<<<<<<< Updated upstream
     onPauseOrDispose {
       model.stopOrientation()
     }
   }
 
   val data = model.orientationValues
+=======
+  val data = model.orientValues
+
+  LifecycleResumeEffect(Unit) {
+    model.startOrient()
+
+    onPauseOrDispose {
+      model.stopOrient()
+    }
+  }
+>>>>>>> Stashed changes
 
   val theta = 2f * acos(data.getOrElse(3){1f})
   val x = data[0] / sin(theta/2f)

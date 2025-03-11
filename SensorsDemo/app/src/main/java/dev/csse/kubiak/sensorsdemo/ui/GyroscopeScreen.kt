@@ -15,6 +15,11 @@ fun GyroscopeScreen(
     factory = SensorViewModel.Factory
   )
 ) {
+<<<<<<< Updated upstream
+=======
+  val values = model.gyroValues
+
+>>>>>>> Stashed changes
   LifecycleResumeEffect(Unit) {
     model.startGyro()
 
