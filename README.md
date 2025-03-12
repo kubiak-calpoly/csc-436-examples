@@ -1,3 +1,5 @@
-You can download the Looper app from here:
+This Repository contains demo projects for CSC 436 _Mobile Application
+Development_ at Cal Poly, as taught by Ken Kubiak in Winter of 2025.
 
-[Looper Release APK](https://drive.google.com/file/d/1--bX5QVeqiT8bmqoykynRkjf2Pddv2gZ/view?usp=sharing)
+Each subdirectory contains an Android Studio project that was used for
+demonstration in class.
