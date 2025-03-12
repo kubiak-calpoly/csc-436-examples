@@ -7,11 +7,11 @@ plugins {
 }
 
 android {
-  namespace = "dev.csse.kubiak.looper"
+  namespace = "dev.csse.kubiak.demoweek8"
   compileSdk = 35
 
   defaultConfig {
-    applicationId = "dev.csse.kubiak.looper"
+    applicationId = "dev.csse.kubiak.demoweek8"
     minSdk = 26
     targetSdk = 35
     versionCode = 1
@@ -22,16 +22,6 @@ android {
 
   buildTypes {
     release {
-      isDebuggable = false
-      isShrinkResources = true
-      isMinifyEnabled = true
-      proguardFiles(
-        getDefaultProguardFile("proguard-android.txt"),
-        "proguard-rules.pro"
-      )
-    }
-    debug {
-      isDebuggable = true
       isMinifyEnabled = false
     }
   }
@@ -65,9 +55,9 @@ dependencies {
   implementation(libs.androidx.media3.exoplayer)
   implementation(libs.androidx.media3.ui)
   implementation(libs.androidx.media3.common)
-  implementation("androidx.room:room-runtime:2.6.1")
-  ksp("androidx.room:room-compiler:2.6.1")
-  implementation("androidx.room:room-ktx:2.6.1")
+  implementation(libs.androidx.room.runtime)
+  ksp(libs.androidx.room.compiler)
+  implementation(libs.androidx.room.ktx)
   implementation(libs.androidx.datastore.preferences)
   testImplementation(libs.junit)
   androidTestImplementation(libs.androidx.junit)
