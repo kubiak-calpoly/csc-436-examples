@@ -1,4 +1,4 @@
-package dev.csse.kubiak.demoweek8.ui.theme
+package dev.csse.kubiak.looper.ui.theme
 
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme

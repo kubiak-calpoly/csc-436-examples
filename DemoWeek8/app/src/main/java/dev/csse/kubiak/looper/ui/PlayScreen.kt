@@ -1,4 +1,4 @@
-package dev.csse.kubiak.demoweek8.ui
+package dev.csse.kubiak.looper.ui
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -19,9 +19,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
-import dev.csse.kubiak.demoweek8.Loop
-import dev.csse.kubiak.demoweek8.R
-import dev.csse.kubiak.demoweek8.Track
+import dev.csse.kubiak.looper.Loop
+import dev.csse.kubiak.looper.R
+import dev.csse.kubiak.looper.Track
 
 @Composable
 fun PlayScreen(

@@ -1,4 +1,4 @@
-package dev.csse.kubiak.demoweek8
+package dev.csse.kubiak.looper
 
 import android.content.pm.PackageManager
 import android.Manifest
@@ -9,9 +9,9 @@ import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
 import androidx.lifecycle.viewmodel.compose.viewModel
-import dev.csse.kubiak.demoweek8.ui.LooperApp
-import dev.csse.kubiak.demoweek8.ui.PlayerViewModel
-import dev.csse.kubiak.demoweek8.ui.theme.DemoWeek8Theme
+import dev.csse.kubiak.looper.ui.LooperApp
+import dev.csse.kubiak.looper.ui.PlayerViewModel
+import dev.csse.kubiak.looper.ui.theme.DemoWeek8Theme
 
 class MainActivity : ComponentActivity() {
   private var playerViewModel: PlayerViewModel? = null

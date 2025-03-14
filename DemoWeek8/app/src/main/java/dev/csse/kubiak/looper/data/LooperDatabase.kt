@@ -1,4 +1,4 @@
-package dev.csse.kubiak.demoweek8.data
+package dev.csse.kubiak.looper.data
 
 import androidx.room.Database
 import androidx.room.RoomDatabase

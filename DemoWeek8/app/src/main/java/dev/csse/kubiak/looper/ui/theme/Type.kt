@@ -1,4 +1,4 @@
-package dev.csse.kubiak.demoweek8.ui.theme
+package dev.csse.kubiak.looper.ui.theme
 
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle

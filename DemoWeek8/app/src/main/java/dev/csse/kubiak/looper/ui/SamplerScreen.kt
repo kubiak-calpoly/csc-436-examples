@@ -1,4 +1,4 @@
-package dev.csse.kubiak.demoweek8.ui
+package dev.csse.kubiak.looper.ui
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -11,8 +11,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
-import dev.csse.kubiak.demoweek8.AudioPlayer
-import dev.csse.kubiak.demoweek8.AudioRecorder
+import dev.csse.kubiak.looper.AudioPlayer
+import dev.csse.kubiak.looper.AudioRecorder
 
 @Composable
 fun SamplerScreen(

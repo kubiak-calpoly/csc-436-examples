@@ -1,4 +1,4 @@
-package dev.csse.kubiak.demoweek8.ui
+package dev.csse.kubiak.looper.ui
 
 import android.util.Log
 import androidx.compose.foundation.gestures.Orientation
@@ -35,10 +35,10 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
-import dev.csse.kubiak.demoweek8.AudioEngine
-import dev.csse.kubiak.demoweek8.Track
-import dev.csse.kubiak.demoweek8.data.AppPreferences
-import dev.csse.kubiak.demoweek8.data.AppStorage
+import dev.csse.kubiak.looper.AudioEngine
+import dev.csse.kubiak.looper.Track
+import dev.csse.kubiak.looper.data.AppPreferences
+import dev.csse.kubiak.looper.data.AppStorage
 import kotlinx.coroutines.launch
 
 @Composable

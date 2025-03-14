@@ -7,10 +7,14 @@ import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.collectAsState
 import dev.csse.kubiak.demoweek10.ui.BluetoothApp
 import dev.csse.kubiak.demoweek10.ui.BluetoothViewModel
 import dev.csse.kubiak.demoweek10.ui.theme.DemoWeek10Theme
@@ -18,7 +22,7 @@ import dev.csse.kubiak.demoweek10.ui.theme.DemoWeek10Theme
 class MainActivity : ComponentActivity() {
 
   private val bluetoothController by lazy {
-    BTController(applicationContext)
+    BTController(this)
   }
 
   private val isBluetoothEnabled: Boolean
@@ -36,30 +40,59 @@ class MainActivity : ComponentActivity() {
       ActivityResultContracts.RequestMultiplePermissions()
     ) { perms ->
       val canEnableBluetooth =
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.S)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S)
           perms[Manifest.permission.BLUETOOTH_CONNECT] == true
         else true
 
-      if(canEnableBluetooth && !isBluetoothEnabled) {
+      if (canEnableBluetooth && !isBluetoothEnabled) {
         enableBluetoothLauncher.launch(
           Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE)
         )
       }
     }
 
-    if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
       permissionLauncher.launch(
         arrayOf(
           Manifest.permission.BLUETOOTH_SCAN,
           Manifest.permission.BLUETOOTH_CONNECT
         )
       )
+    } else {
+      permissionLauncher.launch(
+        arrayOf(
+          Manifest.permission.BLUETOOTH_ADMIN,
+          Manifest.permission.BLUETOOTH,
+          Manifest.permission.ACCESS_FINE_LOCATION
+        )
+      )
     }
+
     setContent {
       DemoWeek10Theme {
-        BluetoothApp(
-          BluetoothViewModel(bluetoothController)
-        )
+        val state by viewModel.state.collectAsState()
+
+        LaunchedEffect(key1 = state.errorMessage) {
+          state.errorMessage?.let { message ->
+            Toast.makeText(
+              applicationContext,
+              message,
+              Toast.LENGTH_LONG
+            ).show()
+          }
+        }
+
+        LaunchedEffect(key1 = state.isConnected) {
+          if(state.isConnected) {
+            Toast.makeText(
+              applicationContext,
+              "You're connected!",
+              Toast.LENGTH_LONG
+            ).show()
+          }
+        }
+
+        BluetoothApp(viewModel)
       }
     }
   }

@@ -1,4 +1,4 @@
-package dev.csse.kubiak.demoweek8.ui
+package dev.csse.kubiak.looper.ui
 
 import android.util.Log
 import androidx.compose.foundation.clickable
@@ -31,10 +31,10 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
-import dev.csse.kubiak.demoweek8.Loop
-import dev.csse.kubiak.demoweek8.Track
-import dev.csse.kubiak.demoweek8.data.LoopEntity
-import dev.csse.kubiak.demoweek8.data.TrackEntity
+import dev.csse.kubiak.looper.Loop
+import dev.csse.kubiak.looper.Track
+import dev.csse.kubiak.looper.data.LoopEntity
+import dev.csse.kubiak.looper.data.TrackEntity
 
 
 @Composable

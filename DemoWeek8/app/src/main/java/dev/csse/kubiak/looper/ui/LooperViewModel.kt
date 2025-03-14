@@ -1,4 +1,4 @@
-package dev.csse.kubiak.demoweek8.ui
+package dev.csse.kubiak.looper.ui
 
 import android.content.Context
 import android.util.Log
@@ -11,10 +11,10 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
-import dev.csse.kubiak.demoweek8.Loop
-import dev.csse.kubiak.demoweek8.LooperApplication
-import dev.csse.kubiak.demoweek8.Track
-import dev.csse.kubiak.demoweek8.data.AppStorage
+import dev.csse.kubiak.looper.Loop
+import dev.csse.kubiak.looper.LooperApplication
+import dev.csse.kubiak.looper.Track
+import dev.csse.kubiak.looper.data.AppStorage
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.io.BufferedReader

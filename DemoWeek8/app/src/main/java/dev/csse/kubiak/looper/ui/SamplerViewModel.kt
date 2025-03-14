@@ -1,4 +1,4 @@
-package dev.csse.kubiak.demoweek8.ui
+package dev.csse.kubiak.looper.ui
 
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.getValue

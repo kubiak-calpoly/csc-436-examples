@@ -1,4 +1,4 @@
-package dev.csse.kubiak.demoweek8.ui
+package dev.csse.kubiak.looper.ui
 
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -23,9 +23,9 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
-import dev.csse.kubiak.demoweek8.data.AppStorage
-import dev.csse.kubiak.demoweek8.AudioEngine
-import dev.csse.kubiak.demoweek8.R
+import dev.csse.kubiak.looper.data.AppStorage
+import dev.csse.kubiak.looper.AudioEngine
+import dev.csse.kubiak.looper.R
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable

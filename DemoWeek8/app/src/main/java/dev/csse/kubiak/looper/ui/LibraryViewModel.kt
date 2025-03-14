@@ -1,4 +1,4 @@
-package dev.csse.kubiak.demoweek8.ui
+package dev.csse.kubiak.looper.ui
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -6,11 +6,11 @@ import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.AP
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
-import dev.csse.kubiak.demoweek8.LooperApplication
-import dev.csse.kubiak.demoweek8.Track
-import dev.csse.kubiak.demoweek8.data.LoopEntity
-import dev.csse.kubiak.demoweek8.data.LooperRepository
-import dev.csse.kubiak.demoweek8.data.TrackEntity
+import dev.csse.kubiak.looper.LooperApplication
+import dev.csse.kubiak.looper.Track
+import dev.csse.kubiak.looper.data.LoopEntity
+import dev.csse.kubiak.looper.data.LooperRepository
+import dev.csse.kubiak.looper.data.TrackEntity
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted

@@ -7,21 +7,31 @@ plugins {
 }
 
 android {
-  namespace = "dev.csse.kubiak.demoweek8"
+  namespace = "dev.csse.kubiak.looper"
   compileSdk = 35
 
   defaultConfig {
-    applicationId = "dev.csse.kubiak.demoweek8"
+    applicationId = "dev.csse.kubiak.looper"
     minSdk = 26
     targetSdk = 35
-    versionCode = 1
-    versionName = "1.0"
+    versionCode = 2
+    versionName = "1.1"
 
     testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
   }
 
   buildTypes {
     release {
+      isDebuggable = false
+      isMinifyEnabled = true
+      isShrinkResources = true
+      proguardFiles(
+        getDefaultProguardFile("proguard-android.txt"),
+        "proguard-rules.pro"
+      )
+    }
+    debug {
+      isDebuggable = true
       isMinifyEnabled = false
     }
   }

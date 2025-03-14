@@ -1,4 +1,4 @@
-package dev.csse.kubiak.demoweek8.ui
+package dev.csse.kubiak.looper.ui
 
 import android.util.Log
 import androidx.compose.foundation.border
@@ -21,9 +21,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import dev.csse.kubiak.demoweek8.AudioEngine
-import dev.csse.kubiak.demoweek8.Loop
-import dev.csse.kubiak.demoweek8.R
+import dev.csse.kubiak.looper.AudioEngine
+import dev.csse.kubiak.looper.Loop
+import dev.csse.kubiak.looper.R
 
 @Composable
 fun LoopPlayer(

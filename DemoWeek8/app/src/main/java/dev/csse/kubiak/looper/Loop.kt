@@ -1,4 +1,4 @@
-package dev.csse.kubiak.demoweek8
+package dev.csse.kubiak.looper
 
 import androidx.compose.runtime.Composable
 
