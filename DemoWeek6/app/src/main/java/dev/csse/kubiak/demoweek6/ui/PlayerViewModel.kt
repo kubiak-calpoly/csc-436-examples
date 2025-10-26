@@ -9,6 +9,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dev.csse.kubiak.demoweek6.Loop
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.callbackFlow
@@ -33,7 +34,7 @@ class PlayerViewModel : ViewModel() {
     if (loop.ticksPerIteration > 0) {
       isRunning = true
 
-      viewModelScope.launch {
+      viewModelScope.launch(Dispatchers.Default) {
         while (isRunning && millisCount < totalMillis) {
           delay(millisPerTick)
           millisCount += millisPerTick
