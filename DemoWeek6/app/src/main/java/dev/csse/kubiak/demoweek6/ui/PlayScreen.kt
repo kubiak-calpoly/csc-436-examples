@@ -50,7 +50,7 @@ fun PlayScreen(
     Row(modifier = Modifier.fillMaxWidth()) {
       NumberField(
         modifier = Modifier.weight(1f),
-        labelText = "Number of Iterations",
+        labelText = "Iterations",
         value = playerViewModel.iterations,
         onValueChange = { value ->
           playerViewModel.iterations = value ?: 1
@@ -58,7 +58,7 @@ fun PlayScreen(
       )
       NumberField(
         modifier = Modifier.weight(1f),
-        labelText = "Beats Per Minute",
+        labelText = "BPM",
         value = playerViewModel.bpm,
         onValueChange = { value ->
           playerViewModel.bpm = value ?: 60
