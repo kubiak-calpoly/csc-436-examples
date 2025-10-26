@@ -1,5 +1,6 @@
 package dev.csse.kubiak.demoweek6.ui
 
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableLongStateOf
@@ -26,6 +27,8 @@ class PlayerViewModel : ViewModel() {
   var isRunning by mutableStateOf(false)
     private set
 
+  private var tickingJob: Job? = null
+
   fun startPlayer(loop: Loop) {
     val millisPerTick = getMillisPerTick(loop)
     val totalMillis = iterations *
@@ -34,19 +37,26 @@ class PlayerViewModel : ViewModel() {
     if (loop.ticksPerIteration > 0) {
       isRunning = true
 
-      viewModelScope.launch(Dispatchers.Default) {
-        while (isRunning && millisCount < totalMillis) {
+      tickingJob = viewModelScope.launch(Dispatchers.Default) {
+        while (millisCount < totalMillis) {
           delay(millisPerTick)
           millisCount += millisPerTick
         }
-        if ( isRunning ) {
-          isRunning = false
-          millisCount = 0
-        }
+        isRunning = false
+        millisCount = 0
       }
     }
   }
 
+  fun pausePlayer() {
+    Log.d("PlayerViewModel", "Player Paused")
+    tickingJob?.cancel()
+    isRunning = false
+  }
+
+  fun resetPlayer() {
+    millisCount = 0
+  }
   fun getMillisPerTick(loop: Loop): Long {
     return 60000L / bpm
   }
