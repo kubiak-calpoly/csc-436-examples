@@ -77,6 +77,10 @@ fun PlayScreen(
     ) {
       loop.beats.forEach {
         Beat(it)
+        if (it.bar > 1 && it.beat == 1) {
+          Box(modifier = Modifier.width(1.dp)
+            .fillMaxHeight().background(Color(0xff000000)))
+        }
       }
     }
     Row(
