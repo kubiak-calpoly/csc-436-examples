@@ -36,7 +36,7 @@ class PlayerViewModel : ViewModel() {
   }
 
   fun getMillisPerTick(loop: Loop): Long {
-    return 60000L / bpm / loop.subdivisions
+    return 60000L / bpm
   }
 
   fun getPosition(loop: Loop): Loop.Position {

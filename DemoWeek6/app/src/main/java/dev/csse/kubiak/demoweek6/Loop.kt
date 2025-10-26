@@ -1,22 +1,19 @@
 package dev.csse.kubiak.demoweek6
 
 class Loop {
-  var barsToLoop: Int = 1
+  var barsToLoop: Int = 2
   var beatsPerBar: Int = 4
-  var subdivisions: Int = 2
   val beats: MutableList<Division> = mutableListOf()
 
   init {
     for(bar in (1)..barsToLoop) {
       for(beat in (1)..beatsPerBar) {
-        for(div in (1)..subdivisions) {
           beats.add(
             Division(
+              bar = bar,
               beat = beat,
-              subdivision = div
             )
           )
-        }
       }
     }
   }
@@ -24,13 +21,12 @@ class Loop {
   data class Position(
     val iteration: Int = 1,
     val bar: Int = 1,
-    val beat: Int = 1,
-    val subdivision: Int = 1
+    val beat: Int = 1
   )
 
   val ticksPerIteration: Int
     get() {
-      return beatsPerBar * subdivisions * barsToLoop
+      return beatsPerBar * barsToLoop
     }
 
   fun getPosition(tickCount: Int): Position {
@@ -38,23 +34,19 @@ class Loop {
     val ticksThisIteration = tickCount -
             (ticksPerIteration * iterationNumber)
     val barNumber = ticksThisIteration /
-            (beatsPerBar * subdivisions)
-    val ticksThisBar = ticksThisIteration -
-            (beatsPerBar * subdivisions * barNumber)
-    val beatNumber = ticksThisBar / subdivisions
-    val subdivisionNumber = ticksThisBar -
-            (subdivisions * beatNumber)
+            (beatsPerBar )
+    val beatNumber = ticksThisIteration -
+            (beatsPerBar *  barNumber)
     return Position(iterationNumber + 1,
       barNumber + 1,
-      beatNumber + 1,
-      subdivisionNumber + 1
+      beatNumber + 1
     )
   }
 }
 
 class Division(
-  val beat: Int = 1,
-  val subdivision: Int = 1
+  val bar: Int = 1,
+  val beat: Int = 1
 )
 
 
