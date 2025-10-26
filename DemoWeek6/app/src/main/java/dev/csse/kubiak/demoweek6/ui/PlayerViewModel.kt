@@ -40,7 +40,11 @@ class PlayerViewModel : ViewModel() {
   }
 
   fun getPosition(loop: Loop): Loop.Position {
-    val tickCount = millisCount / getMillisPerTick(loop)
-    return loop.getPosition(tickCount.toInt())
+    if (isRunning || millisCount > 0) {
+      val tickCount = millisCount / getMillisPerTick(loop)
+      return loop.getPosition(tickCount.toInt())
+    } else {
+      return Loop.Position(0,0,0);
+    }
   }
 }
