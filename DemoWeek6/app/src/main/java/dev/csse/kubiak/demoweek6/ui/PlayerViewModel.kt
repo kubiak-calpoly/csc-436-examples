@@ -31,7 +31,18 @@ class PlayerViewModel : ViewModel() {
             loop.ticksPerIteration * millisPerTick
 
     if (loop.ticksPerIteration > 0) {
-      // isRunning = true
+      isRunning = true
+
+      viewModelScope.launch {
+        while (isRunning && millisCount < totalMillis) {
+          delay(millisPerTick)
+          millisCount += millisPerTick
+        }
+        if ( isRunning ) {
+          isRunning = false
+          millisCount = 0
+        }
+      }
     }
   }
 

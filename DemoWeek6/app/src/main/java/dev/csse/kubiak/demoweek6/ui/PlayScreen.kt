@@ -106,7 +106,7 @@ fun PlayScreen(
       }
       Spacer(modifier = Modifier.width(20.dp))
       IconButton(
-        onClick = { }
+        onClick = { playerViewModel.startPlayer(loop) }
       ) {
         Icon(
           painterResource(R.drawable.baseline_play_circle_24),
