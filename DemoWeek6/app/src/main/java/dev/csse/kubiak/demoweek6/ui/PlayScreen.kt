@@ -46,11 +46,13 @@ fun PlayScreen(
   modifier: Modifier = Modifier,
   playerViewModel: PlayerViewModel = viewModel()
 ) {
+  val position = playerViewModel.getPosition(loop)
+
   Column(modifier = modifier.fillMaxWidth()) {
     Row(modifier = Modifier.fillMaxWidth()) {
       NumberField(
         modifier = Modifier.weight(1f),
-        labelText = "Iterations",
+        labelText = "Number of Iterations",
         value = playerViewModel.iterations,
         onValueChange = { value ->
           playerViewModel.iterations = value ?: 1
@@ -58,7 +60,7 @@ fun PlayScreen(
       )
       NumberField(
         modifier = Modifier.weight(1f),
-        labelText = "BPM",
+        labelText = "Beats Per Minute",
         value = playerViewModel.bpm,
         onValueChange = { value ->
           playerViewModel.bpm = value ?: 60
@@ -82,6 +84,13 @@ fun PlayScreen(
       verticalAlignment = Alignment.CenterVertically,
       horizontalArrangement = Arrangement.Center
     ) {
+      Column (modifier = Modifier.weight(1f),
+        horizontalAlignment =  Alignment.CenterHorizontally ) {
+        Text("LOOP",
+          style = MaterialTheme.typography.labelSmall)
+        Text(position.iteration.toString(),
+          style = MaterialTheme.typography.displayLarge )
+      }
       IconButton(
         onClick = { }
       ) {
@@ -112,6 +121,13 @@ fun PlayScreen(
           modifier = Modifier.scale(2.5f)
         )
       }
+      Column (modifier = Modifier.weight(1f),
+        horizontalAlignment =  Alignment.CenterHorizontally ) {
+        Text("BAR",
+          style = MaterialTheme.typography.labelSmall)
+        Text(position.bar.toString(),
+          style = MaterialTheme.typography.displayLarge )
+      }
     }
 
   }
@@ -139,10 +155,10 @@ fun Shape(
 fun Beat(
   beat: Division,
   hasBeenPlayed: Boolean = false,
-  isPlaying: Boolean = false
+  isPlaying: Boolean = false,
 ) {
   val bg = if (hasBeenPlayed)
-    MaterialTheme.colorScheme.primary
+    MaterialTheme.colorScheme.surfaceDim
   else MaterialTheme.colorScheme.surface
 
   Box(
