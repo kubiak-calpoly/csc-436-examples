@@ -23,6 +23,10 @@ class PlayerViewModel : ViewModel() {
 
   var millisCount: Long by mutableLongStateOf(0L)
     private set
+  var millisPerIteration: Long by mutableLongStateOf(0L)
+    private set
+  var totalMillis: Long by mutableLongStateOf(0L)
+    private set
 
   var isRunning by mutableStateOf(false)
     private set
@@ -31,8 +35,8 @@ class PlayerViewModel : ViewModel() {
 
   fun startPlayer(loop: Loop) {
     val millisPerTick = getMillisPerTick(loop)
-    val totalMillis = iterations *
-            loop.ticksPerIteration * millisPerTick
+    millisPerIteration = loop.ticksPerIteration * millisPerTick
+    totalMillis = iterations * millisPerIteration
 
     if (loop.ticksPerIteration > 0) {
       isRunning = true
