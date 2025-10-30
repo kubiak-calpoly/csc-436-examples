@@ -84,9 +84,9 @@ class MainActivity : ComponentActivity() {
       OneTimeWorkRequestBuilder<LooperWorker>()
         .setInputData(
           workDataOf(
-            KEY_MILLIS_COUNT to playerViewModel.millisCount,
-            KEY_TOTAL_MILLIS to playerViewModel.totalMillis,
-            KEY_ITERATION_MILLIS to playerViewModel.millisPerIteration
+//            KEY_MILLIS_COUNT to playerViewModel.millisCount,
+//            KEY_TOTAL_MILLIS to playerViewModel.totalMillis,
+//            KEY_ITERATION_MILLIS to playerViewModel.millisPerIteration
           )
         ).build()
 

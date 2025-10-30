@@ -13,59 +13,57 @@ import dev.csse.kubiak.demoweek6.Loop
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
 import kotlinx.serialization.descriptors.PrimitiveKind
 
 class PlayerViewModel : ViewModel() {
   var iterations: Int by mutableIntStateOf(8)
   var bpm: Int by mutableIntStateOf(60)
-
-  var millisCount: Long by mutableLongStateOf(0L)
-    private set
-  var millisPerIteration: Long by mutableLongStateOf(0L)
-    private set
   var totalMillis: Long by mutableLongStateOf(0L)
     private set
 
   var isRunning by mutableStateOf(false)
     private set
-
-  private var tickingJob: Job? = null
+  var positionFlow: Flow<Loop.Position> = flow {}
+  private var millisCount = 0L
 
   fun startPlayer(loop: Loop) {
     val millisPerTick = getMillisPerTick(loop)
-    millisPerIteration = loop.ticksPerIteration * millisPerTick
+    val millisPerIteration = loop.ticksPerIteration * millisPerTick
     totalMillis = iterations * millisPerIteration
 
     if (loop.ticksPerIteration > 0) {
       isRunning = true
-
-      tickingJob = viewModelScope.launch(Dispatchers.Default) {
-        while (millisCount < totalMillis) {
-          delay(millisPerTick)
+      positionFlow = flow {
+        do {
+          val position = getPosition(loop, millisCount)
+          emit(position)
+          Log.d("PlayerViewModel", "Position at $millisCount ms: $position")
           millisCount += millisPerTick
-        }
+          delay(millisPerTick)
+        } while (isRunning && millisCount <= totalMillis)
         isRunning = false
-        millisCount = 0
       }
     }
   }
 
   fun pausePlayer() {
     Log.d("PlayerViewModel", "Player Paused")
-    tickingJob?.cancel()
     isRunning = false
   }
 
   fun resetPlayer() {
-    millisCount = 0
+    millisCount = 0L
   }
+
   fun getMillisPerTick(loop: Loop): Long {
     return 60000L / bpm
   }
 
-  fun getPosition(loop: Loop): Loop.Position {
+  fun getPosition(loop: Loop, millisCount: Long): Loop.Position {
     if (isRunning || millisCount > 0) {
       val tickCount = millisCount / getMillisPerTick(loop)
       return loop.getPosition(tickCount.toInt())
