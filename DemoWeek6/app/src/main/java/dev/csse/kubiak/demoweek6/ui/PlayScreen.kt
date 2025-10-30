@@ -41,6 +41,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import dev.csse.kubiak.demoweek6.Division
 import dev.csse.kubiak.demoweek6.Loop
@@ -53,14 +54,8 @@ fun PlayScreen(
   modifier: Modifier = Modifier,
   playerViewModel: PlayerViewModel = viewModel()
 ) {
-  var position by remember { mutableStateOf(Loop.Position()) }
-
-  LaunchedEffect(playerViewModel.positionFlow) {
-    playerViewModel.positionFlow.collect() {
-      Log.d("PlayScreen", "Collected position $it")
-      position = it
-    }
-  }
+  val position: Loop.Position by
+  playerViewModel.positionState.collectAsStateWithLifecycle()
 
   Column(modifier = modifier.fillMaxWidth()) {
     Row(modifier = Modifier.fillMaxWidth()) {
@@ -91,14 +86,21 @@ fun PlayScreen(
     ) {
       loop.beats.forEach {
         if (it.bar > 1 && it.beat == 1) {
-          Box(modifier = Modifier.width(1.dp)
-            .fillMaxHeight().background(Color(0xff000000)))
+          Box(
+            modifier = Modifier
+              .width(1.dp)
+              .fillMaxHeight()
+              .background(Color(0xff000000))
+          )
         }
-        Beat(it,
+        Beat(
+          it,
           hasBeenPlayed = it.bar < position.bar ||
                   it.bar == position.bar && it.beat <= position.beat,
-          isPlaying = it.bar == position.bar && it.beat == position.beat
-                  ,modifier = Modifier.weight(1f)
+          isPlaying = playerViewModel.isRunning &&
+                  it.bar == position.bar &&
+                  it.beat == position.beat,
+          modifier = Modifier.weight(1f)
         )
       }
     }
@@ -111,10 +113,11 @@ fun PlayScreen(
       PlayerPosition(position, modifier = Modifier.weight(1f))
       PlayerControls(
         isRunning = playerViewModel.isRunning,
-        onPlay =  { playerViewModel.startPlayer(loop) },
-        onPause =  { playerViewModel.pausePlayer() },
+        onPlay = { playerViewModel.startPlayer(loop) },
+        onPause = { playerViewModel.pausePlayer() },
         onReset = { playerViewModel.resetPlayer() },
-        modifier = Modifier.weight(1f))
+        modifier = Modifier.weight(1f)
+      )
     }
 
   }
@@ -156,7 +159,8 @@ fun Beat(
   ) {
     Shape(
       lit = isPlaying,
-      modifier = Modifier.align(Alignment.BottomCenter)
+      modifier = Modifier
+        .align(Alignment.BottomCenter)
         .padding(0.dp, 8.dp)
     )
   }
