@@ -43,8 +43,8 @@ fun LooperApp(
       composable<Routes.Play> {
         PlayScreen(
           looperViewModel.loop,
-          modifier = modPadding,
-          playerViewModel = playerViewModel
+          playerViewModel = playerViewModel,
+          modifier = modPadding
         )
       }
     }

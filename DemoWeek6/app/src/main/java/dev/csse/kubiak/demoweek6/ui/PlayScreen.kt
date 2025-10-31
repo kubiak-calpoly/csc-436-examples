@@ -1,26 +1,41 @@
 package dev.csse.kubiak.demoweek6.ui
 
 import android.util.Log
+import androidx.compose.animation.core.updateTransition
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.currentCompositionLocalContext
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.modifier.modifierLocalOf
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
@@ -32,15 +47,15 @@ import dev.csse.kubiak.demoweek6.Division
 import dev.csse.kubiak.demoweek6.Loop
 import dev.csse.kubiak.demoweek6.R
 
+
 @Composable
 fun PlayScreen(
   loop: Loop,
   modifier: Modifier = Modifier,
   playerViewModel: PlayerViewModel = viewModel()
 ) {
-  val position: Loop.Position  by playerViewModel
-    .positionState.collectAsStateWithLifecycle()
-
+  val position: Loop.Position by
+  playerViewModel.positionState.collectAsStateWithLifecycle()
 
   Column(modifier = modifier.fillMaxWidth()) {
     Row(modifier = Modifier.fillMaxWidth()) {
@@ -70,14 +85,21 @@ fun PlayScreen(
       verticalAlignment = Alignment.CenterVertically
     ) {
       loop.beats.forEach {
+        if (it.bar > 1 && it.beat == 1) {
+          Box(
+            modifier = Modifier
+              .width(1.dp)
+              .fillMaxHeight()
+              .background(Color(0xff000000))
+          )
+        }
         Beat(
           it,
-          hasBeenPlayed = it.beat < position.beat ||
-                  it.beat == position.beat &&
-                  it.subdivision < position.subdivision,
+          hasBeenPlayed = it.bar < position.bar ||
+                  it.bar == position.bar && it.beat <= position.beat,
           isPlaying = playerViewModel.isRunning &&
-                  it.beat == position.beat &&
-                  it.subdivision == position.subdivision,
+                  it.bar == position.bar &&
+                  it.beat == position.beat,
           modifier = Modifier.weight(1f)
         )
       }
@@ -91,10 +113,11 @@ fun PlayScreen(
       PlayerPosition(position, modifier = Modifier.weight(1f))
       PlayerControls(
         isRunning = playerViewModel.isRunning,
-        onPlay =  { playerViewModel.startPlayer(loop) },
-        onPause =  { playerViewModel.pausePlayer() },
+        onPlay = { playerViewModel.startPlayer(loop) },
+        onPause = { playerViewModel.pausePlayer() },
         onReset = { playerViewModel.resetPlayer() },
-        modifier = Modifier.weight(1f))
+        modifier = Modifier.weight(1f)
+      )
     }
 
   }
@@ -136,7 +159,8 @@ fun Beat(
   ) {
     Shape(
       lit = isPlaying,
-      modifier = Modifier.align(Alignment.BottomCenter)
+      modifier = Modifier
+        .align(Alignment.BottomCenter)
         .padding(0.dp, 8.dp)
     )
   }
@@ -150,7 +174,7 @@ fun PlayerPosition(
 ) {
   Text(
     "${position.iteration}:" +
-            "${position.bar}.${position.beat}.${position.subdivision}",
+            "${position.bar}.${position.beat}",
     style = MaterialTheme.typography.displayMedium,
     textAlign = TextAlign.Center,
     modifier = modifier.border(

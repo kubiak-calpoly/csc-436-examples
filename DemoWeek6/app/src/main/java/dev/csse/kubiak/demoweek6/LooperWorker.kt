@@ -18,9 +18,10 @@ val KEY_ITERATION_MILLIS = "dev.csse.kubiak.demoweek6.KEY_ITERATION_MILLIS"
 class LooperWorker(context: Context, parameters: WorkerParameters) :
   CoroutineWorker(context, parameters) {
 
-  private val notificationManager =
+  private val notificationManager: NotificationManager =
     context.getSystemService(Context.NOTIFICATION_SERVICE)
             as NotificationManager
+
 
   override suspend fun doWork(): Result {
     var millisCount = inputData.getLong(KEY_MILLIS_COUNT, 0)
@@ -64,6 +65,7 @@ class LooperWorker(context: Context, parameters: WorkerParameters) :
 
     return Result.success()
   }
+
 
   private fun createNotificationChannel() {
     val channel = NotificationChannel(
