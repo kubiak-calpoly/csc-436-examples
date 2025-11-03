@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.mandatorySystemGesturesPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -24,6 +25,7 @@ import androidx.compose.runtime.internal.composableLambdaInstance
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
@@ -74,24 +76,30 @@ fun PlayScreen(
       verticalAlignment = Alignment.CenterVertically
     ) {
       loop.forEachTick { bar, beat, subdivision ->
+        if (bar > 1 && beat == 1 && subdivision == 1) {
+          Box(modifier = Modifier.width(1.dp)
+            .fillMaxHeight().background(Color(0xff000000)))
+        }
         Beat(
-          hasBeenPlayed = bar < position.bar ||
-                  bar == position.bar && (
-                  beat < position.beat ||
-                  beat == position.beat &&
-                  subdivision < position.subdivision),
-          isPlaying = playerViewModel.isRunning &&
-                  bar == position.bar &&
-                  beat == position.beat &&
-                  subdivision == position.subdivision,
-          modifier = Modifier.weight(1f),
-          trackData = tracks.map { track: Track ->
-            val pos = Track.Position(
-              bar = bar, beat = beat, subdivision = subdivision
-            )
-            track.getHit(pos)?.volume
-          }
-        )
+            hasBeenPlayed = bar < position.bar ||
+                    bar == position.bar && (
+                    beat < position.beat ||
+                            beat == position.beat &&
+                            subdivision < position.subdivision),
+            isPlaying = playerViewModel.isRunning &&
+                    bar == position.bar &&
+                    beat == position.beat &&
+                    subdivision == position.subdivision,
+            modifier = Modifier.weight(1f),
+            trackData = tracks.map { track: Track ->
+              val pos = Track.Position(
+                bar = bar, beat = beat, subdivision = subdivision
+              )
+              track.getHit(pos)?.volume
+            }
+          )
+
+
       }
     }
     Row(
@@ -149,7 +157,7 @@ fun Beat(
     Shape(
       lit = isPlaying,
       modifier = Modifier.align(Alignment.BottomCenter)
-        .padding(0.dp, 8.dp)
+        .padding(0.dp, 2.dp)
     )
     trackData.forEachIndexed { i, hit ->
       if (hit != null) {

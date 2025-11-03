@@ -25,20 +25,6 @@ class LooperViewModel(
   var loop: Loop by mutableStateOf(Loop())
   val tracks = mutableStateListOf<Track>()
 
-
-
-  init {
-    viewModelScope.launch {
-      prefStorage.appPreferencesFlow.collect {
-        loop = Loop(
-          barsToLoop = it.loopBars,
-          beatsPerBar = it.loopBeats,
-          subdivisions = it.loopDivisions
-        )
-      }
-    }
-  }
-
   companion object {
     val Factory: ViewModelProvider.Factory = viewModelFactory {
       initializer {

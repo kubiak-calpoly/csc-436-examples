@@ -42,47 +42,37 @@ fun ConfigScreen(
     factory = LooperViewModel.Factory
   )
 ) {
-  val context = LocalContext.current
-  val store = AppStorage(context)
-  val appPrefs = store.appPreferencesFlow
-    .collectAsStateWithLifecycle(initialValue = AppPreferences())
   val coroutineScope = rememberCoroutineScope()
   var filename by remember { mutableStateOf("") }
-
+  val loop = looperViewModel.loop
 
   Column(modifier = modifier) {
     Row {
       NumberField(
         modifier = Modifier.weight(1f),
         labelText = "Number of Bars",
-        value = appPrefs.value.loopBars,
+        value = loop.barsToLoop,
         onValueChange = { value ->
-          coroutineScope.launch() {
-            store.saveLoopBars(value)
-          }
-          // looperViewModel.loop = loop.copy(barsToLoop = value)
+          looperViewModel.loop =
+            loop.copy(barsToLoop = value)
         }
       )
       NumberField(
         modifier = Modifier.weight(1f),
         labelText = "Beats per Bar",
-        value = appPrefs.value.loopBeats ,
+        value = loop.beatsPerBar,
         onValueChange = { value ->
-          coroutineScope.launch() {
-            store.saveLoopBeats(value)
-          }
-          //looperViewModel.loop = loop.copy(beatsPerBar = value)
+          looperViewModel.loop =
+            loop.copy(beatsPerBar = value)
         }
       )
       NumberField(
         modifier = Modifier.weight(1f),
         labelText = "Subdivisions",
-        value = appPrefs.value.loopDivisions,
+        value = loop.subdivisions,
         onValueChange = { value ->
-          coroutineScope.launch() {
-            store.saveSubdivisions(value)
-          }
-          //looperViewModel.loop = loop.copy(subdivisions = value)
+          looperViewModel.loop =
+            loop.copy(subdivisions = value)
         }
       )
     }
@@ -129,7 +119,7 @@ fun ConfigScreen(
         )
         Button(
           onClick = {
-            looperViewModel.loadTracksFromFile(context, filename)
+            // looperViewModel.loadTracksFromFile(context, filename)
           }
         ) { Text("Load Tracks") }
       }
