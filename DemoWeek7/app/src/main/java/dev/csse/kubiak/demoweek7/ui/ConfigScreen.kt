@@ -42,7 +42,6 @@ fun ConfigScreen(
     factory = LooperViewModel.Factory
   )
 ) {
-  val coroutineScope = rememberCoroutineScope()
   var filename by remember { mutableStateOf("") }
   val loop = looperViewModel.loop
 
@@ -119,7 +118,6 @@ fun ConfigScreen(
         )
         Button(
           onClick = {
-            // looperViewModel.loadTracksFromFile(context, filename)
           }
         ) { Text("Load Tracks") }
       }
