@@ -38,9 +38,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun ConfigScreen(
   modifier: Modifier = Modifier,
-  looperViewModel: LooperViewModel = viewModel(
-    factory = LooperViewModel.Factory
-  )
+  looperViewModel: LooperViewModel = viewModel()
 ) {
   var filename by remember { mutableStateOf("") }
   val loop = looperViewModel.loop

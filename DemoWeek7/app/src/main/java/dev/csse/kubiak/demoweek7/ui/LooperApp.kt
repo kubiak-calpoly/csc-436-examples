@@ -32,9 +32,7 @@ sealed class Routes {
 @Composable
 fun LooperApp(
   modifier: Modifier = Modifier,
-  looperViewModel: LooperViewModel = viewModel(
-    factory = LooperViewModel.Factory
-  ),
+  looperViewModel: LooperViewModel = viewModel(),
   playerViewModel: PlayerViewModel = viewModel(),
 ) {
   val navController = rememberNavController()
