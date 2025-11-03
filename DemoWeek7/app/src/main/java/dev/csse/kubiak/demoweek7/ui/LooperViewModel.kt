@@ -19,9 +19,26 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.io.BufferedReader
 
-class LooperViewModel() : ViewModel() {
+class LooperViewModel(
+  prefStorage: AppStorage
+) : ViewModel() {
   var loop: Loop by mutableStateOf(Loop())
   val tracks = mutableStateListOf<Track>()
+
+  companion object {
+    val Factory: ViewModelProvider.Factory = viewModelFactory {
+      initializer {
+        val application =
+          (this[
+            ViewModelProvider.AndroidViewModelFactory.APPLICATION_KEY
+          ] as LooperApplication)
+        LooperViewModel(
+          AppStorage(application.appContext)
+        )
+      }
+    }
+  }
+
 
   fun parseTracksInput(reader: BufferedReader) {
     val pattern = "^(\\w+):\\s*([|](([.*]*)(:[.*]*)*[|])+)".toRegex()
