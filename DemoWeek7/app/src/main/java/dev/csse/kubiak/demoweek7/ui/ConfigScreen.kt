@@ -42,36 +42,43 @@ fun ConfigScreen(
     factory = LooperViewModel.Factory
   )
 ) {
+  val context = LocalContext.current
+  val store = AppStorage(context)
+  val appPrefs = store.appPreferencesFlow
+    .collectAsStateWithLifecycle(initialValue = AppPreferences())
+  val coroutineScope = rememberCoroutineScope()
   var filename by remember { mutableStateOf("") }
-  val loop = looperViewModel.loop
 
   Column(modifier = modifier) {
     Row {
       NumberField(
         modifier = Modifier.weight(1f),
         labelText = "Number of Bars",
-        value = loop.barsToLoop,
+        value = appPrefs.value.loopBars,
         onValueChange = { value ->
-          looperViewModel.loop =
-            loop.copy(barsToLoop = value)
+          coroutineScope.launch() {
+            store.saveLoopBars(value)
+          }
         }
       )
       NumberField(
         modifier = Modifier.weight(1f),
         labelText = "Beats per Bar",
-        value = loop.beatsPerBar,
+        value = appPrefs.value.loopBeats,
         onValueChange = { value ->
-          looperViewModel.loop =
-            loop.copy(beatsPerBar = value)
+          coroutineScope.launch {
+            store.saveLoopBeats(value)
+          }
         }
       )
       NumberField(
         modifier = Modifier.weight(1f),
         labelText = "Subdivisions",
-        value = loop.subdivisions,
+        value = appPrefs.value.loopDivisions,
         onValueChange = { value ->
-          looperViewModel.loop =
-            loop.copy(subdivisions = value)
+          coroutineScope.launch() {
+            store.saveSubdivisions(value)
+          }
         }
       )
     }
