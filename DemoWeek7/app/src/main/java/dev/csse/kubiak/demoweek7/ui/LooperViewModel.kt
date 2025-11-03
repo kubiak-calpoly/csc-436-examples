@@ -51,6 +51,19 @@ class LooperViewModel(
     }
   }
 
+  fun loadTracksFromFile(context: Context, filename: String) {
+    viewModelScope.launch(Dispatchers.IO) {
+      try {
+        val inputStream = context.openFileInput(filename)
+        val reader = inputStream.bufferedReader()
+        parseTracksInput(reader)
+        inputStream.close()
+      } catch(e: Exception) {
+        // TODO: Raise an alert
+        Log.e("LooperViewModel", "Error reading tracks file '$filename': $e")
+      }
+    }
+  }
 
   fun parseTracksInput(reader: BufferedReader) {
     val pattern = "^(\\w+):\\s*([|](([.*]*)(:[.*]*)*[|])+)".toRegex()

@@ -119,12 +119,14 @@ fun ConfigScreen(
           modifier = Modifier.fillMaxWidth(),
           label = { Text("Tracks Filename") },
           value = filename,
+          singleLine = true,
           onValueChange = { name: String ->
             filename = name
           }
         )
         Button(
           onClick = {
+            looperViewModel.loadTracksFromFile(context, filename)
           }
         ) { Text("Load Tracks") }
       }
