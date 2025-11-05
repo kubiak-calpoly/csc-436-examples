@@ -45,7 +45,7 @@ fun LibraryScreen(
   onLoopLoaded: (Loop) -> Unit = {},
   looperViewModel: LooperViewModel,
   libraryViewModel: LibraryViewModel = viewModel(
-    factory = LibraryViewModel.Factory
+    // TODO: factory =
   ),
 ) {
   var showAddLoopDialog by rememberSaveable {

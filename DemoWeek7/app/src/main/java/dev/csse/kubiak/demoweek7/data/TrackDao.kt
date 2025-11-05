@@ -5,18 +5,18 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface TrackDao {
-  @Query("SELECT * FROM TrackEntity WHERE id = :id")
+  // TODO: add @Query
   fun getTrack(id: Long): Flow<TrackEntity?>
 
-  @Query("SELECT * FROM TrackEntity WHERE loop_id = :loopId ORDER BY trackNum")
+  // TODO: add @Query
   fun getTracks(loopId: Long): Flow<List<TrackEntity>>
 
-  @Insert(onConflict = OnConflictStrategy.REPLACE)
+  // TODO: add @Insert
   fun addTrack(entity: TrackEntity): Long
 
-  @Update
+  // TODO: add @Update
   fun updateTrack(entity: TrackEntity)
 
-  @Delete
+  // TODO: add @Delete
   fun deleteTrack(entity: TrackEntity)
 }

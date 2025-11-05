@@ -24,25 +24,19 @@ class LooperRepository(context: Context) {
     .addCallback(databaseCallback)
     .build()
 
-  private val trackDao = database.trackDao()
-  private val loopDao = database.loopDao()
+  // TODO: private val trackDao =
+  // TODO: private val loopDao =
 
-  fun getLoops() = loopDao.getLoops()
-  fun getTracks(loop: LoopEntity) =
-    trackDao.getTracks(loop.id)
+
+  // TODO: fun getLoops() =
+  // TODO: fun getTracks(loop: LoopEntity) =
 
   fun addLoop(
     loop: LoopEntity,
     tracks: List<TrackEntity>
   ) {
     if (loop.title.trim() != "") {
-      CoroutineScope(Dispatchers.IO).launch {
-        loop.id = loopDao.addLoop(loop)
-        tracks.forEach { track ->
-          track.loopId = loop.id
-          trackDao.addTrack(track)
-        }
-      }
+      // Launch coroutine to add tracks and loop
     }
   }
 
