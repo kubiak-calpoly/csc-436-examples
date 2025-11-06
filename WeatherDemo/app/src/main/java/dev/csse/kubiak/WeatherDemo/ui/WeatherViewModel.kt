@@ -17,16 +17,14 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 sealed class WeatherUiState {
-  data class Success(val report: WeatherReport) : WeatherUiState()
-  data class Error(val error: String = "error") : WeatherUiState()
-  data object Loading : WeatherUiState()
+  // TODO: 3 options for WeatherUiState
 }
 
 class WeatherViewModel(
   private val weatherRepository: WeatherRepository
 ) : ViewModel() {
-  var uiState: WeatherUiState by mutableStateOf(WeatherUiState.Loading)
-    private set
+  // TODO: var uiState: WeatherUiState
+
   var lat: Float? = null
   var lon: Float? = null
 
@@ -43,13 +41,11 @@ class WeatherViewModel(
     this.lat = lat
     this.lon = lon
     viewModelScope.launch(Dispatchers.IO) {
-      uiState = try {
-        WeatherUiState.Success(
-          weatherRepository.getWeather(lat, lon)
-        )
+      // TODO: uiState =
+      try {
+        // TODO: get weather, return Success
       } catch (e: Exception) {
-        Log.e("WeatherViewModel", "Error: ${e}")
-        WeatherUiState.Error(e.toString())
+        // TODO: return an error
       }
     }
   }
