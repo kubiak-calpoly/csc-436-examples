@@ -7,11 +7,11 @@ plugins {
 }
 
 android {
-  namespace = "dev.csse.kubiak.demoweek9"
+  namespace = "dev.csse.kubiak.WeatherDemo"
   compileSdk = 35
 
   defaultConfig {
-    applicationId = "dev.csse.kubiak.demoweek9"
+    applicationId = "dev.csse.kubiak.WeatherDemo"
     minSdk = 24
     targetSdk = 35
     versionCode = 1

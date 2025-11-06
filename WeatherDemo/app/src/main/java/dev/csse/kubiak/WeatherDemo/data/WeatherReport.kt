@@ -1,6 +1,5 @@
-package dev.csse.kubiak.demoweek9.data
+package dev.csse.kubiak.WeatherDemo.data
 
-import android.text.SpannableStringBuilder
 import com.google.gson.annotations.SerializedName
 
 data class WeatherReport(

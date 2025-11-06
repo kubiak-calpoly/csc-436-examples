@@ -1,4 +1,4 @@
-package dev.csse.kubiak.demoweek9
+package dev.csse.kubiak.WeatherDemo
 
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.ext.junit.runners.AndroidJUnit4

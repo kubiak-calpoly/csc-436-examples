@@ -1,4 +1,4 @@
-package dev.csse.kubiak.demoweek9
+package dev.csse.kubiak.WeatherDemo
 
 import org.junit.Test
 

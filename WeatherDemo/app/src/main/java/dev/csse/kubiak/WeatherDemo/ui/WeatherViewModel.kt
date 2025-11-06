@@ -1,18 +1,18 @@
-package dev.csse.kubiak.demoweek9.ui
+package dev.csse.kubiak.WeatherDemo.ui
 
 import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
-import dev.csse.kubiak.demoweek9.data.WeatherRepository
+import dev.csse.kubiak.WeatherDemo.data.WeatherRepository
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
-import dev.csse.kubiak.demoweek9.WeatherApplication
-import dev.csse.kubiak.demoweek9.data.WeatherReport
+import dev.csse.kubiak.WeatherDemo.WeatherApplication
+import dev.csse.kubiak.WeatherDemo.data.WeatherReport
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 

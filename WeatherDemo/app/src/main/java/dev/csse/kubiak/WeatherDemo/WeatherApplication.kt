@@ -1,23 +1,16 @@
-package dev.csse.kubiak.demoweek9
+package dev.csse.kubiak.WeatherDemo
 
 import android.app.Application
-import dev.csse.kubiak.demoweek9.data.WeatherRepository
-import dev.csse.kubiak.demoweek9.data.WeatherService
-import dev.csse.kubiak.demoweek9.sensor.Accelerometer
-import dev.csse.kubiak.demoweek9.sensor.Magnetometer
+import dev.csse.kubiak.WeatherDemo.data.WeatherRepository
+import dev.csse.kubiak.WeatherDemo.data.WeatherService
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 class WeatherApplication : Application() {
-  lateinit var accelerometerSensor: Accelerometer
-  lateinit var magnetometerSensor: Magnetometer
   lateinit var weatherRepository: WeatherRepository
 
   override fun onCreate() {
     super.onCreate()
-
-    accelerometerSensor = Accelerometer(this)
-    magnetometerSensor = Magnetometer(this)
 
     val weatherService: WeatherService by lazy {
       val retrofit: Retrofit = Retrofit.Builder()

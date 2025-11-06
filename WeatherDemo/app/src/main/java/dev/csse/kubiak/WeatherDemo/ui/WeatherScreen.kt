@@ -1,10 +1,9 @@
-package dev.csse.kubiak.demoweek9.ui
+package dev.csse.kubiak.WeatherDemo.ui
 
 import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -17,13 +16,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.draw.scale
-import androidx.compose.ui.graphics.RenderEffect
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.em
 import androidx.lifecycle.viewmodel.compose.viewModel
-import dev.csse.kubiak.demoweek9.data.WeatherReport
-import dev.csse.kubiak.demoweek9.R
+import dev.csse.kubiak.WeatherDemo.data.WeatherReport
+import dev.csse.kubiak.WeatherDemo.R
 
 @Composable
 fun WeatherScreen(

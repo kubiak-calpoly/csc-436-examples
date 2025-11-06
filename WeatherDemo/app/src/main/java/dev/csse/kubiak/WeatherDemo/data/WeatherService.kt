@@ -1,4 +1,4 @@
-package dev.csse.kubiak.demoweek9.data
+package dev.csse.kubiak.WeatherDemo.data
 
 import retrofit2.http.GET
 import retrofit2.http.Query

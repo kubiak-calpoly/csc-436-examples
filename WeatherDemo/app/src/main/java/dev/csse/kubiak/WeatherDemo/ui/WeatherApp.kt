@@ -1,7 +1,5 @@
-package dev.csse.kubiak.demoweek9.ui
+package dev.csse.kubiak.WeatherDemo.ui
 
-import android.util.Log
-import androidx.compose.animation.core.animateDecay
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
@@ -17,7 +15,6 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.modifier.modifierLocalOf
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -27,7 +24,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
-import dev.csse.kubiak.demoweek9.R
+import dev.csse.kubiak.WeatherDemo.R
 import kotlinx.serialization.Serializable
 
 const val SLO_COORD_LAT = 35.28275f
@@ -41,12 +38,6 @@ sealed class Routes {
 
   @Serializable
   data object Somewhere
-
-  @Serializable
-  data object ReportLocal
-
-  @Serializable
-  data object Compass
 }
 
 fun composable(function: Any) {}
@@ -100,16 +91,6 @@ fun WeatherApp(
           modifier = Modifier.padding(innerPadding)
         )
       }
-
-      composable<Routes.ReportLocal> {
-        LocalScreen(
-          modifier = Modifier.padding(innerPadding)
-        )
-      }
-
-      composable<Routes.Compass> {
-        CompassScreen()
-      }
     }
   }
 }
@@ -130,14 +111,6 @@ enum class AppScreen(val route: Any, val title: String, val icon: Int) {
   PIE(
     Routes.Report(35.489596f,-120.668665f), "Pie",
     R.drawable.outline_pie_24
-  ),
-  LOCAL(
-    Routes.ReportLocal, "Local",
-    R.drawable.outline_pin_drop_24
-  ),
-  COMPASS(
-    Routes.Compass, "Compass",
-    R.drawable.baseline_compass_24
   )
 }
 

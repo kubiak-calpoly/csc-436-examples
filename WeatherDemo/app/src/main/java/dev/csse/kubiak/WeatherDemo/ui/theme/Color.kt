@@ -1,4 +1,4 @@
-package dev.csse.kubiak.demoweek9.ui.theme
+package dev.csse.kubiak.WeatherDemo.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
