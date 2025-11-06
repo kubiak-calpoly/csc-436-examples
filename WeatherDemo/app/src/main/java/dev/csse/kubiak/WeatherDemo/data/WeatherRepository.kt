@@ -10,10 +10,10 @@ class WeatherRepository(
   val service: WeatherService
 ) {
 
-  val API_KEY = getString(context, R.string.com_openweatherapp_api_key);
+  // TODO: val API_KEY =
 
   suspend fun getWeather(lat: Float, lon: Float): WeatherReport {
-    Log.d("Weather Repository", "Getting the weather $API_KEY")
+    Log.d("Weather Repository", "Getting the weather at $lat, $lon")
     return service.getWeather(lat, lon, apiKey = API_KEY)
   }
 }
