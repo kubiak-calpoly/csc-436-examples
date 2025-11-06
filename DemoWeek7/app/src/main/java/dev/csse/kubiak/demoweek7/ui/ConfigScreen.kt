@@ -63,18 +63,16 @@ fun ConfigScreen(
           coroutineScope.launch() {
             store.saveLoopBars(value)
           }
-          // looperViewModel.loop = loop.copy(barsToLoop = value)
         }
       )
       NumberField(
         modifier = Modifier.weight(1f),
         labelText = "Beats per Bar",
-        value = appPrefs.value.loopBeats ,
+        value = appPrefs.value.loopBeats,
         onValueChange = { value ->
-          coroutineScope.launch() {
+          coroutineScope.launch {
             store.saveLoopBeats(value)
           }
-          //looperViewModel.loop = loop.copy(beatsPerBar = value)
         }
       )
       NumberField(
@@ -85,7 +83,6 @@ fun ConfigScreen(
           coroutineScope.launch() {
             store.saveSubdivisions(value)
           }
-          //looperViewModel.loop = loop.copy(subdivisions = value)
         }
       )
     }
@@ -126,6 +123,7 @@ fun ConfigScreen(
           modifier = Modifier.fillMaxWidth(),
           label = { Text("Tracks Filename") },
           value = filename,
+          singleLine = true,
           onValueChange = { name: String ->
             filename = name
           }

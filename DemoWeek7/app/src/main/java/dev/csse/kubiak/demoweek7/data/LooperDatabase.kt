@@ -6,12 +6,10 @@ import androidx.room.RoomDatabase
 
 @Database(
   entities = [
-    LoopEntity::class,
-    TrackEntity::class
+    // TODO: list entities here
   ],
   version = 1
 )
 abstract class LooperDatabase : RoomDatabase() {
-  abstract fun trackDao(): TrackDao
-  abstract fun loopDao(): LoopDao
+  // TODO: add Dao accessors here
 }

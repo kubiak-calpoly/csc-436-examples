@@ -30,26 +30,20 @@ class LibraryViewModel(
 
   val selectedLoopFlow =
     MutableStateFlow<LoopEntity?>(null)
-  val loopsFlow =
-    looperRepo.getLoops()
+  // TODO: val loopsFlow =
 
   @OptIn(ExperimentalCoroutinesApi::class)
   val combinedFlow =
     selectedLoopFlow.flatMapLatest { loop: LoopEntity? ->
-      val tracksFlow =
-        if (loop != null)
-          looperRepo.getTracks(loop)
-        else
-          flowOf(emptyList())
+      // TODO: val tracksFlow =
       combine(
         selectedLoopFlow,
-        loopsFlow,
-        tracksFlow
-      ) { selectedLoop, loops, tracks ->
+        // TODO: flows to combine here
+      ) { selectedLoop: LoopEntity?,
+          loops: Flow<LoopEntity?>,
+          tracks: Flow<TrackEntity?> ->
         LibraryScreenUiState(
-          loopList = loops,
-          selectedLoopId = selectedLoop?.id,
-          trackList = tracks
+          // TODO: fill in the ui State
         )
       }
     }
