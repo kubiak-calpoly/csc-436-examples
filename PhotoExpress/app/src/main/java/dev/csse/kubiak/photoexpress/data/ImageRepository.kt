@@ -2,6 +2,7 @@ package com.zybooks.photoexpress.data
 
 import android.content.Context
 import android.net.Uri
+import android.os.Environment
 import androidx.core.content.FileProvider
 import java.io.File
 
@@ -21,6 +22,11 @@ class ImageRepository(private val context: Context) {
   }
 
   fun createEmptyImageFile(): File {
-    // coming up...
+    val storageDir = Environment
+      .getExternalStoragePublicDirectory(
+        Environment.DIRECTORY_PICTURES
+      )
+
+    return File(storageDir, "new_image.jpg")
   }
 }
