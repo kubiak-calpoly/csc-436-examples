@@ -1,4 +1,4 @@
-package com.zybooks.photoexpress.ui.theme
+package dev.csse.kubiak.photoexpress.ui.theme
 
 import androidx.compose.ui.graphics.Color
 

@@ -1,7 +1,7 @@
-package com.zybooks.photoexpress
+package dev.csse.kubiak.photoexpress
 
 import android.app.Application
-import com.zybooks.photoexpress.data.ImageRepository
+import dev.csse.kubiak.photoexpress.data.ImageRepository
 
 class PhotoExpressApplication : Application() {
    lateinit var imageRepo: ImageRepository

@@ -4,11 +4,11 @@ plugins {
 }
 
 android {
-   namespace = "com.zybooks.photoexpress"
+   namespace = "dev.csse.kubiak.photoexpress"
    compileSdk = 34
 
    defaultConfig {
-      applicationId = "com.zybooks.photoexpress"
+      applicationId = "dev.csse.kubiak.photoexpress"
       minSdk = 24
       targetSdk = 34
       versionCode = 1

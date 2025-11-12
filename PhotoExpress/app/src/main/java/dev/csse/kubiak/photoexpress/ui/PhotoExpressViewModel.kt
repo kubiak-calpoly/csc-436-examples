@@ -1,4 +1,4 @@
-package com.zybooks.photoexpress.ui
+package dev.csse.kubiak.photoexpress.ui
 
 import android.net.Uri
 import androidx.compose.ui.graphics.Color
@@ -8,10 +8,11 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
-import com.zybooks.photoexpress.PhotoExpressApplication
-import com.zybooks.photoexpress.data.ImageRepository
+import dev.csse.kubiak.photoexpress.PhotoExpressApplication
+import dev.csse.kubiak.photoexpress.data.ImageRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.update
 
 class PhotoExpressViewModel(private val imageRepo: ImageRepository) : ViewModel() {
 
@@ -26,12 +27,28 @@ class PhotoExpressViewModel(private val imageRepo: ImageRepository) : ViewModel(
 
    private val _uiState = MutableStateFlow(PhotoExpressUiState())
    val uiState: StateFlow<PhotoExpressUiState> = _uiState
+
+   fun prepareToTakePhoto(): Uri {
+      _uiState.update {
+         it.copy(
+            photoVisible = false,
+            photoUri = imageRepo.createPhotoFile()
+         )
+      }
+      return _uiState.value.photoUri
+
+   }
+
+   fun photoTaken() {
+      _uiState.update {
+         it.copy(
+            photoVisible = true
+         )
+      }
+   }
 }
 
 data class PhotoExpressUiState(
    val photoUri: Uri = Uri.EMPTY,
-   val brightness: Float = 100f,
-   val colorFilter: LightingColorFilter = LightingColorFilter(Color.White, Color.Black),
    val photoVisible: Boolean = false,
-   val photoSaved: Boolean = true
 )

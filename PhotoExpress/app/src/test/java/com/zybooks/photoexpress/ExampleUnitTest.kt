@@ -1,4 +1,4 @@
-package com.zybooks.photoexpress
+package dev.csse.kubiak.photoexpress
 
 import org.junit.Test
 

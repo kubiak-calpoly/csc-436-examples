@@ -1,4 +1,4 @@
-package com.zybooks.photoexpress.ui.theme
+package dev.csse.kubiak.photoexpress.ui.theme
 
 import android.app.Activity
 import android.os.Build
