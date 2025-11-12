@@ -15,12 +15,7 @@ class ImageRepository(private val context: Context) {
   fun createPhotoFile(): Uri {
     val file = createEmptyImageFile()
     photoFile = file
-    val photoUri =
-      FileProvider.getUriForFile(
-        context,
-        "dev.csse.kubiak.photoexpress.fileprovider",
-        file
-      )
+    // TODO: val photoUri =
     return photoUri
   }
 
@@ -31,9 +26,7 @@ class ImageRepository(private val context: Context) {
     val imageFilename = "photo_$timeStamp.jpg"
 
     // Create the file in scoped Pictures directory on external storage
-    val storageDir = context.getExternalFilesDir(
-      Environment.DIRECTORY_PICTURES
-    )
+    // TODO: val storageDir =
 
     return File(storageDir, imageFilename)
   }
