@@ -1,9 +1,16 @@
 package dev.csse.kubiak.graphicsdemo.ui
 
+import androidx.compose.animation.core.EaseInOut
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.geometry.center
@@ -14,7 +21,6 @@ import androidx.compose.ui.graphics.ShaderBrush
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.vector.Group
 import androidx.compose.ui.graphics.vector.Path
-import androidx.compose.ui.graphics.vector.PathParser
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -44,8 +50,19 @@ fun JellyfishScreen(
     viewportHeight = 563.1f,
     autoMirror = true,
   ) { _, _ ->
+    val duration = 2000
+    val transition = rememberInfiniteTransition()
+    val translationY by transition.animateFloat(
+      initialValue =  0f,
+      targetValue =  -30f,
+      animationSpec = infiniteRepeatable(
+        tween(duration, easing = EaseInOut ),
+        repeatMode = RepeatMode.Reverse
+      )
+    )
     Group(
-      name = "jellyfish"
+      name = "jellyfish",
+      translationY = translationY
     ) {
       Group("tentacles") {
         model.tentacles.forEachIndexed { i, path ->
@@ -123,15 +140,3 @@ fun JellyfishPreview() {
   }
 }
 
-// create a custom gradient background that has a radius that is the size of the biggest dimension of the drawing area, this creates a better looking radial gradient in this case.
-val largeRadialGradient = object : ShaderBrush() {
-  override fun createShader(size: Size): Shader {
-    val biggerDimension = maxOf(size.height, size.width)
-    return RadialGradientShader(
-      colors = listOf(Color(0xFF2be4dc), Color(0xFF243484)),
-      center = size.center,
-      radius = biggerDimension / 2f,
-      colorStops = listOf(0f, 0.95f)
-    )
-  }
-}
