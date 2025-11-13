@@ -26,7 +26,17 @@ import dev.csse.kubiak.graphicsdemo.ui.theme.GraphicsDemoTheme
 fun JellyfishScreen(
   model: JellyfishViewModel = viewModel()
 ) {
-
+  val largeRadialGradient = object : ShaderBrush() {
+    override fun createShader(size: Size): Shader {
+      val biggerDimension = maxOf(size.height, size.width)
+      return RadialGradientShader(
+        colors = listOf(Color(0xFF2be4dc), Color(0xFF243484)),
+        center = size.center,
+        radius = biggerDimension / 2f,
+        colorStops = listOf(0f, 0.95f)
+      )
+    }
+  }
   val vectorPainter = rememberVectorPainter(
     defaultWidth = 530.46f.dp,
     defaultHeight = 563.1f.dp,
@@ -101,7 +111,7 @@ fun JellyfishScreen(
     contentDescription = "Jellyfish",
     modifier = Modifier
       .fillMaxSize()
-      .background(Color.Blue)
+      .background(largeRadialGradient)
   )
 }
 
