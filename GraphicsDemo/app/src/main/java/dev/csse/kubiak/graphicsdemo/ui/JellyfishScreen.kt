@@ -1,6 +1,8 @@
 package dev.csse.kubiak.graphicsdemo.ui
 
+import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.EaseInOut
+import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.infiniteRepeatable
@@ -8,9 +10,11 @@ import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Size
@@ -23,11 +27,14 @@ import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.vector.Group
 import androidx.compose.ui.graphics.vector.Path
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.tooling.data.Group
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import dev.csse.kubiak.graphicsdemo.ui.theme.GraphicsDemoTheme
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
 
 
 @Composable
@@ -125,6 +132,12 @@ fun JellyfishScreen(
   )
 
   val coroutineScope = rememberCoroutineScope()
+  val blinkAlphaAnimation = remember {
+    Animatable(1f)
+  }
+  val blinkScaleAnimation = remember {
+    Animatable(1f)
+  }
 
   val vectorPainterFace = rememberVectorPainter(
     defaultWidth = 530.46f.dp,
@@ -147,9 +160,10 @@ fun JellyfishScreen(
     Group(name = "face", translationY = translationY) {
       // face paths
       val colors = arrayOf(Color(0xFFb4bebf), Color(0xFFb4bebf), Color(0xFFd3d3d3))
-      Group(name = "eye-left") {
+      Group(name = "eye-left",
+        scaleY = blinkScaleAnimation.value,
+        pivotY = 233f) {
         Path(
-
           pathData = model.face[0],
           fill = SolidColor(colors[0]),
           fillAlpha = 1f
@@ -171,13 +185,35 @@ fun JellyfishScreen(
     }
   }
 
+  suspend fun instantBlinkAnimation() {
+    val tweenSpec = tween<Float>(150, easing = LinearEasing)
+    coroutineScope {
+      launch {
+        blinkAlphaAnimation.animateTo(0f, animationSpec = tweenSpec)
+        blinkAlphaAnimation.animateTo(1f, animationSpec = tweenSpec)
+      }
+      launch {
+        blinkScaleAnimation.animateTo(0.3f, animationSpec = tweenSpec)
+        blinkScaleAnimation.animateTo(1f, animationSpec = tweenSpec)
+      }
+    }
+  }
+
   Image(
     vectorPainterFace,
     contentDescription = "Jellyfish face",
     modifier = Modifier
       .fillMaxSize()
+      .pointerInput(Unit) {
+        detectTapGestures {
+          coroutineScope.launch {
+            instantBlinkAnimation()
+          }
+        }
+      }
   )
 }
+
 
 @Preview
 @Composable
