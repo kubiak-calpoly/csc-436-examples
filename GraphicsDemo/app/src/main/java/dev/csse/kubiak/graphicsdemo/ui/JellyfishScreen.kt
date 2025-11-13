@@ -11,6 +11,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.geometry.center
@@ -22,6 +23,7 @@ import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.vector.Group
 import androidx.compose.ui.graphics.vector.Path
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
+import androidx.compose.ui.tooling.data.Group
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -53,13 +55,14 @@ fun JellyfishScreen(
     val duration = 2000
     val transition = rememberInfiniteTransition()
     val translationY by transition.animateFloat(
-      initialValue =  0f,
-      targetValue =  -30f,
+      initialValue = 0f,
+      targetValue = -30f,
       animationSpec = infiniteRepeatable(
-        tween(duration, easing = EaseInOut ),
+        tween(duration, easing = EaseInOut),
         repeatMode = RepeatMode.Reverse
       )
     )
+
     Group(
       name = "jellyfish",
       translationY = translationY
@@ -70,7 +73,7 @@ fun JellyfishScreen(
           Path(
             pathData = path,
             fill = SolidColor(Color.White),
-            fillAlpha = alphas.getOrElse(i/5) { 1f }
+            fillAlpha = alphas.getOrElse(i / 5) { 1f }
           )
         }
       }
@@ -97,17 +100,7 @@ fun JellyfishScreen(
         }
 
       }
-      Group(name = "face") {
-        // face paths
-        val colors = arrayOf(Color(0xFFb4bebf), Color(0xFFb4bebf), Color(0xFFd3d3d3))
-        model.face.forEachIndexed { i, path ->
-          Path(
-            pathData = path,
-            fill = SolidColor(colors.getOrElse(i) { Color.Black }),
-            fillAlpha = 1f
-          )
-        }
-      }
+
     }
     Group(name = "bubbles") {
       // bubbles around the jellyfish
@@ -129,6 +122,60 @@ fun JellyfishScreen(
     modifier = Modifier
       .fillMaxSize()
       .background(largeRadialGradient)
+  )
+
+  val coroutineScope = rememberCoroutineScope()
+
+  val vectorPainterFace = rememberVectorPainter(
+    defaultWidth = 530.46f.dp,
+    defaultHeight = 563.1f.dp,
+    viewportWidth = 530.46f,
+    viewportHeight = 563.1f,
+    autoMirror = true,
+  ) { _, _ ->
+    val duration = 2000
+    val transition = rememberInfiniteTransition()
+    val translationY by transition.animateFloat(
+      initialValue = 0f,
+      targetValue = -30f,
+      animationSpec = infiniteRepeatable(
+        tween(duration, easing = EaseInOut),
+        repeatMode = RepeatMode.Reverse
+      )
+    )
+
+    Group(name = "face", translationY = translationY) {
+      // face paths
+      val colors = arrayOf(Color(0xFFb4bebf), Color(0xFFb4bebf), Color(0xFFd3d3d3))
+      Group(name = "eye-left") {
+        Path(
+
+          pathData = model.face[0],
+          fill = SolidColor(colors[0]),
+          fillAlpha = 1f
+        )
+      }
+      Group(name = "eye-right") {
+        Path(
+
+          pathData = model.face[1],
+          fill = SolidColor(colors[1]),
+          fillAlpha = 1f
+        )
+      }
+      Path(
+        pathData = model.face[2],
+        fill = SolidColor(colors[2]),
+        fillAlpha = 1f
+      )
+    }
+  }
+
+  Image(
+    vectorPainterFace,
+    contentDescription = "Jellyfish face",
+    modifier = Modifier
+      .fillMaxSize()
   )
 }
 
