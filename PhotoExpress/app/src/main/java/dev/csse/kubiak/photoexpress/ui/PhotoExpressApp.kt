@@ -36,13 +36,19 @@ fun PhotoExpressApp(
    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
    val coroutineScope = rememberCoroutineScope()
 
-   // TODO: val cameraLauncher =
+   val cameraLauncher = rememberLauncherForActivityResult(
+      ActivityResultContracts.TakePicture()
+   ) {
+      success ->
+        if (success) viewModel.photoTaken()
+   }
 
    Scaffold(
       topBar = {
          PhotoExpressTopAppBar(
             onTakePhoto = {
-               // TODO: prepareToTakePhoto and launch camera
+               val photoUri = viewModel.prepareToTakePhoto()
+               cameraLauncher.launch(photoUri)
             }
          )
       }
@@ -83,6 +89,10 @@ fun PhotoScreen(
       verticalArrangement = Arrangement.Center,
       modifier = modifier
    ) {
-      // TODO: add AsyncImage
+      AsyncImage(
+         photoUri,
+         contentDescription = null,
+         modifier = Modifier.fillMaxHeight(0.9f)
+      )
    }
 }

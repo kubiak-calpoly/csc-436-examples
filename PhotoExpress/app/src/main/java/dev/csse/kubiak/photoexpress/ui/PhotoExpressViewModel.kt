@@ -29,12 +29,21 @@ class PhotoExpressViewModel(private val imageRepo: ImageRepository) : ViewModel(
    val uiState: StateFlow<PhotoExpressUiState> = _uiState
 
    fun prepareToTakePhoto(): Uri {
-      // TODO: update _uiState
+      _uiState.update {
+         it.copy(
+            photoVisible =  false,
+            photoUri =  imageRepo.createPhotoFile()
+         )
+      }
       return _uiState.value.photoUri
    }
 
    fun photoTaken() {
-      // TODO: update _uiState
+      _uiState.update {
+         it.copy(
+            photoVisible =  true
+         )
+      }
    }
 }
 
