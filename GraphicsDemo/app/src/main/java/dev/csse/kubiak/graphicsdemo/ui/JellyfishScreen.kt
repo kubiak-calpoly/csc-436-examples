@@ -139,7 +139,7 @@ fun JellyfishScreen(
       modifier = Modifier
         .fillMaxSize()
         .background(largeRadialGradient),
-      // shader = PERLIN_NOISE
+        shader = PERLIN_NOISE
     )
   } else {
     Image(
