@@ -45,5 +45,16 @@ object paths {
 }
 
 class JellyfishViewModel : ViewModel() {
+  val tentacles = pathsToPaths(paths.tentacles)
+  val body = pathsToPaths(paths.body)
+  val freckles= pathsToPaths(paths.freckles)
+  val bubbles = pathsToPaths(paths.bubbles)
+  val face = pathsToPaths(paths.face)
+
 }
 
+fun pathsToPaths(paths: List<String>): List<List<PathNode>> {
+  return paths.map { d ->
+    PathParser().parsePathString(d).toNodes()
+  }
+}
