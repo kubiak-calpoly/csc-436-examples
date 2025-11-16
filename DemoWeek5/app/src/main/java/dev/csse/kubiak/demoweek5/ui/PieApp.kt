@@ -80,13 +80,14 @@ fun PieApp(
           PieAppBar(pie.name,
             canNavigateBack = true,
             onUpClick = { navController.navigateUp() },
-          actions = {
-            IconButton(onClick = {
-              sharePie(context = context, pie = pie)
-            }) {
-              Icon(Icons.Filled.Share, "Shared")
+            actions = {
+              IconButton(onClick = {
+                sharePie(context = context, pie = pie)
+              }) {
+                Icon(Icons.Filled.Share, "Shared")
+              }
             }
-          })
+          )
         }
       ) { innerPadding ->
         PieDetailScreen(
@@ -123,6 +124,7 @@ fun PieAppBar(
       }
     }
   )
+
 }
 
 fun sharePie(pie: Pie, context: Context) {

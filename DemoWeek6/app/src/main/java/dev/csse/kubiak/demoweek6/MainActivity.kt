@@ -1,8 +1,7 @@
 package dev.csse.kubiak.demoweek6
 
-import android.content.pm.PackageManager
 import android.Manifest
-import android.content.res.Configuration
+import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
@@ -29,18 +28,20 @@ import dev.csse.kubiak.demoweek6.ui.theme.DemoWeek6Theme
 
 class MainActivity : ComponentActivity() {
 
-  // private val playerViewModel = PlayerViewModel()
   private var playerViewModel: PlayerViewModel? = null
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     enableEdgeToEdge()
+
     setContent {
       playerViewModel = viewModel()
+
       DemoWeek6Theme {
         LooperApp(playerViewModel = playerViewModel!!)
       }
     }
+
     // Only need permision to post notifications on Tiramisu and above
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
       ActivityCompat.checkSelfPermission(
@@ -52,6 +53,7 @@ class MainActivity : ComponentActivity() {
         Manifest.permission.POST_NOTIFICATIONS
       )
     }
+
   }
 
   override fun onStop() {
@@ -76,14 +78,15 @@ class MainActivity : ComponentActivity() {
     }
   }
 
+
   private fun startWorker(playerViewModel: PlayerViewModel) {
     val looperWorkRequest: WorkRequest =
       OneTimeWorkRequestBuilder<LooperWorker>()
         .setInputData(
           workDataOf(
-            // KEY_MILLIS_COUNT to playerViewModel.millisCount,
-            KEY_TOTAL_MILLIS to playerViewModel.totalMillis,
-            // KEY_ITERATION_MILLIS to playerViewModel.millisPerIteration
+//            KEY_MILLIS_COUNT to playerViewModel.millisCount,
+//            KEY_TOTAL_MILLIS to playerViewModel.totalMillis,
+//            KEY_ITERATION_MILLIS to playerViewModel.millisPerIteration
           )
         ).build()
 

@@ -7,10 +7,8 @@ import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.lifecycle.viewmodel.InitializerViewModelFactoryBuilder
 import dev.csse.kubiak.demoweek6.Loop
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -21,24 +19,19 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.serialization.descriptors.PrimitiveKind
-import kotlin.times
 
 class PlayerViewModel : ViewModel() {
-  var iterations: Int by mutableIntStateOf(4)
-  var bpm: Int by mutableIntStateOf(120)
-
+  var iterations: Int by mutableIntStateOf(8)
+  var bpm: Int by mutableIntStateOf(60)
   var runningLoop: Loop? = null
-  var isRunning: Boolean = false
-    get() { return runningLoop != null }
-
   val millisPerTick: Long
     get() {
       return if ( runningLoop != null ) getMillisPerTick(runningLoop!!)
       else 0L
     }
-
   val totalMillis: Long
     get() {
       val millisPerIteration =
@@ -46,15 +39,19 @@ class PlayerViewModel : ViewModel() {
       return iterations * millisPerIteration
     }
 
+  var isRunning by mutableStateOf(false)
+    private set
+
+  private var millisCount = 0L
+
   val _positionState = MutableStateFlow(Loop.Position())
   var positionState: StateFlow<Loop.Position> =
-    _positionState //.asStateFlow()
-
-  var tickerJob: Job? = null
+    _positionState.asStateFlow()
 
   val positionFlow: Flow<Loop.Position> = flow {
     if (runningLoop != null) {
-      var millisCount = 0L
+      millisCount = 0L
+      isRunning = true
       Log.d("PlayerViewModel", "starting flow at $millisCount")
       while( millisCount <= totalMillis) {
         Log.d("PlayerViewModel", "emitting position at ${millisCount}ms")
@@ -62,41 +59,43 @@ class PlayerViewModel : ViewModel() {
         delay(millisPerTick)
         millisCount += millisPerTick
       }
-      runningLoop = null
+      isRunning = false
       emit(Loop.Position())
     }
   }
 
+  private var tickingJob: Job? = null
+
   fun startPlayer(loop: Loop) {
     runningLoop = loop
-    Log.d(
-      "PlayerViewModel",
-      "starting Player totalMillis=$totalMillis, millisPerTick=$millisPerTick"
-    )
-
-    tickerJob = viewModelScope.launch(Dispatchers.Default) {
+    tickingJob = viewModelScope.launch(Dispatchers.Default) {
       positionFlow.collect {
         _positionState.value = it
       }
     }
   }
 
-  fun getMillisPerTick(loop: Loop): Long {
-    return 60000L / (if(bpm == 0) 60 else bpm) /
-      loop.subdivisions
-  }
-
-  fun getPosition(loop: Loop, millisCount: Long): Loop.Position {
-    val tickCount = millisCount / getMillisPerTick(loop)
-    return loop.getPosition(tickCount.toInt())
-  }
-
   fun pausePlayer() {
     Log.d("PlayerViewModel", "Player Paused")
-    tickerJob?.cancel()
+    tickingJob?.cancel()
+    isRunning = false
   }
 
   fun resetPlayer() {
-    //millisCount = 0
+    millisCount = 0L
+    _positionState.update { Loop.Position() }
+  }
+
+  fun getMillisPerTick(loop: Loop): Long {
+    return 60000L / bpm
+  }
+
+  fun getPosition(loop: Loop, millisCount: Long): Loop.Position {
+    if (isRunning || millisCount > 0) {
+      val tickCount = millisCount / getMillisPerTick(loop)
+      return loop.getPosition(tickCount.toInt())
+    } else {
+      return Loop.Position(0,0,0);
+    }
   }
 }

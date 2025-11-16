@@ -1,6 +1,5 @@
 package dev.csse.kubiak.demoweek5.ui
 
-import android.R
 import android.content.Intent
 import android.net.Uri
 import androidx.compose.foundation.Image
@@ -74,7 +73,6 @@ fun PieDetailScreen(
         }
       }
     }
-
     pie.pieShops.forEach() { pieShop ->
       Card(
         modifier = Modifier
@@ -88,9 +86,7 @@ fun PieDetailScreen(
             })
       ) {
         Column(
-          modifier = Modifier
-            .padding(8.dp)
-            .fillMaxWidth(),
+          modifier = Modifier.padding(8.dp).fillMaxWidth(),
           horizontalAlignment = Alignment.CenterHorizontally
         ) {
           Text(pieShop.name)
@@ -99,7 +95,7 @@ fun PieDetailScreen(
             val intent = Intent(Intent.ACTION_VIEW, url)
             context.startActivity(intent)
           }) {
-            Text("Go get the pie")
+            Text("Go get the pie!")
           }
         }
       }
