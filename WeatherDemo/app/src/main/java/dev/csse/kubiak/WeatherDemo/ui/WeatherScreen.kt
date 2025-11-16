@@ -27,16 +27,23 @@ fun WeatherScreen(
   lat: Float,
   lon: Float,
   modifier: Modifier = Modifier,
-  // TODO: model: WeatherViewModel =
+  model: WeatherViewModel = viewModel(
+    factory = WeatherViewModel.Factory
+  )
 ) {
-  // TODO: val uiState =
+  val uiState = model.uiState
 
   LaunchedEffect(lat, lon) {
-    // TODO: get weather
+    model.getWeather(lat, lon)
   }
 
-  // TODO: when( uiState ) { ... }
-}
+  when (uiState) {
+    is WeatherUiState.Loading -> Text("Loading...")
+    is WeatherUiState.Success -> WeatherView(
+      uiState.report, modifier = modifier
+    )
+    is WeatherUiState.Error -> Text("Error: ${uiState.error}")
+  }}
 
 @Composable
 fun WeatherView(

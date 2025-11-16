@@ -38,6 +38,9 @@ sealed class Routes {
 
   @Serializable
   data object Somewhere
+
+  @Serializable
+  data object ReportLocal
 }
 
 fun composable(function: Any) {}
@@ -91,6 +94,12 @@ fun WeatherApp(
           modifier = Modifier.padding(innerPadding)
         )
       }
+
+      composable<Routes.ReportLocal> {
+        LocalScreen(
+          modifier = Modifier.padding(innerPadding)
+        )
+      }
     }
   }
 }
@@ -108,10 +117,10 @@ enum class AppScreen(val route: Any, val title: String, val icon: Int) {
     Routes.Report(35.190349f, -120.731793f), "Beach",
     R.drawable.baseline_beach_access_24
   ),
-  PIE(
-    Routes.Report(35.489596f,-120.668665f), "Pie",
-    R.drawable.outline_pie_24
-  )
+  LOCAL(
+    Routes.ReportLocal, "Local",
+    R.drawable.outline_pin_drop_24
+  ),
 }
 
 @Composable

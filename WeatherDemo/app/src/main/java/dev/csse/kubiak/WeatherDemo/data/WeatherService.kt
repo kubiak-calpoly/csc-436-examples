@@ -7,12 +7,11 @@ import retrofit2.http.Query
 
 interface WeatherService {
 
-  // TODO: @GET
+  @GET("weather?units=imperial")
   suspend fun getWeather(
-    // TODO: @Query for each query param
-    lat: Float,
-    lon: Float,
-    apiKey: String
+    @Query("lat") lat: Float,
+    @Query("lon") lon: Float,
+    @Query("appid") apiKey: String
   ): WeatherReport
 }
 
