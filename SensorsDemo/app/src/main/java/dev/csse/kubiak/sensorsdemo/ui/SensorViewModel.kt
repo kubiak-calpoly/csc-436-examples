@@ -24,30 +24,9 @@ class SensorViewModel(
   val context: Context,
 ) : ViewModel() {
 
-  private var sensorManager: SensorManager
-  private var gyroscope: Gyroscope
-  private var accelerometer: Accelerometer
-  private var linearAccelerometer: LinearAccelerometer
-  private var orientation: OrientationSensor
-  private var magnetometer: Magnetometer
-
-  var gyroValues by mutableStateOf( listOf(0.0f, 0.0f, 0.0f))
-  var accelValues by mutableStateOf( listOf(0.0f, 0.0f, 0.0f))
-  var linearValues by mutableStateOf( listOf(0.0f, 0.0f, 0.0f))
-  var orientationValues by mutableStateOf( listOf(0.0f, 0.0f, 0.0f))
-  var magneticValues by mutableStateOf( listOf(0.0f, 0.0f, 0.0f))
-  var compassRotation by mutableFloatStateOf(0.0f)
-
-  init {
-    sensorManager =
-      context.getSystemService(Context.SENSOR_SERVICE)
-              as SensorManager
-    accelerometer = Accelerometer(context)
-    linearAccelerometer = LinearAccelerometer(context)
-    magnetometer = Magnetometer(context)
-    gyroscope = Gyroscope(context)
-    orientation = OrientationSensor(context)
-  }
+  private var sensorManager: SensorManager =
+    context.getSystemService(Context.SENSOR_SERVICE)
+            as SensorManager
 
   fun getSensorList(type: Int = Sensor.TYPE_ALL): List<Sensor> {
     return sensorManager.getSensorList(type)
@@ -65,6 +44,11 @@ class SensorViewModel(
     }
   }
 
+  // GyroScope
+
+  private var gyroscope= Gyroscope(context)
+  var gyroValues by mutableStateOf( listOf(0.0f, 0.0f, 0.0f))
+
   fun startGyro() {
     gyroscope.startListening { values ->
       gyroValues = values.toMutableList()
@@ -75,6 +59,11 @@ class SensorViewModel(
   fun stopGyro() {
     gyroscope.stopListening()
   }
+
+  // Accelerometer
+
+  private var accelerometer = Accelerometer(context)
+  var accelValues by mutableStateOf( listOf(0.0f, 0.0f, 0.0f))
 
   fun startAccel() {
     accelerometer.startListening { values ->
@@ -87,6 +76,11 @@ class SensorViewModel(
     accelerometer .stopListening()
   }
 
+  // LinearAccelerometer
+
+  private var linearAccelerometer = LinearAccelerometer(context)
+  var linearValues by mutableStateOf( listOf(0.0f, 0.0f, 0.0f))
+
   fun startLinear() {
     linearAccelerometer.startListening { values ->
       linearValues = values.toMutableList()
@@ -98,6 +92,11 @@ class SensorViewModel(
     linearAccelerometer .stopListening()
   }
 
+  // OrientationSensor
+
+  private var orientation = OrientationSensor(context)
+  var orientationValues by mutableStateOf( listOf(0.0f, 0.0f, 0.0f))
+
   fun stopOrientation() {
     orientation .stopListening()
   }
@@ -108,6 +107,12 @@ class SensorViewModel(
       Log.i("SensorViewModel", "Orientation event ${linearValues}")
     }
   }
+
+  // Magnetometer and Compass
+
+  private var magnetometer = Magnetometer(context)
+  var magneticValues by mutableStateOf( listOf(0.0f, 0.0f, 0.0f))
+  var compassRotation by mutableFloatStateOf(0.0f)
 
   fun startCompass() {
     accelerometer.startListening { values ->
