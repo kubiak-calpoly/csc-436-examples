@@ -25,19 +25,6 @@ fun CompassScreen(
     factory = SensorViewModel.Factory
   )
 ) {
-<<<<<<< Updated upstream
-=======
-  val rotation = model.compassRotation
-
-  LifecycleResumeEffect(Unit) {
-    model.startCompass()
-
-    onPauseOrDispose {
-      model.stopCompass()
-    }
-  }
-
->>>>>>> Stashed changes
   val vectorPainter = rememberVectorPainter(
     defaultWidth = 100.dp,
     defaultHeight = 100.dp,

@@ -15,11 +15,6 @@ fun AccelerometerScreen(
     factory = SensorViewModel.Factory
   )
 ) {
-<<<<<<< Updated upstream
-=======
-  val values = model.accelValues
-
->>>>>>> Stashed changes
   LifecycleResumeEffect(Unit) {
     model.startAccel()
 
