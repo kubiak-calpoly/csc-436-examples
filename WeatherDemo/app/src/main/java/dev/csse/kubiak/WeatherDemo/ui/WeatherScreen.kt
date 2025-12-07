@@ -43,8 +43,7 @@ fun WeatherScreen(
       uiState.report, modifier = modifier
     )
     is WeatherUiState.Error -> Text("Error: ${uiState.error}")
-  }
-}
+  }}
 
 @Composable
 fun WeatherView(
