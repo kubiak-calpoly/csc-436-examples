@@ -1,4 +1,4 @@
-package dev.csse.kubiak.demoweek3.ui.theme
+package dev.csse.kubiak.tinyss.ui.theme
 
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle
@@ -6,7 +6,7 @@ import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
-import dev.csse.kubiak.demoweek3.R
+import dev.csse.kubiak.tinyss.R
 
 val Merriweather = FontFamily(
   Font(R.font.merriweather_regular, FontWeight.Normal),

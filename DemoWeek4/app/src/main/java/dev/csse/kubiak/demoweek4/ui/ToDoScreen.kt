@@ -1,13 +1,11 @@
 package dev.csse.kubiak.demoweek4.ui
 
-import android.R
 import android.content.res.Configuration
 import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -18,9 +16,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -29,20 +24,11 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Checkbox
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FloatingActionButton
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SwipeToDismiss
-import androidx.compose.material3.SwipeToDismissBoxState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarColors
-import androidx.compose.material3.dynamicDarkColorScheme
-import androidx.compose.material3.rememberSwipeToDismissBoxState
 import androidx.compose.ui.platform.LocalConfiguration
 
 import androidx.compose.runtime.Composable
@@ -62,107 +48,42 @@ import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import dev.csse.kubiak.demoweek4.Task
 import dev.csse.kubiak.demoweek4.ui.theme.DemoWeek4Theme
-import org.w3c.dom.Text
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ToDoScreen(
-  modifier: Modifier = Modifier, todoViewModel: ToDoViewModel = viewModel()
+  modifier: Modifier = Modifier,
+  model: ToDoViewModel = viewModel()
 ) {
-  var showConfirmationDialog by rememberSaveable { mutableStateOf(false) }
-  var showTaskInput by rememberSaveable { mutableStateOf(false) }
-
-  Scaffold(topBar = {
-    TopAppBar(title = { Text("Todo List") }, colors = TopAppBarColors(
-      containerColor = MaterialTheme.colorScheme.primary,
-      scrolledContainerColor = MaterialTheme.colorScheme.primary,
-      navigationIconContentColor = MaterialTheme.colorScheme.onPrimary,
-      titleContentColor = MaterialTheme.colorScheme.onPrimary,
-      actionIconContentColor = MaterialTheme.colorScheme.onPrimary
-    ), actions = {
-      IconButton(
-        onClick = {
-          showConfirmationDialog = true
-        }, enabled = todoViewModel.completedTasksExist
-      ) {
-        Icon(
-          imageVector = Icons.Default.Delete, contentDescription = "Delete completed tasks"
-        )
-      }
-    }
-
-    )
-  }, floatingActionButton = {
-    FloatingActionButton(onClick = { showTaskInput = true }) {
-      Icon(
-        imageVector = Icons.Default.Add, contentDescription = "Add a task"
-      )
-    }
-  }) { innerPadding ->
+  Scaffold() { innerPadding ->
     TaskList(
-      showTaskInput = showTaskInput,
-      onDismissInput = { showTaskInput = false },
       modifier = modifier
         .fillMaxSize()
         .padding(innerPadding)
     )
   }
-
-  if (showConfirmationDialog) {
-    DeleteConfirmationDialog(onConfirm = {
-      todoViewModel.deleteCompletedTasks()
-      showConfirmationDialog = false
-    }, onDismiss = {
-      showConfirmationDialog = false
-    })
-  }
 }
 
-@Composable
-fun DeleteConfirmationDialog(
-  onConfirm: () -> Unit, onDismiss: () -> Unit
-) {
-  AlertDialog(text = { Text("Ok to delete completed tasks?") }, onDismissRequest = {
-    onDismiss()
-  }, confirmButton = {
-    TextButton(onClick = { onConfirm() }) { Text("Confirm") }
-  }, dismissButton = {
-    TextButton(onClick = { onDismiss() }) { Text("Dismiss") }
-  }) // no body
-}
-
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun TaskList(
   modifier: Modifier = Modifier,
-  showTaskInput: Boolean = true,
-  onDismissInput: () -> Unit,
-  todoViewModel: ToDoViewModel = viewModel()
+  model: ToDoViewModel = viewModel()
 ) {
-  val focusRequester = remember { FocusRequester() }
-
   LazyColumn(modifier = modifier) {
     stickyHeader {
-      LaunchedEffect(showTaskInput) {
-        if (showTaskInput) {
-          focusRequester.requestFocus()
-        }
-      }
-      AnimatedVisibility(showTaskInput) {
-        AddTaskInput(
-          modifier = Modifier.focusRequester(focusRequester), onDismiss = onDismissInput
-        ) { s ->
-          todoViewModel.addTask(s)
-          onDismissInput()
-        }
-      }
+      AddTaskInput(onEnterTask = { s ->
+        model.addTask(s)
+      })
     }
-    items(items = todoViewModel.taskList, key = { t -> t.id }) { task ->
+    items(
+      items = model.taskList,
+      key = { t -> t.id }
+    ) { task ->
       TaskCard(
-        task = task, toggleCompleted = todoViewModel::toggleTaskCompleted
+        task = task,
+        toggleCompleted = model::toggleTaskCompleted
       )
     }
   }
@@ -172,13 +93,10 @@ fun TaskList(
 @Composable
 fun AddTaskInput(
   modifier: Modifier = Modifier,
-  todoViewModel: ToDoViewModel = viewModel(),
-  onDismiss: () -> Unit,
   onEnterTask: (Task) -> Unit,
 ) {
   val keyboardController = LocalSoftwareKeyboardController.current
   var taskBody by remember { mutableStateOf("") }
-  val tagList = remember { mutableStateListOf<String>() }
 
   @Composable
   fun TaskTextInput(modifier: Modifier = Modifier) {
@@ -193,88 +111,28 @@ fun AddTaskInput(
       keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
       keyboardActions = KeyboardActions(onDone = {
         keyboardController?.hide()
-        onEnterTask(Task(body = taskBody, tags = tagList))
+        onEnterTask(Task(body = taskBody))
+        taskBody = ""
       })
     )
   }
 
-  @Composable
-  fun TaskTagsInput(modifier: Modifier = Modifier) {
-    Row(
-      modifier = modifier,
-      horizontalArrangement = Arrangement.SpaceEvenly
-    ) {
-      todoViewModel.tagList.forEach { tag ->
-        Row(
-          modifier = Modifier
-            .background(Color(0x18000000)),
-          verticalAlignment = Alignment.CenterVertically
-        ) {
-          Checkbox(
-            modifier = Modifier.padding(0.dp),
-            checked = tagList.contains(tag),
-            onCheckedChange = { checked ->
-              Log.d(TAG, "tag $tag is now $checked")
-              if (checked) tagList.add(tag) else tagList.remove(tag)
-            })
-          Text(
-            tag,
-            style = MaterialTheme.typography.labelMedium
-          )
-        }
 
-      }
-    }
-  }
-
-  @Composable
-  fun TaskInputButtons() {
-    Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-      Button(colors = ButtonDefaults.buttonColors(
-        containerColor = MaterialTheme.colorScheme.secondary
-      ), onClick = {
-        onDismiss()
-      }) {
-        Text("Cancel")
-      }
-      Button(colors = ButtonDefaults.buttonColors(
-        containerColor = MaterialTheme.colorScheme.primary
-      ), onClick = {
-        onEnterTask(Task(body = taskBody, tags = tagList))
-      }) {
-        Text("Add Task")
-      }
-    }
-  }
-
-  BoxWithConstraints {
-    if (this.maxWidth >= 400.dp) {
-      Column {
-        TaskTextInput(modifier)
-        Row(modifier = Modifier.fillMaxWidth() ){
-          TaskTagsInput(modifier = Modifier.weight(1f))
-          TaskInputButtons()
-        }
-      }
-    } else {
-      Column(horizontalAlignment = Alignment.CenterHorizontally) {
-        TaskTextInput(modifier)
-        TaskTagsInput(Modifier.fillMaxWidth())
-        TaskInputButtons()
-      }
-    }
-  }
-
-
+  TaskTextInput(modifier = modifier)
 }
 
 @Composable
 fun TaskCard(
   task: Task,
-  toggleCompleted: (Task) -> Unit,
+  toggleCompleted: (Task, Boolean) -> Unit,
   modifier: Modifier = Modifier
 ) {
-  val config = LocalConfiguration.current
+  Log.d("TaskCard", "Rendering ${task}")
+
+  val toggleThisTask: (Boolean) -> Unit = remember  {{
+    b: Boolean ->
+      toggleCompleted(task, b)
+  }}
 
   @Composable
   fun TaskText(modifier: Modifier = Modifier) {
@@ -284,25 +142,6 @@ fun TaskCard(
       modifier = modifier,
       color = if (task.completed) Color.Gray else Color.Black
     )
-  }
-
-  @Composable
-  fun TaskTags(modifier: Modifier = Modifier) {
-    Row(
-      modifier = modifier,
-      horizontalArrangement = Arrangement.spacedBy(4.dp)
-    ) {
-      task.tags.forEach { tag ->
-        Text(
-          tag,
-          modifier = Modifier
-            .alignByBaseline()
-            .background(MaterialTheme.colorScheme.primary)
-            .padding(4.dp),
-          color = MaterialTheme.colorScheme.onPrimary
-        )
-      }
-    }
   }
 
   Card(
@@ -319,28 +158,19 @@ fun TaskCard(
       verticalAlignment = Alignment.Top,
       horizontalArrangement = Arrangement.SpaceBetween
     ) {
-      Checkbox(checked = task.completed,
+      Checkbox(
+        checked = task.completed,
         modifier = Modifier.alignByBaseline(),
-        onCheckedChange = {
-          toggleCompleted(task)
-        })
+        onCheckedChange = toggleThisTask
+      )
 
-      if (config.orientation == Configuration.ORIENTATION_PORTRAIT) {
-        Column(modifier = Modifier.padding(12.dp)) {
-          TaskText(modifier = Modifier.fillMaxWidth())
-          TaskTags(modifier = Modifier.padding(top = 8.dp))
-        }
-      } else {
+      TaskText(
+        modifier = Modifier
+          .alignByBaseline()
+          .padding(12.dp)
+          .weight(1f)
+      )
 
-        TaskText(
-          modifier = Modifier
-            .alignByBaseline()
-            .padding(12.dp)
-            .weight(1f)
-        )
-
-        TaskTags(modifier = Modifier.alignByBaseline())
-      }
     }
   }
 }

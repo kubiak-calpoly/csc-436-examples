@@ -5,7 +5,7 @@ plugins {
 }
 
 android {
-  namespace = "dev.csse.kubiak.demoweek3"
+  namespace = "dev.csse.kubiak.tinyss"
   compileSdk = 35
 
   defaultConfig {

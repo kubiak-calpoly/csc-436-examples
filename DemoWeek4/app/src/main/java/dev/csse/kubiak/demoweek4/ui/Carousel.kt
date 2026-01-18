@@ -67,9 +67,10 @@ fun CityCard(city: City) {
   }
 }
 
-@Preview
+@Preview(showBackground = true)
 @Composable
-fun CarouselPreview() {
+fun CarouselPreview(
+) {
   val cities = listOf(
     City("Barcelona", R.drawable.barcelona_sagrada_familia, "sagrada familia"),
     City("Dubai", R.drawable.dubai_burj_al_arab, "burj al arab"),

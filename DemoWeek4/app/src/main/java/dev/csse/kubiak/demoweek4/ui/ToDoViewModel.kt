@@ -27,15 +27,17 @@ class ToDoViewModel : ViewModel() {
    fun createTestTasks(numTasks: Int = 10) {
       // Add tasks for testing purposes
       for (i in 1..numTasks) {
-         addTask(Task(body = "task $i", tags =  listOf("Work")))
+         addTask(Task(body = "task $i"))
       }
    }
 
-   fun toggleTaskCompleted(task: Task) {
+   fun toggleTaskCompleted(task: Task, completed: Boolean) {
       // Observer of MutableList not notified when changing a property, so
       // need to replace element in the list for notification to go through
       val index = taskList.indexOf(task)
-      taskList[index] = taskList[index].copy(completed = !task.completed)
+      taskList[index] = taskList[index].copy(
+        completed = completed
+      )
    }
 
 }

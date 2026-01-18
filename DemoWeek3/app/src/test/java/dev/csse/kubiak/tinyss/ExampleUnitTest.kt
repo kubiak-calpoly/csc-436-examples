@@ -1,4 +1,4 @@
-package dev.csse.kubiak.demoweek3
+package dev.csse.kubiak.tinyss
 
 import org.junit.Test
 

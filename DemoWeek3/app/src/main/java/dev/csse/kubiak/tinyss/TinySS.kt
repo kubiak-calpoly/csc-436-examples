@@ -1,4 +1,4 @@
-package dev.csse.kubiak.demoweek3
+package dev.csse.kubiak.tinyss
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -10,7 +10,6 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
-import androidx.compose.material3.TextFieldColors
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -29,16 +28,16 @@ val rowHeaderWidth = 16.dp * 1
 
 @Preview
 @Composable
-fun SpreadsheetPreview() {
-  Spreadsheet()
+fun TinySSPreview() {
+  TinySS()
 }
 
 @Composable
-fun Spreadsheet(
-  sheetViewModel: SpreadsheetViewModel = viewModel()
+fun TinySS(
+  model: TinySSViewModel = viewModel()
 ) {
-  val columnNames = sheetViewModel.columnNames
-  val rowNumbers = sheetViewModel.rowNumbers
+  val columnNames = model.columnNames
+  val rowNumbers = model.rowNumbers
 
   Column(
     modifier = Modifier
@@ -74,12 +73,12 @@ fun ColumnHeader(columnNames: List<String>) {
 }
 
 @Composable
-fun RowData(rowNum: Int, columnNames: List<String>) {
+fun RowData(row: Int, columnNames: List<String>) {
   Row(verticalAlignment = Alignment.CenterVertically,
     horizontalArrangement = Arrangement.SpaceBetween,
     modifier = Modifier.fillMaxWidth()) {
     Text(
-      rowNum.toString(),
+      row.toString(),
       style = MaterialTheme.typography.labelLarge,
       textAlign = TextAlign.Right,
       modifier = Modifier.width(rowHeaderWidth),
@@ -87,7 +86,7 @@ fun RowData(rowNum: Int, columnNames: List<String>) {
     )
     for ( col in columnNames ) {
       Cell(
-        key = "$col$rowNum",
+        col, row,
         modifier = Modifier.width(columnWidth)
       )
     }
@@ -96,29 +95,26 @@ fun RowData(rowNum: Int, columnNames: List<String>) {
 
 @Composable
 fun Cell(
-  key: String,
+  col: String,
+  row: Int,
   modifier: Modifier = Modifier,
-  sheetViewModel: SpreadsheetViewModel = viewModel()
+  model: TinySSViewModel = viewModel()
 ) {
-  val data = sheetViewModel.data[key]
+  val data = model.getData(col, row)
 
   TextField(
     value = (data ?: "").toString(),
-    onValueChange = { x: String ->
-       sheetViewModel.data[key] = x.toIntOrNull() },
+    onValueChange = {
+       model.setData(col, row, it.toIntOrNull())
+    },
     singleLine = true,
     textStyle = TextStyle(
       fontSize = 20.sp,
       fontFamily = FontFamily.Monospace,
       textAlign = TextAlign.End,
-      color = MaterialTheme.colorScheme.onTertiary
     ),
     keyboardOptions = KeyboardOptions(
       keyboardType = KeyboardType.Number
-    ),
-    colors = TextFieldDefaults.colors(
-      unfocusedContainerColor = MaterialTheme.colorScheme.tertiary,
-      unfocusedTextColor = MaterialTheme.colorScheme.onTertiary
     ),
     modifier = modifier
   )

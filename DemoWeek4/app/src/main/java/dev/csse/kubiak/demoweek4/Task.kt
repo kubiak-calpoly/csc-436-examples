@@ -1,10 +1,10 @@
 package dev.csse.kubiak.demoweek4
 
-import java.util.UUID
+var lastTaskId: Int = 0
 
 data class Task (
-   var id: UUID = UUID.randomUUID(),
-   var body: String = "",
-   var completed: Boolean = false,
-   var tags: List<String> = listOf()
+   val id: Int = lastTaskId++,
+   val body: String = "",
+   val completed: Boolean = false,
+   // var tags: List<String> = listOf()
 )

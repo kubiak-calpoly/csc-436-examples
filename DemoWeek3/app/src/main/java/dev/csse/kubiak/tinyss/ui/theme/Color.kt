@@ -1,4 +1,4 @@
-package dev.csse.kubiak.demoweek3.ui.theme
+package dev.csse.kubiak.tinyss.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
