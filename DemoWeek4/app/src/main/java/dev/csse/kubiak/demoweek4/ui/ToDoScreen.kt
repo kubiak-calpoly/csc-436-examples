@@ -129,11 +129,6 @@ fun TaskCard(
 ) {
   Log.d("TaskCard", "Rendering ${task}")
 
-  val toggleThisTask: (Boolean) -> Unit = remember  {{
-    b: Boolean ->
-      toggleCompleted(task, b)
-  }}
-
   @Composable
   fun TaskText(modifier: Modifier = Modifier) {
     Text(
@@ -161,7 +156,7 @@ fun TaskCard(
       Checkbox(
         checked = task.completed,
         modifier = Modifier.alignByBaseline(),
-        onCheckedChange = toggleThisTask
+        onCheckedChange = { toggleCompleted(task, it) }
       )
 
       TaskText(
