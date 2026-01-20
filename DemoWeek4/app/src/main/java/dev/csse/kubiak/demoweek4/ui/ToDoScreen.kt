@@ -71,11 +71,14 @@ fun TaskList(
   modifier: Modifier = Modifier,
   model: ToDoViewModel = viewModel()
 ) {
+  val toggleTaskCompleted = remember {{
+   task: Task, completed: Boolean ->
+    model.toggleTaskCompleted(task, completed)
+  }}
+
   LazyColumn(modifier = modifier) {
     stickyHeader {
-      AddTaskInput(onEnterTask = { s ->
-        model.addTask(s)
-      })
+      AddTaskInput(onEnterTask = model::addTask)
     }
     items(
       items = model.taskList,
@@ -83,7 +86,7 @@ fun TaskList(
     ) { task ->
       TaskCard(
         task = task,
-        toggleCompleted = model::toggleTaskCompleted
+        toggleCompleted = toggleTaskCompleted
       )
     }
   }
