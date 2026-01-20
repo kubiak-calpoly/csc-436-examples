@@ -7,16 +7,15 @@ import androidx.lifecycle.ViewModel
 
 class TinySSViewModel : ViewModel() {
 
-  val columnNames = mutableStateListOf("A", "B", "C")
-  val rowNumbers = mutableStateListOf(1, 2, 3)
+  // TODO val columnNames =
+  // TODO val rowNumbers =
+  // TODO private val data =
 
-  private val data = mutableStateMapOf<String, Int?>()
-
-  fun getData(col: String, row: Int)
-    = data["$col$row"]
+  fun getData(col: String, row: Int) : Int?
+    = null // TODO: lookup cell data
 
   fun setData(col: String, row: Int, value: Int?) {
-    data["$col$row"] = value
+    // TODO: update cell data
   }
 }
 

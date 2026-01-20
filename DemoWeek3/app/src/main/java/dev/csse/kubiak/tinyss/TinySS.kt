@@ -14,6 +14,7 @@ import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.input.KeyboardType
@@ -26,18 +27,18 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 val columnWidth = 16.dp * 5
 val rowHeaderWidth = 16.dp * 1
 
-@Preview
+@Preview(
+  backgroundColor = 0xff222222,
+  showBackground = true )
 @Composable
 fun TinySSPreview() {
   TinySS()
 }
 
 @Composable
-fun TinySS(
-  model: TinySSViewModel = viewModel()
-) {
-  val columnNames = model.columnNames
-  val rowNumbers = model.rowNumbers
+fun TinySS() {
+  val columnNames = listOf("A", "B", "C")
+  val rowNumbers = listOf(1, 2, 3)
 
   Column(
     modifier = Modifier
@@ -97,15 +98,14 @@ fun RowData(row: Int, columnNames: List<String>) {
 fun Cell(
   col: String,
   row: Int,
-  modifier: Modifier = Modifier,
-  model: TinySSViewModel = viewModel()
+  modifier: Modifier = Modifier
 ) {
-  val data = model.getData(col, row)
+  val data = null // TODO get data(col, row)
 
   TextField(
     value = (data ?: "").toString(),
     onValueChange = {
-       model.setData(col, row, it.toIntOrNull())
+      // TODO set data(col, row)
     },
     singleLine = true,
     textStyle = TextStyle(
