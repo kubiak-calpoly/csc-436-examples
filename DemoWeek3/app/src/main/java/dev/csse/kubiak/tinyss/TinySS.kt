@@ -1,5 +1,6 @@
 package dev.csse.kubiak.tinyss
 
+import android.R
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -29,7 +30,8 @@ val rowHeaderWidth = 16.dp * 1
 
 @Preview(
   backgroundColor = 0xff222222,
-  showBackground = true )
+  showBackground = true,
+  heightDp = 600)
 @Composable
 fun TinySSPreview() {
   TinySS()
@@ -43,7 +45,8 @@ fun TinySS() {
   Column(
     modifier = Modifier
       .fillMaxWidth()
-      .padding(24.dp)
+      .padding(24.dp),
+    verticalArrangement = Arrangement.spacedBy(20.dp)
   ) {
     ColumnHeader(columnNames)
     for (row in rowNumbers) {
@@ -100,9 +103,15 @@ fun Cell(
   row: Int,
   modifier: Modifier = Modifier
 ) {
+  val label = "$col$row"
   val data = null // TODO get data(col, row)
 
   TextField(
+    label = {
+      Text(label,
+        style = MaterialTheme.typography.labelSmall
+      )
+    },
     value = (data ?: "").toString(),
     onValueChange = {
       // TODO set data(col, row)
@@ -110,6 +119,7 @@ fun Cell(
     singleLine = true,
     textStyle = TextStyle(
       fontSize = 20.sp,
+      lineHeight = 40.sp,
       fontFamily = FontFamily.Monospace,
       textAlign = TextAlign.End,
     ),
