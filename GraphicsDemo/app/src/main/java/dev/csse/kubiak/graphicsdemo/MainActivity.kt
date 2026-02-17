@@ -20,7 +20,7 @@ class MainActivity : ComponentActivity() {
     enableEdgeToEdge()
     setContent {
       GraphicsDemoTheme {
-        JellyfishScreen()
+        JellyfishScreen(modifier = Modifier.fillMaxSize())
       }
     }
   }

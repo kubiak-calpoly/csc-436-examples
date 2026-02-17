@@ -3,26 +3,31 @@ package dev.csse.kubiak.graphicsdemo.ui
 import android.graphics.RuntimeShader
 import android.os.Build
 import androidx.annotation.RequiresApi
-import androidx.collection.emptyLongSet
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.EaseInOut
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.keyframes
 import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.core.withInfiniteAnimationFrameMillis
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.focusModifier
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.geometry.center
 import androidx.compose.ui.graphics.Color
@@ -39,28 +44,58 @@ import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.max
+import androidx.compose.ui.unit.min
+import androidx.compose.ui.unit.times
 import androidx.lifecycle.viewmodel.compose.viewModel
 import dev.csse.kubiak.graphicsdemo.ui.theme.GraphicsDemoTheme
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
+import kotlin.collections.get
 
 @Composable
 fun JellyfishScreen(
-  model: JellyfishViewModel = viewModel()
+  model: JellyfishViewModel = viewModel(),
+  modifier: Modifier = Modifier
 ) {
   val coroutineScope = rememberCoroutineScope()
-  val vectorPainter = rememberVectorPainter(
-    defaultWidth = 530.46f.dp,
-    defaultHeight = 563.1f.dp,
+
+  BoxWithConstraints(modifier = modifier) {
+    val maxSize = min(maxWidth, maxHeight)
+    Bubbles(maxSize, maxSize,
+      modifier = Modifier.fillMaxSize()
+    )
+    Jellyfish(maxSize, maxSize,
+      modifier = Modifier.fillMaxWidth()
+        .align(Alignment.TopCenter)
+    )
+    Corals(maxWidth, maxHeight/2,
+      modifier = Modifier.fillMaxHeight(.5f)
+      .align(Alignment.BottomCenter))
+  }
+}
+
+@Composable
+fun Jellyfish(
+  width: Dp,
+  height: Dp,
+  modifier: Modifier = Modifier,
+  model: JellyfishViewModel = viewModel(),
+) {
+  val jellyPainter = rememberVectorPainter(
+    defaultWidth = width,
+    defaultHeight = height,
     viewportWidth = 530.46f,
     viewportHeight = 563.1f,
     autoMirror = true,
   ) { viewPortWidth, viewPortHeight ->
-    val duration = 3000
+
+    val duration = 10_000
     val transition = rememberInfiniteTransition()
     val translationY by transition.animateFloat(
-      initialValue = 0f, targetValue = -30f, animationSpec = infiniteRepeatable(
+      initialValue = 100f, targetValue = -100f, animationSpec = infiniteRepeatable(
         tween(duration, easing = EaseInOut), repeatMode = RepeatMode.Reverse
       )
     )
@@ -71,7 +106,8 @@ fun JellyfishScreen(
       Group("tentacles") {
         val alphas = arrayOf(.49f, .66f, .44f, .6f)
         model.tentacles.forEachIndexed { i, path ->
-          Path(pathData = path,
+          Path(
+            pathData = path,
             fill = SolidColor(Color.White),
             fillAlpha = alphas.getOrElse(i) { 1f })
         }
@@ -79,7 +115,8 @@ fun JellyfishScreen(
       Group(name = "body") {
         val alphas = arrayOf(1f, .5f)
         model.body.forEachIndexed { i, path ->
-          Path(pathData = path,
+          Path(
+            pathData = path,
             fill = SolidColor(Color.White),
             fillAlpha = alphas.getOrElse(i) { 1f })
         }
@@ -96,75 +133,31 @@ fun JellyfishScreen(
       }
     }
 
-    Group(name = "bubbles") {
-      // bubbles around the jellyfish
-      val alphas = arrayOf(.67f, .79f, .89f, .77f, .77f)
-      model.bubbles.forEachIndexed { i, path ->
-        Path(pathData = path,
-          fill = SolidColor(Color.White),
-          fillAlpha = alphas.getOrElse(i) { .49f })
-      }
-    }
-  }
-
-  val blinkAlphaAnimation = remember {
-    Animatable(1f)
-  }
-  val blinkScaleAnimation = remember {
-    Animatable(1f)
-  }
-
-  suspend fun instantBlinkAnimation() {
-    val tweenSpec = tween<Float>(150, easing = LinearEasing)
-    coroutineScope {
-      launch {
-        blinkAlphaAnimation.animateTo(0f, animationSpec = tweenSpec)
-        blinkAlphaAnimation.animateTo(1f, animationSpec = tweenSpec)
-      }
-      launch {
-        blinkScaleAnimation.animateTo(0.3f, animationSpec = tweenSpec)
-        blinkScaleAnimation.animateTo(1f, animationSpec = tweenSpec)
-      }
-    }
-  }
-
-  val vectorPainterFace = rememberVectorPainter(
-    defaultWidth = 530.46f.dp,
-    defaultHeight = 563.1f.dp,
-    viewportWidth = 530.46f,
-    viewportHeight = 563.1f,
-    autoMirror = true,
-  ) { _, _ ->
-    val duration = 3000
-    val transition = rememberInfiniteTransition()
-    val translationY by transition.animateFloat(
-      initialValue = 0f, targetValue = -30f, animationSpec = infiniteRepeatable(
-        tween(duration, easing = EaseInOut), repeatMode = RepeatMode.Reverse
-      )
-    )
-    Group(name = "face",
-      translationY = translationY) {
+    Group(
+      name = "face",
+      translationY = translationY
+    ) {
       // face paths
       Group(
         name = "eye-left",
-        scaleY = blinkScaleAnimation.value,
+        scaleY = 1f,
         pivotY = 233f // vertical center of eye path
       ) {
         Path(
           pathData = model.face[0],
           fill = SolidColor(Color(0xFFb4bebf)),
-          fillAlpha = blinkAlphaAnimation.value,
+          fillAlpha = 1f,
         )
       }
       Group(
         name = "eye-right",
-        scaleY = blinkScaleAnimation.value,
+        scaleY = 1f,
         pivotY = 233f // vertical center of eye path
       ) {
         Path(
           pathData = model.face[1],
           fill = SolidColor(Color(0xFFb4bebf)),
-          fillAlpha = blinkAlphaAnimation.value,
+          fillAlpha = 1f,
         )
       }
       Path(
@@ -173,42 +166,138 @@ fun JellyfishScreen(
         fillAlpha = 1f,
       )
     }
+
+
   }
 
   if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
     WobblyImage(
-      vectorPainter,
+      jellyPainter,
       contentDescription = "Jellyfish",
-      modifier = Modifier.fillMaxSize()
-        .background(largeRadialGradient)
-      ,
+      modifier = modifier,
       shader = PERLIN_NOISE
     )
-  }
-   else {
+  } else {
     Image(
-      vectorPainter,
+      jellyPainter,
       contentDescription = "Jellyfish",
-      modifier = Modifier.fillMaxSize()
+      modifier = modifier
+    )
+  }
+}
+
+@Composable
+fun Bubbles(
+  width: Dp,
+  height: Dp,
+  modifier: Modifier = Modifier,
+  model: JellyfishViewModel = viewModel()
+) {
+  val bubblePainter = rememberVectorPainter(
+    defaultWidth = width,
+    defaultHeight = height,
+    viewportWidth = 530.46f,
+    viewportHeight = 563.1f,
+    autoMirror = true,
+  ) { viewPortWidth, viewPortHeight ->
+    Group(name = "bubbles") {
+      // bubbles around the jellyfish
+      val alphas = arrayOf(.67f, .79f, .89f, .77f, .77f)
+      model.bubbles.forEachIndexed { i, path ->
+        Path(
+          pathData = path,
+          fill = SolidColor(Color.White),
+          fillAlpha = alphas.getOrElse(i) { .49f })
+      }
+    }
+  }
+
+  if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+    WobblyImage(
+      bubblePainter,
+      contentDescription = "Bubbles",
+      modifier = modifier
+        .background(largeRadialGradient),
+      shader = PERLIN_NOISE
+    )
+  } else {
+    Image(
+      bubblePainter,
+      contentDescription = "Bubbles",
+      modifier = modifier
         .background(largeRadialGradient)
     )
   }
-
-  Image(vectorPainterFace,
-    contentDescription = "",
-    modifier = Modifier
-      .fillMaxSize()
-      .pointerInput(Unit) {
-        detectTapGestures {
-          coroutineScope.launch {
-            instantBlinkAnimation()
-          }
-        }
-      })
-
 }
 
-@Preview
+@Composable
+fun Corals(
+  width: Dp,
+  height: Dp,
+  modifier: Modifier = Modifier,
+  model: JellyfishViewModel = viewModel()
+) {
+  val size = 1200f
+  val duration = 20_000
+  val transition = rememberInfiniteTransition()
+  val translationX by transition.animateFloat(
+    initialValue = -size,
+    targetValue = -3f * size,
+    animationSpec = infiniteRepeatable(
+      animation = tween(
+        durationMillis = duration,
+        easing = LinearEasing
+      ),
+      repeatMode = RepeatMode.Restart
+    )
+  )
+  val coralPainter = rememberVectorPainter(
+    defaultWidth = width,
+    defaultHeight = height,
+    viewportWidth = size,
+    viewportHeight = size,
+    autoMirror = true,
+  ) { viewPortWidth, viewPortHeight ->
+    Group(name = "coral_reef",
+      translationX = translationX
+    ) {
+      val colors = arrayOf(
+        Color(0xC8F5E29A),
+        Color(0xC8AEF59A),
+        Color(0xC8F5C49A),
+        Color(0xC8F59ADE)
+      )
+      val corals = model.corals + model.corals
+      corals.forEachIndexed { i, path ->
+        Group(name = "coral $i",
+          translationX = 0.5f * size * i
+        ) {
+          Path(
+            pathData = path,
+            fill = SolidColor(colors[i % colors.size])
+          )
+        }
+      }
+    }
+  }
+
+  if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+    WobblyImage(
+      coralPainter,
+      contentDescription = "Coral",
+      modifier = modifier,
+      shader = PERLIN_NOISE
+    )
+  } else {
+    Image(
+      coralPainter,
+      contentDescription = "Coral",
+      modifier = modifier
+    )
+  }
+}
+
+@Preview(widthDp = 450, heightDp = 800)
 @Composable
 fun JellyfishPreview() {
   GraphicsDemoTheme {
