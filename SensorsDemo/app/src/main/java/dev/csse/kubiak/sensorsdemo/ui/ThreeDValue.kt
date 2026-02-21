@@ -127,7 +127,7 @@ fun ThreeDValue(
           style = MaterialTheme.typography.displayLarge
         )
         Text(
-          String.format("%.6f", value),
+          String.format("%.2f", value),
           modifier = Modifier.weight(7f),
           style = MaterialTheme.typography.displayMedium,
           textAlign = TextAlign.Right
