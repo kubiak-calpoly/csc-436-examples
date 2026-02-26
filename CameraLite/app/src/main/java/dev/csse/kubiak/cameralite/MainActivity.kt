@@ -9,6 +9,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
 import com.google.common.util.concurrent.ListenableFuture
+import dev.csse.kubiak.cameralite.ui.CameraApp
 import dev.csse.kubiak.cameralite.ui.CameraPreview
 import dev.csse.kubiak.cameralite.ui.theme.CameraLiteTheme
 
@@ -27,7 +28,7 @@ class MainActivity : ComponentActivity() {
                modifier = Modifier.fillMaxSize(),
                color = MaterialTheme.colorScheme.background
             ) {
-               CameraPreview()
+               CameraApp()
             }
          }
       }
