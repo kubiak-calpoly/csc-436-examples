@@ -10,6 +10,7 @@ import dev.csse.kubiak.dbdemo.StudyHelperApplication
 import dev.csse.kubiak.dbdemo.data.Question
 import dev.csse.kubiak.dbdemo.data.StudyRepository
 import dev.csse.kubiak.dbdemo.data.Subject
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -18,6 +19,14 @@ import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
+
+data class SubjectScreenUiState(
+  val subjectList: List<Subject> = emptyList(),
+  val questionList: List<Question> = emptyList(),
+  val selectedSubjects: Set<Subject> = emptySet(),
+  val isCabVisible: Boolean = selectedSubjects.isNotEmpty(),
+  val isSubjectDialogVisible: Boolean = false
+)
 
 class SubjectViewModel(private val studyRepo: StudyRepository) : ViewModel() {
 
@@ -33,14 +42,10 @@ class SubjectViewModel(private val studyRepo: StudyRepository) : ViewModel() {
   private val selectedSubjects = MutableStateFlow(emptySet<Subject>())
   private val isSubjectDialogVisible = MutableStateFlow(false)
 
-  val uiState: StateFlow<SubjectScreenUiState> = transformedFlow()
-    .stateIn(
-      scope = viewModelScope,
-      started = SharingStarted.WhileSubscribed(5000L),
-      initialValue = SubjectScreenUiState(),
-    )
 
-  private fun transformedFlow() = selectedSubjects.flatMapLatest {
+
+  @OptIn(ExperimentalCoroutinesApi::class)
+  private val transformedFlow = selectedSubjects.flatMapLatest {
     set ->
     val questionsFlow =
       if (set.isEmpty()) flowOf(emptyList<Question>())
@@ -60,6 +65,12 @@ class SubjectViewModel(private val studyRepo: StudyRepository) : ViewModel() {
     }
   }
 
+  val uiState: StateFlow<SubjectScreenUiState> = transformedFlow
+    .stateIn(
+      scope = viewModelScope,
+      started = SharingStarted.WhileSubscribed(5000L),
+      initialValue = SubjectScreenUiState(),
+    )
 
    fun addSubject(title: String) {
       studyRepo.addSubject(Subject(title = title))
@@ -94,10 +105,3 @@ class SubjectViewModel(private val studyRepo: StudyRepository) : ViewModel() {
    }
 }
 
-data class SubjectScreenUiState(
-  val subjectList: List<Subject> = emptyList(),
-  val questionList: List<Question> = emptyList(),
-  val selectedSubjects: Set<Subject> = emptySet(),
-  val isCabVisible: Boolean = selectedSubjects.isNotEmpty(),
-  val isSubjectDialogVisible: Boolean = false
-)
