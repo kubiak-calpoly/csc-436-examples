@@ -1,6 +1,8 @@
 package dev.csse.kubiak.cameralite.ui
 
 import android.content.Context
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -21,6 +23,7 @@ import androidx.compose.material3.SingleChoiceSegmentedButtonRow
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -40,6 +43,16 @@ fun CameraApp(
     CaptureMode.BUFFER -> !model.isBitmapEmpty
   }
   val context: Context = LocalContext.current
+
+  val permissionLauncher = rememberLauncherForActivityResult(
+    ActivityResultContracts.RequestPermission()
+  ) { isGranted -> model.hasPermission = isGranted  }
+
+  LaunchedEffect(model.hasPermission) {
+    if ( !model.hasPermission )
+      model.requestPermission(context, permissionLauncher)
+  }
+
   Scaffold(
     topBar = {
       TopAppBar(
@@ -133,7 +146,7 @@ fun CameraApp(
           modifier = Modifier.align(Alignment.BottomCenter)
         )
       }
-    } else {
+    } else if (model.hasPermission){
       CameraCapture(
         modifier = Modifier
           .padding(innerPadding)
@@ -145,6 +158,8 @@ fun CameraApp(
           model.bitmap = image.toBitmap()
         }
       )
+    } else {
+      Text("This app requires permission to use the camera.")
     }
   }
 }

@@ -19,8 +19,6 @@ fun CameraPreview(
    onUseCase: (UseCase) -> Unit = { },
    scaleType: PreviewView.ScaleType = PreviewView.ScaleType.FILL_CENTER,
 ) {
-   val coroutineScope = rememberCoroutineScope()
-   val lifecycleOwner = LocalLifecycleOwner.current
    AndroidView(
       modifier = modifier,
       factory = { context ->

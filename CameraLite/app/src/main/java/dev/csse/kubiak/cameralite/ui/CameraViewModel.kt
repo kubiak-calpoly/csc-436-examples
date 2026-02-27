@@ -9,12 +9,15 @@ import android.graphics.Paint
 import android.graphics.Rect
 import android.net.Uri
 import android.provider.MediaStore
+import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.camera.core.CameraSelector
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.res.painterResource
+import androidx.core.app.ActivityCompat
+import androidx.core.content.PermissionChecker.PERMISSION_GRANTED
 import androidx.core.graphics.createBitmap
 import androidx.lifecycle.ViewModel
 import java.io.ByteArrayOutputStream
@@ -29,6 +32,8 @@ enum class CaptureMode() {
 
 class CameraViewModel() : ViewModel() {
 
+  var hasPermission: Boolean by mutableStateOf(false)
+
   var cameraSelector: CameraSelector by mutableStateOf(CameraSelector.DEFAULT_FRONT_CAMERA)
   var captureMode by mutableStateOf(CaptureMode.FILE)
 
@@ -38,7 +43,21 @@ class CameraViewModel() : ViewModel() {
   var bitmap: Bitmap? by mutableStateOf(null)
   val isBitmapEmpty get() = bitmap == null
 
-  val emptyBitmap = createBitmap(1,1)
+  val emptyBitmap = createBitmap(1, 1)
+
+  fun requestPermission(
+    context: Context,
+    launcher: ManagedActivityResultLauncher<String, Boolean>
+  ) {
+    val permission = android.Manifest.permission.CAMERA
+    if ( ActivityCompat.checkSelfPermission
+        (
+          context, permission
+        )!= PERMISSION_GRANTED
+    ) {
+      launcher.launch(permission)
+    }
+  }
 
 
   fun saveImage(context: Context): Uri? {
@@ -58,27 +77,27 @@ class CameraViewModel() : ViewModel() {
     return bitmap?.let {
       val width = it.width
       val height = it.height
-      val diagonal = sqrt(1.0f*width*width + 1.0f*height*height)
+      val diagonal = sqrt(1.0f * width * width + 1.0f * height * height)
       val compositeImage = createBitmap(height * 2, width * 2)
       val canvas = Canvas(compositeImage)
       val matrix: Matrix = Matrix()
 
-      canvas.drawRect(Rect(0, 0, 2*height, 2*width), Paint(Color.BLACK))
+      canvas.drawRect(Rect(0, 0, 2 * height, 2 * width), Paint(Color.BLACK))
 
       matrix.setTranslate(0f, 0f)
-      matrix.postRotate(-135f, height/2f, width/2f)
+      matrix.postRotate(-135f, height / 2f, width / 2f)
       canvas.drawBitmap(bitmap ?: emptyBitmap, matrix, null)
 
-      matrix.setTranslate(height/1f, 0f)
-      matrix.postRotate(-45f, 1.5f*height, width/2f)
+      matrix.setTranslate(height / 1f, 0f)
+      matrix.postRotate(-45f, 1.5f * height, width / 2f)
       canvas.drawBitmap(bitmap ?: emptyBitmap, matrix, null)
 
-      matrix.setTranslate(0f, width/1f)
-      matrix.postRotate(135f, height/2f, 1.5f*width)
+      matrix.setTranslate(0f, width / 1f)
+      matrix.postRotate(135f, height / 2f, 1.5f * width)
       canvas.drawBitmap(bitmap ?: emptyBitmap, matrix, null)
 
-      matrix.setTranslate(height/1f, width/1f)
-      matrix.postRotate(45f, 1.5f*height, 1.5f*width)
+      matrix.setTranslate(height / 1f, width / 1f)
+      matrix.postRotate(45f, 1.5f * height, 1.5f * width)
       canvas.drawBitmap(bitmap ?: emptyBitmap, matrix, null)
 
       compositeImage
