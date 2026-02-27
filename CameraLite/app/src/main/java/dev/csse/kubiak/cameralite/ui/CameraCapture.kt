@@ -1,15 +1,20 @@
 package dev.csse.kubiak.cameralite.ui
 
+import android.R
 import android.util.Log
+import androidx.camera.core.Camera
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageCapture
 import androidx.camera.core.ImageCapture.CAPTURE_MODE_MAXIMIZE_QUALITY
 import androidx.camera.core.ImageCaptureException
+import androidx.camera.core.ImageProxy
 import androidx.camera.core.Preview
 import androidx.camera.core.UseCase
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Camera
@@ -25,9 +30,11 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.LocalLifecycleOwner
+import androidx.lifecycle.viewmodel.compose.viewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
@@ -41,8 +48,9 @@ import kotlin.coroutines.suspendCoroutine
 @Composable
 fun CameraCapture(
   modifier: Modifier = Modifier,
-  cameraSelector: CameraSelector = CameraSelector.DEFAULT_BACK_CAMERA,
-  onImageFile: (File) -> Unit = { }
+  onImageFile: (File) -> Unit = { },
+  onImageBuffer: (ImageProxy) -> Unit = {},
+  model: CameraViewModel = viewModel()
 ) {
   val context = LocalContext.current
   val lifecycleOwner = LocalLifecycleOwner.current
@@ -71,21 +79,29 @@ fun CameraCapture(
 
     IconButton(
       modifier = Modifier
-        .wrapContentSize()
+        .padding(bottom =  40.dp)
+        .background(Color(0x80000000))
         .padding(16.dp)
         .align(Alignment.BottomCenter),
       onClick = {
         coroutineScope.launch {
-          imageCaptureUseCase.takePicture(context.executor).let {
-            onImageFile(it)
-          }
+          if (model.captureMode == CaptureMode.FILE)
+            imageCaptureUseCase.takePicture(context.executor).let {
+              onImageFile(it)
+            }
+          else
+            imageCaptureUseCase.captureImage(context.executor).let {
+              onImageBuffer(it)
+            }
         }
       }
     ) {
       Icon(
         Icons.Filled.Camera,
-        contentDescription = "Capture Image"
-      )
+        contentDescription = "Capture Image",
+        modifier = Modifier.size(50.dp),
+        tint = Color.White
+        )
     }
 
   }
@@ -96,7 +112,7 @@ fun CameraCapture(
       // Must unbind the use-cases before rebinding them.
       cameraProvider.unbindAll()
       cameraProvider.bindToLifecycle(
-        lifecycleOwner, cameraSelector, previewUseCase, imageCaptureUseCase
+        lifecycleOwner, model.cameraSelector, previewUseCase, imageCaptureUseCase
       )
     } catch (ex: Exception) {
       Log.e("CameraCapture", "Failed to bind camera use cases", ex)
@@ -122,7 +138,23 @@ suspend fun ImageCapture.takePicture(executor: Executor): File {
       }
 
       override fun onError(ex: ImageCaptureException) {
-        Log.e("TakePicture", "Image capture failed", ex)
+        Log.e("CameraCapture", "Image capture failed", ex)
+        continuation.resumeWithException(ex)
+      }
+    })
+  }
+}
+
+suspend fun ImageCapture.captureImage(executor: Executor): ImageProxy {
+  return suspendCoroutine { continuation ->
+    takePicture(executor, object : ImageCapture.OnImageCapturedCallback() {
+      override fun onCaptureSuccess(image: ImageProxy) {
+        super.onCaptureSuccess(image)
+        continuation.resume(image)
+      }
+
+      override fun onError(ex: ImageCaptureException) {
+        Log.e("CameraCapture", "Image capture failed", ex)
         continuation.resumeWithException(ex)
       }
     })
