@@ -27,6 +27,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.SegmentedButtonDefaults.Icon
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
@@ -277,6 +278,7 @@ fun Corals(
   val uiState by model.uiState.collectAsStateWithLifecycle()
 
   val size = 1200f
+  val n = model.corals.size
   val coralPainter = rememberVectorPainter(
     defaultWidth = width,
     defaultHeight = height,
@@ -284,8 +286,22 @@ fun Corals(
     viewportHeight = size,
     autoMirror = true,
   ) { viewPortWidth, viewPortHeight ->
+    fun offset(x: Int) = (3.0f * x)
+
+    val translationX = remember { Animatable(offset(uiState.xPosition)) }
+
+    LaunchedEffect(uiState.xPosition, uiState.isMoving) {
+      if ( uiState.xPosition == 0 )
+        translationX.snapTo(offset(uiState.xPosition))
+      translationX.animateTo(offset(uiState.xPosition+1),
+        animationSpec = tween(
+          durationMillis = model.millisPerTick.toInt(),
+          easing = LinearEasing
+        ))
+    }
+
     Group(name = "coral_reef",
-      translationX = (-0.5 * width.value - (3.0f * uiState.xPosition) % size).toFloat()
+      translationX = -0.5f * width.value - (translationX.value % (n*size/2))
     ) {
       val colors = arrayOf(
         Color(0xC8F5E29A),
