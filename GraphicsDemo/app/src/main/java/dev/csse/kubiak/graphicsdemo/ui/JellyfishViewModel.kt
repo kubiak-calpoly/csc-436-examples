@@ -5,6 +5,17 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.graphics.vector.PathParser
 import androidx.compose.ui.graphics.vector.PathNode
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 
 object paths {
   val tentacles = listOf(
@@ -50,6 +61,11 @@ object paths {
   )
 }
 
+data class UiState(
+  val isMoving: Boolean = false,
+  val xPosition: Int = 0
+)
+
 class JellyfishViewModel : ViewModel() {
   val tentacles = pathsToPaths(paths.tentacles)
   val body = pathsToPaths(paths.body)
@@ -57,6 +73,46 @@ class JellyfishViewModel : ViewModel() {
   val bubbles = pathsToPaths(paths.bubbles)
   val face = pathsToPaths(paths.face)
   val corals = pathsToPaths(paths.corals)
+
+  var millisCount = 0L
+  var millisPerTick = 1000L
+  val totalMillis = 30_000L
+
+  val tickerFlow: Flow<Int> = flow {
+    var millisCount = 0L
+    while (millisCount < totalMillis) {
+      emit((millisCount / millisPerTick).toInt())
+      delay(millisPerTick)
+      millisCount += millisPerTick
+    }
+    emit(0)
+  }
+
+  private val mutableFlow =
+    MutableStateFlow<UiState>(UiState())
+  val uiState: StateFlow<UiState> = mutableFlow.asStateFlow()
+
+  var motionJob: Job? = null
+
+  fun startMotion() {
+    mutableFlow.update {
+      it.copy(isMoving = true)
+    }
+    motionJob = viewModelScope.launch(Dispatchers.Default) {
+      tickerFlow.collect { tick ->
+        mutableFlow.update {
+          it.copy(xPosition = 100 * tick)
+        }
+      }
+    }
+  }
+
+  fun pauseMotion() {
+    motionJob?.cancel()
+    mutableFlow.update {
+      it.copy(isMoving = false)
+    }
+  }
 }
 
 fun pathsToPaths(paths: List<String>): List<List<PathNode>> {

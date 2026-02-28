@@ -16,10 +16,16 @@ import androidx.compose.animation.core.withInfiniteAnimationFrameMillis
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.SegmentedButtonDefaults.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.produceState
@@ -27,6 +33,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.focus.focusModifier
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.geometry.center
@@ -43,14 +50,17 @@ import androidx.compose.ui.graphics.vector.VectorPainter
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.max
 import androidx.compose.ui.unit.min
 import androidx.compose.ui.unit.times
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import dev.csse.kubiak.graphicsdemo.ui.theme.GraphicsDemoTheme
+import dev.csse.kubiak.graphicsdemo.R
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import kotlin.collections.get
@@ -60,7 +70,7 @@ fun JellyfishScreen(
   model: JellyfishViewModel = viewModel(),
   modifier: Modifier = Modifier
 ) {
-  val coroutineScope = rememberCoroutineScope()
+  val uiState by model.uiState.collectAsStateWithLifecycle()
 
   BoxWithConstraints(modifier = modifier) {
     val maxSize = min(maxWidth, maxHeight)
@@ -74,6 +84,33 @@ fun JellyfishScreen(
     Corals(maxWidth, maxHeight/2,
       modifier = Modifier.fillMaxHeight(.5f)
       .align(Alignment.BottomCenter))
+    Row(modifier = Modifier.align(Alignment.BottomCenter).padding(bottom =  20.dp),
+      horizontalArrangement = Arrangement.spacedBy(40.dp)) {
+      IconButton(
+        enabled = !uiState.isMoving,
+        onClick = {
+          model.startMotion()
+        }
+      ) {
+        Icon(
+          painterResource(R.drawable.outline_play_circle_filled_24),
+          contentDescription = "Play",
+          modifier = Modifier.scale(2.0f),
+          tint =  Color.White
+        )
+      }
+      IconButton(
+        enabled = uiState.isMoving,
+        onClick = { model.pauseMotion() }
+      ) {
+        Icon(
+          painterResource(R.drawable.outline_pause_circle_filled_24),
+          contentDescription = "Pause",
+          modifier = Modifier.scale(2.0f),
+          tint =  Color.White
+        )
+      }
+    }
   }
 }
 
@@ -237,20 +274,9 @@ fun Corals(
   modifier: Modifier = Modifier,
   model: JellyfishViewModel = viewModel()
 ) {
+  val uiState by model.uiState.collectAsStateWithLifecycle()
+
   val size = 1200f
-  val duration = 20_000
-  val transition = rememberInfiniteTransition()
-  val translationX by transition.animateFloat(
-    initialValue = -size,
-    targetValue = -3f * size,
-    animationSpec = infiniteRepeatable(
-      animation = tween(
-        durationMillis = duration,
-        easing = LinearEasing
-      ),
-      repeatMode = RepeatMode.Restart
-    )
-  )
   val coralPainter = rememberVectorPainter(
     defaultWidth = width,
     defaultHeight = height,
@@ -259,7 +285,7 @@ fun Corals(
     autoMirror = true,
   ) { viewPortWidth, viewPortHeight ->
     Group(name = "coral_reef",
-      translationX = translationX
+      translationX = (-0.5 * width.value - (3.0f * uiState.xPosition) % size).toFloat()
     ) {
       val colors = arrayOf(
         Color(0xC8F5E29A),

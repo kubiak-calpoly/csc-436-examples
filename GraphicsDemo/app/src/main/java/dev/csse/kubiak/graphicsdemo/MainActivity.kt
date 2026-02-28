@@ -20,7 +20,11 @@ class MainActivity : ComponentActivity() {
     enableEdgeToEdge()
     setContent {
       GraphicsDemoTheme {
-        JellyfishScreen(modifier = Modifier.fillMaxSize())
+        Scaffold {
+          innerPadding ->
+          JellyfishScreen(modifier =
+            Modifier.padding(innerPadding).fillMaxSize())
+        }
       }
     }
   }
