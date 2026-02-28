@@ -2,6 +2,7 @@ package dev.csse.kubiak.graphicsdemo.ui
 
 import android.graphics.RuntimeShader
 import android.os.Build
+import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.EaseInOut
@@ -279,6 +280,8 @@ fun Corals(
 
   val size = 1200f
   val n = model.corals.size
+  fun offset(x: Int) = (3.0f * x)
+
   val coralPainter = rememberVectorPainter(
     defaultWidth = width,
     defaultHeight = height,
@@ -286,22 +289,27 @@ fun Corals(
     viewportHeight = size,
     autoMirror = true,
   ) { viewPortWidth, viewPortHeight ->
-    fun offset(x: Int) = (3.0f * x)
 
-    val translationX = remember { Animatable(offset(uiState.xPosition)) }
+    Log.d("JellyFishScreen", "uiState = $uiState")
+
+    val offsetX = remember { Animatable(offset(uiState.xPosition)) }
 
     LaunchedEffect(uiState.xPosition, uiState.isMoving) {
-      if ( uiState.xPosition == 0 )
-        translationX.snapTo(offset(uiState.xPosition))
-      translationX.animateTo(offset(uiState.xPosition+1),
-        animationSpec = tween(
-          durationMillis = model.millisPerTick.toInt(),
-          easing = LinearEasing
-        ))
+      if ( uiState.xPosition == 0)
+        offsetX.snapTo(offset(0))
+      if ( uiState.isMoving ) {
+        offsetX.animateTo(
+          offset(uiState.xPosition + 100),
+          animationSpec = tween(
+            durationMillis = model.millisPerTick.toInt(),
+            easing = LinearEasing
+          )
+        )
+      }
     }
 
     Group(name = "coral_reef",
-      translationX = -0.5f * width.value - (translationX.value % (n*size/2))
+      translationX = -viewPortWidth/2 - offsetX.value % (n * size / 2)
     ) {
       val colors = arrayOf(
         Color(0xC8F5E29A),

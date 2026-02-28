@@ -1,5 +1,6 @@
 package dev.csse.kubiak.graphicsdemo.ui
 
+import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.graphics.vector.PathParser
@@ -88,21 +89,25 @@ class JellyfishViewModel : ViewModel() {
     emit(0)
   }
 
-  private val mutableFlow =
-    MutableStateFlow<UiState>(UiState())
+  private val mutableFlow = MutableStateFlow<UiState>(UiState())
   val uiState: StateFlow<UiState> = mutableFlow.asStateFlow()
 
   var motionJob: Job? = null
 
   fun startMotion() {
-    mutableFlow.update {
-      it.copy(isMoving = true)
-    }
+
     motionJob = viewModelScope.launch(Dispatchers.Default) {
+      mutableFlow.update {
+        it.copy(isMoving = true)
+      }
       tickerFlow.collect { tick ->
+        Log.d("JellyFishViewModel", "xPosition = ${100*tick}")
         mutableFlow.update {
           it.copy(xPosition = 100 * tick)
         }
+      }
+      mutableFlow.update {
+        it.copy(isMoving = false)
       }
     }
   }
