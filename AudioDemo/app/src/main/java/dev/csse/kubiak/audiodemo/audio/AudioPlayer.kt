@@ -13,9 +13,9 @@ class AudioPlayer(
 
   fun start(filename: String) {
     val file: File = File(context.filesDir, filename)
-    MediaPlayer.create(context, file.toUri()).apply {
-      player = this
-      start()
+    if (file.isFile() && file.length() > 0) {
+      player = MediaPlayer.create(context, file.toUri())
+      player?.start()
     }
   }
 
