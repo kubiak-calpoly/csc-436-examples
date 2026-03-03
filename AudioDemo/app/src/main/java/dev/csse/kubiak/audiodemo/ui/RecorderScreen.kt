@@ -43,7 +43,6 @@ fun RecorderScreen(
       horizontalArrangement = Arrangement.SpaceEvenly) {
       Button(
         enabled = filename != null,
-        modifier = Modifier.weight(1f),
         onClick = {
           model.getSoundFile(context, filename?: "")?.let {
             recorder.start(it)
@@ -55,7 +54,6 @@ fun RecorderScreen(
       }
       Button(
         enabled = filename != null,
-        modifier = Modifier.weight(1f),
         onClick = {
           recorder.stop()
         }

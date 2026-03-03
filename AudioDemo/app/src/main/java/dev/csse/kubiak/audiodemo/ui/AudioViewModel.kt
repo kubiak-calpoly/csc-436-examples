@@ -20,8 +20,7 @@ class AudioViewModel() : ViewModel() {
 
   @RequiresApi(Build.VERSION_CODES.S)
   fun listSounds(context: Context):List<String> {
-    return (getSoundsDir(context)?.list() ?: emptyList<String>())
-            as List<String>
+    return getSoundsDir(context)?.list()?.toList() ?: emptyList()
   }
 
   @RequiresApi(Build.VERSION_CODES.S)
