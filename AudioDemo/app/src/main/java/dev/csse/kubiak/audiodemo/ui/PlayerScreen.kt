@@ -1,5 +1,7 @@
 package dev.csse.kubiak.audiodemo.ui
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -15,6 +17,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import dev.csse.kubiak.audiodemo.audio.AudioPlayer
 
+@RequiresApi(Build.VERSION_CODES.S)
 @Composable
 fun PlayerScreen(
   modifier: Modifier = Modifier,
@@ -22,7 +25,7 @@ fun PlayerScreen(
 ) {
   val context = LocalContext.current
   val player = AudioPlayer(context)
-  val file = model.soundFile
+  val filename = model.soundFile
 
   Column(modifier = modifier.fillMaxSize(),
     verticalArrangement = Arrangement.spacedBy(40.dp)
@@ -30,7 +33,7 @@ fun PlayerScreen(
     TextField(
       modifier = Modifier.fillMaxWidth(),
       label = { Text("Sound Sample Filename") },
-      value = file ?: "",
+      value = filename ?: "",
       onValueChange = { name: String ->
         model.soundFile = name
       }
@@ -39,16 +42,18 @@ fun PlayerScreen(
     Row(modifier = Modifier.fillMaxWidth(),
       horizontalArrangement = Arrangement.SpaceEvenly) {
       Button(
-        enabled = file != null,
+        enabled = filename != null,
         modifier = Modifier.weight(1f),
         onClick = {
-          player.start(file!!)
+          model.getSoundFile(context, filename?: "")?.let {
+            player.start(it)
+          }
         }
       ) {
         Text("Play")
       }
       Button(
-        enabled = file != null,
+        enabled = filename != null,
         modifier = Modifier.weight(1f),
         onClick = {
           player.stop()

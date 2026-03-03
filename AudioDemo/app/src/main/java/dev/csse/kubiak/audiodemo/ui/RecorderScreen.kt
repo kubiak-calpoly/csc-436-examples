@@ -1,5 +1,7 @@
 package dev.csse.kubiak.audiodemo.ui
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -13,9 +15,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import dev.csse.kubiak.audiodemo.audio.AudioPlayer
 import dev.csse.kubiak.audiodemo.audio.AudioRecorder
 
+@RequiresApi(Build.VERSION_CODES.S)
 @Composable
 fun RecorderScreen(
   modifier: Modifier = Modifier,
@@ -23,7 +25,7 @@ fun RecorderScreen(
 ) {
   val context = LocalContext.current
   val recorder = AudioRecorder(context)
-  val file = model.soundFile
+  val filename = model.soundFile
 
   Column(modifier = modifier.fillMaxSize(),
     verticalArrangement = Arrangement.spacedBy(40.dp)
@@ -31,7 +33,7 @@ fun RecorderScreen(
     TextField(
       modifier = Modifier.fillMaxWidth(),
       label = { Text("Sound Sample Filename") },
-      value = file ?: "",
+      value = filename ?: "",
       onValueChange = { name: String ->
         model.soundFile = name
       }
@@ -40,16 +42,19 @@ fun RecorderScreen(
     Row(modifier = Modifier.fillMaxWidth(),
       horizontalArrangement = Arrangement.SpaceEvenly) {
       Button(
-        enabled = file != null,
+        enabled = filename != null,
         modifier = Modifier.weight(1f),
         onClick = {
-          recorder.start(file!!)
+          model.getSoundFile(context, filename?: "")?.let {
+            recorder.start(it)
+
+          }
         }
       ) {
         Text("Record")
       }
       Button(
-        enabled = file != null,
+        enabled = filename != null,
         modifier = Modifier.weight(1f),
         onClick = {
           recorder.stop()

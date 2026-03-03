@@ -1,6 +1,10 @@
 package dev.csse.kubiak.audiodemo.ui
 
+import android.Manifest
+import android.os.Build
 import androidx.annotation.DrawableRes
+import androidx.annotation.RequiresApi
+import androidx.annotation.RequiresPermission
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -14,6 +18,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -45,7 +50,9 @@ enum class AppDestinations(
   SAMPLE(Routes.Sample, R.drawable.outline_mic_24, "Sample")
 }
 
+@RequiresApi(Build.VERSION_CODES.S)
 @OptIn(ExperimentalMaterial3Api::class)
+@RequiresPermission(Manifest.permission.RECORD_AUDIO)
 @Composable
 fun AudioDemo(
   engine: AudioEngine,
@@ -67,6 +74,7 @@ fun AudioDemo(
     innerPadding ->
 
     val modPadding = Modifier.padding(innerPadding)
+    val audioViewModel: AudioViewModel = viewModel()
 
     NavHost(
       navController = navController,
@@ -74,12 +82,14 @@ fun AudioDemo(
     ) {
       composable<Routes.Play> {
         PlayerScreen(
-          modifier = modPadding
+          modifier = modPadding,
+          model =  audioViewModel
         )
       }
       composable<Routes.Record> {
         RecorderScreen(
-          modifier = modPadding
+          modifier = modPadding,
+          model = audioViewModel
         )
       }
       composable<Routes.Sample> {

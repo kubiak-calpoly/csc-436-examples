@@ -18,9 +18,7 @@ class AudioRecorder(
     } else MediaRecorder()
   }
 
-  fun start(filename: String) {
-    val file: File = File(context.filesDir, filename)
-
+  fun start(file: File) {
     createRecorder().apply {
       setAudioSource(MediaRecorder.AudioSource.MIC)
       setOutputFormat(MediaRecorder.OutputFormat.MPEG_4)
@@ -29,7 +27,7 @@ class AudioRecorder(
 
       prepare()
       start()
-      Log.d("AudioRecorder", "Recording started on $filename")
+      Log.d("AudioRecorder", "Recording started on ${file.name}")
       recorder = this
     }
   }
